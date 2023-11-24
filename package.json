@@ -1,0 +1,40 @@
+{
+  "name": "@encryption-api-services/eas-javascript",
+  "version": "1.1.7",
+  "description": "",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "test": "mocha -r ts-node/register ./test/**/*.ts --timeout 20000 --recursive",
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Encryption-API-Services/eas-javascript"
+  },
+  "keywords": [],
+  "author": "Mike Mulchrone <mikemulchrone987@gmail.com>",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/Encryption-API-Services/eas-javascript/issues"
+  },
+  "homepage": "https://github.com/Encryption-API-Services/eas-javascript#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node-fetch": "^2.6.3",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.3"
+  },
+  "dependencies": {
+    "jwt-decode": "^3.1.2",
+    "node-fetch": "^2.6.9"
+  }
+}
