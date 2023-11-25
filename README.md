@@ -1,1 +1,1 @@
-# eas-javascript
+# eas-javascript-sdk
