@@ -1,25 +1,25 @@
 {
-  "name": "@encryption-api-services/eas-javascript",
-  "version": "1.1.7",
+  "name": "eas-typescript-sdk",
+  "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register ./test/**/*.ts --timeout 20000 --recursive",
-    "build": "tsc",
+    "build": "tsc && copyfiles \"./cas_core_lib.dll\" \"lib\" && copyfiles \"./libcas_core_lib.so\" \"lib\"",
     "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Encryption-API-Services/eas-javascript"
+    "url": "git+https://github.com/Cryptographic-API-Services/cas-typescript-sdk"
   },
   "keywords": [],
   "author": "Mike Mulchrone <mikemulchrone987@gmail.com>",
   "license": "Apache 2.0",
   "bugs": {
-    "url": "https://github.com/Encryption-API-Services/eas-javascript/issues"
+    "url": "https://github.com/Cryptographic-API-Services/cas-typescript-sdk/issues"
   },
-  "homepage": "https://github.com/Encryption-API-Services/eas-javascript#readme",
+  "homepage": "https://github.com/Cryptographic-API-Services/cas-typescript-sdk#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -35,8 +35,7 @@
     "typescript": "^5.0.3"
   },
   "dependencies": {
-    "ffi-napi": "^4.0.3",
-    "jwt-decode": "^3.1.2",
-    "node-fetch": "^2.6.9"
+    "copyfiles": "^2.4.1",
+    "ffi-napi": "^4.0.3"
   }
 }
