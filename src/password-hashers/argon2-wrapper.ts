@@ -1,27 +1,19 @@
-import ffi from "ffi-napi";
 import os from "os";
+import koffi  from "koffi";
 
 export class Argon2Wrapper {
-  private ffiLibraries;
+  private lib;
+  private argon2_hash: Function;
 
   constructor() {
-    let platform = os.platform();
-    console.log(platform);
-    if (platform === "win32") {
-        this.ffiLibraries = ffi.Library("./cas_core_lib.dll", {
-          "argon2_hash": ["string", ["string"]],
-        });
-    } else {
-        this.ffiLibraries = ffi.Library("./libcas_core_lib.so", {
-            "argon2_hash": ["string", ["string"]],
-          });
-    }
+    this.lib = (os.platform() === "win32") ? koffi.load('./cas_core_lib.dll') : koffi.load("./libcas_core_lib.so");
+    this.argon2_hash = this.lib.func("argon2_hash", 'string', ['string'])
   }
 
   public hashPassword(passwordToHash: string): string | null {
     if (!passwordToHash) {
         throw new Error("You must provide a password to hash");
     }
-    return this.ffiLibraries.argon2_hash(passwordToHash);
+    return this.argon2_hash(passwordToHash);
   }
 }
