@@ -1,4 +1,4 @@
-# eas-javascript-sdk
+# eas-typescript-sdk
 
 ## Consuming Library Documentation
 **Note: All work is experimental and we understand benchmarks might not be the most optimal however we feel that large modern day microservices architectures utilizing multiple languages will benefit from a standardized subset of libraries.**
