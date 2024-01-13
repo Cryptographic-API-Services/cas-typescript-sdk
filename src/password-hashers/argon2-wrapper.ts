@@ -6,7 +6,7 @@ export class Argon2Wrapper {
   private argon2_hash: Function;
 
   constructor() {
-    this.lib = (os.platform() === "win32") ? koffi.load('./cas_core_lib.dll') : koffi.load("./libcas_core_lib.so");
+    this.lib = (os.platform() === "win32") ? koffi.load(global.pathToWindowsDll) : koffi.load(global.pathToLinuxSO);
     this.argon2_hash = this.lib.func("argon2_hash", 'string', ['string'])
   }
 
