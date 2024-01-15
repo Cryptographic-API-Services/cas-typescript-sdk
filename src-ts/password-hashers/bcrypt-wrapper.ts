@@ -1,4 +1,4 @@
-import { IPasswordHasherBase, PasswordHasherBase } from "./password-hasher-base";
+import { IPasswordHasherBase } from "./password-hasher-base";
 import { bcryptHash, bcryptVerify } from "./../../index";
 
 export class BCryptWrapper implements IPasswordHasherBase {

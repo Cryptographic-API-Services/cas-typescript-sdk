@@ -1,6 +1,7 @@
 import { Argon2Wrapper } from "./argon2-wrapper";
 import { BCryptWrapper } from "./bcrypt-wrapper";
 import { PasswordHasherType } from "./password-hasher-type";
+import { ScryptWrapper } from "./scrypt-wrapper";
 
 export class PasswordHasherFactory {
   static getHasher(type: PasswordHasherType): any {
@@ -11,6 +12,7 @@ export class PasswordHasherFactory {
         hasher = new BCryptWrapper();
         break;
       case PasswordHasherType.Scrypt:
+        hasher = new ScryptWrapper();
         break;
     }
     return hasher;
