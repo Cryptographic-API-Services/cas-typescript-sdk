@@ -1,6 +1,7 @@
 import {argon2Hash, argon2Verify} from "./../../index";
+import { IPasswordHasherBase, PasswordHasherBase } from "./password-hasher-base";
 
-export class Argon2Wrapper {
+export class Argon2Wrapper extends PasswordHasherBase implements IPasswordHasherBase {
   public hashPassword(password: string): string {
     if (!password){
       throw new Error("You must provide a password to hash with Argon2");

@@ -1,5 +1,5 @@
-import { Argon2Wrapper } from "./password-hashers/argon2-wrapper";
+import * as PasswordHashers from "./password-hashers/index";
 
 export {
-    Argon2Wrapper
+    PasswordHashers
 }
