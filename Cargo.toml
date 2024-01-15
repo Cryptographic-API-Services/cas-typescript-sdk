@@ -1,0 +1,17 @@
+[package]
+name = "cas-typescript-sdk-napi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+argon2 = "0.5.2"
+napi = "2"
+napi-derive = "2"
+rand = "0.8.5"
+
+[build-dependencies]
+napi-build = "1"
