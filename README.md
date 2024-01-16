@@ -15,4 +15,4 @@ We utilize some smart people's existing work and we believe their documentation 
 - [Rayon](https://github.com/rayon-rs/rayon)
 
 ## Disclaimer
-Many of the cryptographic crates that are utilized in our core FFI [layer](https://github.com/Crytographic-API-Services/cas-core-lib) have never had a security audit performed. Utilize this SDK at your own risk.
+Many of the cryptographic crates that are utilized in our core FFI [layer](./src) have never had a security audit performed. Utilize this SDK at your own risk.
