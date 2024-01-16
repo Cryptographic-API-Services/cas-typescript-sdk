@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register ./test/**/*.ts --timeout 20000 --recursive",
+    "test": "mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
     "build": "napi build --release && tsc",
     "prepare": "npm run build"
   },
@@ -26,14 +26,12 @@
   },
   "devDependencies": {
     "@napi-rs/cli": "^2.17.0",
-    "@types/chai": "^4.3.5",
-    "@types/mocha": "^10.0.1",
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
     "@types/node-fetch": "^2.6.3",
-    "chai": "^4.3.7",
+    "chai": "^4.4.1",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.3"
-  },
-  "dependencies": {
   }
 }
