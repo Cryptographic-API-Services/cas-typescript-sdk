@@ -67,3 +67,37 @@ describe("Scrypt Tests", () => {
     assert.isNotTrue(verified);
   });
 });
+
+describe("Argon2 Tests", () => {
+  it("hash with factory", () => {
+    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+      PasswordHasherType.Argon2,
+    );
+    const password: string = "ScryptRocks";
+    const hashed: string = hasher.hashPassword(password);
+    assert.notEqual(password, hashed);
+  });
+
+  it("verify pass with factory", () => {
+    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+      PasswordHasherType.Argon2,
+    );
+    const password: string = "ScryptRocks1231231";
+    const hashed: string = hasher.hashPassword(password);
+    const verified: boolean = hasher.verifyPassword(hashed, password);
+    assert.isTrue(verified);
+  });
+
+  it("verify fail with factory", () => {
+    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+      PasswordHasherType.Argon2,
+    );
+    const password: string = "ScryptRocksSomeGarbageText";
+    const hashed: string = hasher.hashPassword(password);
+    const verified: boolean = hasher.verifyPassword(
+      hashed,
+      "make this fail, its not the same",
+    );
+    assert.isNotTrue(verified);
+  });
+});
