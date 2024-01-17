@@ -1,3 +1,5 @@
+use std::net::ToSocketAddrs;
+
 use napi_derive::napi;
 
 use argon2::{
@@ -50,4 +52,13 @@ pub fn argon2_verify_test() {
     let hashed = argon2_hash(password.clone());
     let verified = argon2_verify(hashed, password);
     assert_eq!(true, verified);
+}
+
+#[test]
+pub fn argon2_verify_fail_test() {
+    let password = "ThisIsNotMyPasswolrd".to_string();
+    let hashed = argon2_hash(password.clone());
+    let verified = "Nope".to_string();
+    let verified = argon2_verify(hashed, verified);
+    assert_eq!(false, verified);
 }

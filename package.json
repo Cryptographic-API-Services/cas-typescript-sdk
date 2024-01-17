@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
+    "test": "cargo test && npm run build && mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
     "build": "napi build --release && tsc",
     "prepare": "npm run build"
   },

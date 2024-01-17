@@ -1,3 +1,5 @@
-import { SHAWrapper } from "./SHAWrapper";
+import { HasherFactory } from "./hasher-factory";
+import { HasherType } from "./hasher-type";
+import { SHAWrapper } from "./sha-wrapper";
 
-export { SHAWrapper };
+export { SHAWrapper, HasherFactory, HasherType };

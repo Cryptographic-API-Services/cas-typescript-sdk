@@ -40,3 +40,12 @@ pub fn bcrypt_verify_test() {
     let verified = bcrypt_verify(hashed, password);
     assert_eq!(true, verified);
 }
+
+#[test]
+pub fn bcrypt_verify_fail_test() {
+    let password = "ThisIsNotMyPasswolrd".to_string();
+    let hashed = bcrypt_hash(password.clone());
+    let verified = "nope".to_string();
+    let verified = bcrypt_verify(hashed, verified);
+    assert_eq!(false, verified);
+}

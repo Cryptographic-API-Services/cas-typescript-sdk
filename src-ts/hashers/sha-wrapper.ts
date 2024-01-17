@@ -1,5 +1,5 @@
 import { sha256, sha256Verify, sha512, sha512Verify } from "../../index";
-import { IHasherBase } from "./IHasherBase";
+import { IHasherBase } from "./hasher-base";
 
 export class SHAWrapper implements IHasherBase {
     hash_512(dataToHash: number[]): number[] {

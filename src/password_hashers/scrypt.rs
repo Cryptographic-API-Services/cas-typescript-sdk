@@ -45,3 +45,12 @@ pub fn scrypt_verify_test() {
     let verified = scrypt_verify(hashed_password, password);
     assert_eq!(true, verified);
 }
+
+#[test]
+pub fn scrypt_verify_fail_test() {
+    let password = "BadPassword".to_string();
+    let hashed_password = scrypt_hash(password.clone());
+    let verified = "Nope".to_string();
+    let verified = scrypt_verify(hashed_password, verified);
+    assert_eq!(false, verified);
+}
