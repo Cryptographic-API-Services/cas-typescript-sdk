@@ -1,7 +1,19 @@
-import * as PasswordHashers from "./password-hashers/index";
-import * as Hashers from "./hashers/index";
+import {
+  Argon2Wrapper,
+  BCryptWrapper,
+  PasswordHasherFactory,
+  PasswordHasherType,
+  ScryptWrapper,
+} from "./password-hashers/index";
+import { HasherFactory, HasherType, SHAWrapper } from "./hashers/index";
 
 export {
-    PasswordHashers,
-    Hashers
-}
+  Argon2Wrapper,
+  BCryptWrapper,
+  ScryptWrapper,
+  PasswordHasherFactory,
+  PasswordHasherType,
+  HasherFactory,
+  HasherType,
+  SHAWrapper,
+};
