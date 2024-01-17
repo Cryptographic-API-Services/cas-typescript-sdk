@@ -9,3 +9,7 @@ export function bcryptHash(passwordToHash: string): string
 export function bcryptVerify(hashedPassword: string, passwordToVerify: string): boolean
 export function scryptHash(passwordToHash: string): string
 export function scryptVerify(hashedPassword: string, passwordToVerify: string): boolean
+export function sha512(dataToHash: Array<number>): Array<number>
+export function sha512Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
+export function sha256(dataToHash: Array<number>): Array<number>
+export function sha256Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean

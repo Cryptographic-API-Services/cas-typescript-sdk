@@ -4,3 +4,8 @@ mod password_hashers {
     pub mod scrypt;
     pub mod cas_password_hasher;
 }
+
+mod hashers {
+    pub mod sha;
+    pub mod cas_hasher;
+}
