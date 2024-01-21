@@ -10,6 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 argon2 = "0.5.2"
 bcrypt = "0.15.0"
+blake2 = "0.10.6"
 napi = "2"
 napi-derive = "2"
 rand = "0.8.5"
