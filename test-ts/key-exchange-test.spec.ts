@@ -2,7 +2,7 @@ import { assert } from "chai";
 import {X25519Wrapper} from "../src-ts/index";
 
 describe("X25519 Key Exchange", () => {
-  test("Pass", () => {
+    it("Pass", () => {
     const wrapper = new X25519Wrapper();
     const alice = wrapper.generateSecretAndPublicKey();
     const bob = wrapper.generateSecretAndPublicKey();
@@ -16,7 +16,7 @@ describe("X25519 Key Exchange", () => {
       alice.publicKey,
     );
 
-    const areEqual = (a, b) => {
+    const areEqual = (a: any, b: any) => {
         if (a === b) return true;
         if (a == null || b == null) return false;
         if (a.length !== b.length) return false;
