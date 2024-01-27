@@ -13,3 +13,11 @@ export function sha512(dataToHash: Array<number>): Array<number>
 export function sha512Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
 export function sha256(dataToHash: Array<number>): Array<number>
 export function sha256Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
+export function x25519GenerateSecretAndPublicKey(): X25519SecretPublicKeyResult
+export function x25519DiffieHellman(mySecretKey: Array<number>, usersPublicKey: Array<number>): Array<number>
+export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
+export class X25519SecretPublicKeyResult {
+  publicKey: Array<number>
+  secretKey: Array<number>
+  constructor(publicKey: Array<number>, secretKey: Array<number>)
+}

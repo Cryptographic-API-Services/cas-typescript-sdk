@@ -10,3 +10,8 @@ mod hashers {
     pub mod cas_hasher;
     pub mod blake2;
 }
+
+mod key_exchange {
+    pub mod x25519;
+    mod cas_key_exchange;
+}
