@@ -8,12 +8,14 @@ path = "src/lib.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
+aes-gcm = "0.10.3"
 argon2 = "0.5.2"
 bcrypt = "0.15.0"
 blake2 = "0.10.6"
 napi = "2"
 napi-derive = "2"
 rand = "0.8.5"
+rand_chacha = "0.3.1"
 scrypt = "0.11.0"
 sha3 = "0.10.8"
 x25519-dalek = {version = "2.0.0", features = ["static_secrets"] }

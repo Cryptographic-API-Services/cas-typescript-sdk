@@ -13,5 +13,10 @@ mod hashers {
 
 mod key_exchange {
     pub mod x25519;
-    mod cas_key_exchange;
+    pub mod cas_key_exchange;
+}
+
+mod symmetric {
+    pub mod aes;
+    pub mod cas_symmetric_encryption;
 }
