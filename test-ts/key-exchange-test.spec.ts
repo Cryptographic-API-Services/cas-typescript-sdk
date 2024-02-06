@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import {X25519Wrapper} from "../src-ts/index";
+import { X25519Wrapper } from "../src-ts/index";
+import { areEqual } from "./helpers/array";
 
 describe("X25519 Key Exchange", () => {
     it("Pass", () => {
@@ -15,17 +16,6 @@ describe("X25519 Key Exchange", () => {
       bob.secretKey,
       alice.publicKey,
     );
-
-    const areEqual = (a: any, b: any) => {
-        if (a === b) return true;
-        if (a == null || b == null) return false;
-        if (a.length !== b.length) return false;
-
-        for (var i = 0; i < a.length; ++i) {
-            if (a[i] !== b[i]) return false;
-        }
-        return true;
-    };
 
     var result = areEqual(alice_shared_secret, bob_shared_secret);
     assert.isTrue(result);

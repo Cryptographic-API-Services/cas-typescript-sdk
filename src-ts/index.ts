@@ -6,7 +6,8 @@ import {
   ScryptWrapper,
 } from "./password-hashers/index";
 import { HasherFactory, HasherType, SHAWrapper } from "./hashers/index";
-import { X25519Wrapper } from "./key_exchange/x25519";
+import { X25519Wrapper } from "./key_exchange/index";
+import { AESWrapper } from "./symmetric/index";
 
 export {
   Argon2Wrapper,
@@ -17,5 +18,6 @@ export {
   PasswordHasherType,
   ScryptWrapper,
   SHAWrapper,
-  X25519Wrapper
+  X25519Wrapper,
+  AESWrapper
 };
