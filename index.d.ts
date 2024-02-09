@@ -23,6 +23,8 @@ export function aes128Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphe
 export function aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
 export function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 export function generateRsaKeys(keySize: number): RsaKeyPairResult
+export function encryptPlaintextRsa(publicKey: string, plaintext: Array<number>): Array<number>
+export function decryptCiphertextRsa(privateKey: string, ciphertext: Array<number>): Array<number>
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
