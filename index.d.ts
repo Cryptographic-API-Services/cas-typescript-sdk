@@ -22,9 +22,16 @@ export function aes128Encrypt(aesKey: Array<number>, nonce: Array<number>, plain
 export function aes128Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 export function aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
 export function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
+export function generateRsaKeys(keySize: number): RsaKeyPairResult
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
   secretKey: Array<number>
   constructor(publicKey: Array<number>, secretKey: Array<number>)
+}
+export type RSAKeyPairResult = RsaKeyPairResult
+export class RsaKeyPairResult {
+  privateKey: string
+  publicKey: string
+  constructor(privateKey: string, publicKey: string)
 }

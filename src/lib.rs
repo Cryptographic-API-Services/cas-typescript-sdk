@@ -20,3 +20,8 @@ mod symmetric {
     pub mod aes;
     pub mod cas_symmetric_encryption;
 }
+
+mod asymmetric {
+    pub mod cas_asymmetric_encryption;
+    pub mod cas_rsa;
+}

@@ -8,6 +8,7 @@ import {
 import { HasherFactory, HasherType, SHAWrapper } from "./hashers/index";
 import { X25519Wrapper } from "./key_exchange/index";
 import { AESWrapper } from "./symmetric/index";
+import { RSAWrapper, RsaKeyPairResult } from "./asymmetric";
 
 export {
   Argon2Wrapper,
@@ -19,5 +20,7 @@ export {
   ScryptWrapper,
   SHAWrapper,
   X25519Wrapper,
-  AESWrapper
+  AESWrapper,
+  RSAWrapper,
+  RsaKeyPairResult
 };
