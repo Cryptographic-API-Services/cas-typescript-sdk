@@ -1,11 +1,13 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "cargo test && npm run build && mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
+    "node:test": "mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
+    "rust:test": "cargo test",
     "build": "napi build --release && tsc",
     "prepare": "npm run build"
   },

@@ -22,6 +22,8 @@ export function aes128Encrypt(aesKey: Array<number>, nonce: Array<number>, plain
 export function aes128Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 export function aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
 export function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
+export function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>): AesKeyFromX25519SharedSecret
+export function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>): AesKeyFromX25519SharedSecret
 export function generateRsaKeys(keySize: number): RsaKeyPairResult
 export function encryptPlaintextRsa(publicKey: string, plaintext: Array<number>): Array<number>
 export function decryptCiphertextRsa(privateKey: string, ciphertext: Array<number>): Array<number>
@@ -32,6 +34,11 @@ export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
   secretKey: Array<number>
   constructor(publicKey: Array<number>, secretKey: Array<number>)
+}
+export class AesKeyFromX25519SharedSecret {
+  aesKey: Array<number>
+  aesNonce: Array<number>
+  constructor(aesKey: Array<number>, aesNonce: Array<number>)
 }
 export type RSAKeyPairResult = RsaKeyPairResult
 export class RsaKeyPairResult {
