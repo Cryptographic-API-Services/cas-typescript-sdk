@@ -1,4 +1,4 @@
-import { decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, RsaKeyPairResult } from "../../index";
+import { decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, RsaKeyPairResult, signRsa, verifyRsa } from "../../index";
 
 export class RSAWrapper {
   public generateKeys(keySize: number): RsaKeyPairResult {
@@ -26,5 +26,28 @@ export class RSAWrapper {
       throw new Error("You must provide an array of ciphertext bytes to encrypt with RSA");
     }
     return decryptCiphertextRsa(privateKey, ciphertext);
+  }
+
+  public sign(privateKey: string, hash: Array<number>): Array<number> {
+    if (!privateKey) {
+      throw new Error("You must provide a private key to sign with RSA");
+    }
+    if (!hash || hash.length === 0) {
+      throw new Error("You must provide an allocated hash to sign with RSA");
+    }
+    return signRsa(privateKey, hash);
+  }
+
+  public verify(publicKey: string, hash: Array<number>, signature: Array<number>): boolean {
+    if (!publicKey) {
+      throw new Error("You must provide a public key to verify with RSA");
+    }
+    if (!hash || hash.length === 0) {
+      throw new Error("You must provide an allocated hash to verify with RSA");
+    }
+    if (!signature || signature.length === 0) {
+      throw new Error("You must provide and allocated signature to verify with RSA");
+    }
+    return verifyRsa(publicKey, hash, signature);
   }
 }

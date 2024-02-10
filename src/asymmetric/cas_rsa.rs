@@ -1,7 +1,7 @@
 use napi_derive::napi;
 use rand::rngs::OsRng;
 use rsa::{
-    pkcs1::{DecodeRsaPublicKey, EncodeRsaPublicKey}, pkcs8::{DecodePrivateKey, EncodePrivateKey}, Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey
+    pkcs1::{DecodeRsaPublicKey, EncodeRsaPublicKey}, pkcs8::{DecodePrivateKey, EncodePrivateKey}, Pkcs1v15Encrypt, Pkcs1v15Sign, RsaPrivateKey, RsaPublicKey
 };
 
 use super::cas_asymmetric_encryption::{CASRSAEncryption, RSAKeyPairResult};
@@ -31,6 +31,26 @@ impl CASRSAEncryption for CASRSA {
         let plaintext = private_key.decrypt(Pkcs1v15Encrypt, &ciphertext).unwrap();
         plaintext
     }
+
+    fn sign(private_key: String, hash: Vec<u8>) -> Vec<u8> {
+        let private_key = RsaPrivateKey::from_pkcs8_pem(&private_key).unwrap();
+        let mut signed_data = private_key.sign(Pkcs1v15Sign::new_unprefixed(), &hash).unwrap();
+        signed_data
+    }
+
+    fn verify(public_key: String, hash: Vec<u8>, signature: Vec<u8>) -> bool {
+        let public_key = RsaPublicKey::from_pkcs1_pem(&public_key).unwrap();
+        let verified = public_key.verify(
+            Pkcs1v15Sign::new_unprefixed(),
+            &hash,
+            &signature,
+        );
+        if verified.is_err() == false {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 
@@ -47,4 +67,14 @@ pub fn encrypt_plaintext_rsa(public_key: String, plaintext: Vec<u8>) -> Vec<u8> 
 #[napi]
 pub fn decrypt_ciphertext_rsa(private_key: String, ciphertext: Vec<u8>) -> Vec<u8> {
     return CASRSA::decrypt_ciphertext(private_key, ciphertext);
+}
+
+#[napi]
+pub fn sign_rsa(private_key: String, hash: Vec<u8>) -> Vec<u8> {
+    return CASRSA::sign(private_key, hash);
+}
+
+#[napi]
+pub fn verify_rsa(public_key: String, hash: Vec<u8>, signature: Vec<u8>) -> bool {
+    return CASRSA::verify(public_key, hash, signature);
 }

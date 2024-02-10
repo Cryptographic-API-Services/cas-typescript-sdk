@@ -25,6 +25,8 @@ export function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphe
 export function generateRsaKeys(keySize: number): RsaKeyPairResult
 export function encryptPlaintextRsa(publicKey: string, plaintext: Array<number>): Array<number>
 export function decryptCiphertextRsa(privateKey: string, ciphertext: Array<number>): Array<number>
+export function signRsa(privateKey: string, hash: Array<number>): Array<number>
+export function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
