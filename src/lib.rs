@@ -29,4 +29,5 @@ mod asymmetric {
 mod digital_signature {
     pub mod cas_digital_signature;
     pub mod sha_512_rsa;
+    pub mod sha_256_rsa;
 }

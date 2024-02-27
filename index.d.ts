@@ -31,6 +31,8 @@ export function signRsa(privateKey: string, hash: Array<number>): Array<number>
 export function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
 export function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CasrsaDigitalSignatureResult
 export function sha512RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
+export function sha256RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CasrsaDigitalSignatureResult
+export function sha256RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
