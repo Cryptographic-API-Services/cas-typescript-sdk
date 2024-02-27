@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi(constructor)]
 pub struct AesKeyFromX25519SharedSecret {
     pub aes_key: Vec<u8>,
-    pub aes_nonce: Vec<u8>
+    pub aes_nonce: Vec<u8>,
 }
 
 pub trait CASAESEncryption {

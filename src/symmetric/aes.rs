@@ -6,7 +6,7 @@ use rand_chacha::ChaCha20Rng;
 
 use aes_gcm::{
     aead::{generic_array::GenericArray, Aead},
-    Aes256Gcm, Aes128Gcm, KeyInit, Nonce
+    Aes128Gcm, Aes256Gcm, KeyInit, Nonce,
 };
 
 use super::cas_symmetric_encryption::{AesKeyFromX25519SharedSecret, CASAESEncryption};
@@ -40,7 +40,7 @@ impl CASAESEncryption for CASAES256 {
         aes_nonce.copy_from_slice(&shared_secret[..12]);
         let result = AesKeyFromX25519SharedSecret {
             aes_key: aes_key.to_vec(),
-            aes_nonce: aes_nonce.to_vec()
+            aes_nonce: aes_nonce.to_vec(),
         };
         result
     }
@@ -75,7 +75,7 @@ impl CASAESEncryption for CASAES128 {
         aes_nonce.copy_from_slice(&shared_secret[..12]);
         let result = AesKeyFromX25519SharedSecret {
             aes_key: aes_key_slice.to_vec(),
-            aes_nonce: aes_nonce.to_vec()
+            aes_nonce: aes_nonce.to_vec(),
         };
         result
     }
@@ -121,12 +121,16 @@ pub fn aes256_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> 
 }
 
 #[napi]
-pub fn aes_256_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> AesKeyFromX25519SharedSecret {
+pub fn aes_256_key_from_x25519_shared_secret(
+    shared_secret: Vec<u8>,
+) -> AesKeyFromX25519SharedSecret {
     return CASAES256::key_from_x25519_shared_secret(shared_secret);
 }
 
 #[napi]
-pub fn aes_128_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> AesKeyFromX25519SharedSecret {
+pub fn aes_128_key_from_x25519_shared_secret(
+    shared_secret: Vec<u8>,
+) -> AesKeyFromX25519SharedSecret {
     return CASAES128::key_from_x25519_shared_secret(shared_secret);
 }
 

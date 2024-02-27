@@ -8,7 +8,7 @@ use super::cas_key_exchange::CASKeyExchange;
 #[napi(constructor)]
 pub struct x25519SecretPublicKeyResult {
     pub public_key: Vec<u8>,
-    pub secret_key: Vec<u8>
+    pub secret_key: Vec<u8>,
 }
 
 pub struct X25519;
@@ -19,7 +19,7 @@ impl CASKeyExchange for X25519 {
         let public_key = PublicKey::from(&secret_key);
         let result = x25519SecretPublicKeyResult {
             secret_key: secret_key.as_bytes().to_vec(),
-            public_key: public_key.as_bytes().to_vec()
+            public_key: public_key.as_bytes().to_vec(),
         };
         result
     }

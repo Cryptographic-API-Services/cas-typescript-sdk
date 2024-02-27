@@ -1,5 +1,5 @@
-use blake2::{Blake2b512, Blake2s256, Digest};
 use super::cas_hasher::CASHasher;
+use blake2::{Blake2b512, Blake2s256, Digest};
 
 pub struct CASBlake2;
 
@@ -34,6 +34,4 @@ impl CASHasher for CASBlake2 {
 }
 
 #[test]
-fn hash_512_test() {
-    
-}
+fn hash_512_test() {}

@@ -3,7 +3,7 @@ use napi_derive::napi;
 #[napi(constructor)]
 pub struct RSAKeyPairResult {
     pub private_key: String,
-    pub public_key: String
+    pub public_key: String,
 }
 
 pub trait CASRSAEncryption {

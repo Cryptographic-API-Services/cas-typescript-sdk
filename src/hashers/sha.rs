@@ -45,7 +45,6 @@ pub fn sha_512_verify(data_to_hash: Vec<u8>, data_to_verify: Vec<u8>) -> bool {
     return <CASSHA as CASHasher>::verify_512(data_to_hash, data_to_verify);
 }
 
-
 #[napi]
 pub fn sha_256(data_to_hash: Vec<u8>) -> Vec<u8> {
     return <CASSHA as CASHasher>::hash_256(data_to_hash);

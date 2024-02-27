@@ -1,5 +1,5 @@
-use napi_derive::napi;
 use bcrypt::{hash, verify, DEFAULT_COST};
+use napi_derive::napi;
 
 use super::cas_password_hasher::CASPasswordHasher;
 
@@ -14,7 +14,6 @@ impl CASPasswordHasher for CASBCrypt {
         return verify(password_to_verify, &hashed_password).unwrap();
     }
 }
-
 
 #[napi]
 pub fn bcrypt_hash(password_to_hash: String) -> String {

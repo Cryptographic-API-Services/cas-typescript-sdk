@@ -29,6 +29,8 @@ export function encryptPlaintextRsa(publicKey: string, plaintext: Array<number>)
 export function decryptCiphertextRsa(privateKey: string, ciphertext: Array<number>): Array<number>
 export function signRsa(privateKey: string, hash: Array<number>): Array<number>
 export function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
+export function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CasrsaDigitalSignatureResult
+export function sha512RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
@@ -45,4 +47,11 @@ export class RsaKeyPairResult {
   privateKey: string
   publicKey: string
   constructor(privateKey: string, publicKey: string)
+}
+export type CASRSADigitalSignatureResult = CasrsaDigitalSignatureResult
+export class CasrsaDigitalSignatureResult {
+  publicKey: string
+  privateKey: string
+  signature: Array<number>
+  constructor(publicKey: string, privateKey: string, signature: Array<number>)
 }
