@@ -6,12 +6,10 @@ use rsa::{
     Pkcs1v15Sign, RsaPrivateKey, RsaPublicKey,
 };
 use sha3::{Digest, Sha3_512};
-
-use super::cas_digital_signature::{CASDigitalSignature, CASRSADigitalSignatureResult};
-
+use super::cas_digital_signature_rsa::{CASRSADigitalSignatureResult, CASRSADigitalSignature};
 pub struct SHA512RSADigitalSignature;
 
-impl CASDigitalSignature for SHA512RSADigitalSignature {
+impl CASRSADigitalSignature for SHA512RSADigitalSignature {
     fn digital_signature_rsa(
         rsa_key_size: u32,
         data_to_sign: Vec<u8>,

@@ -8,11 +8,11 @@ use rsa::{
 use sha3::{Digest, Sha3_256};
 
 
-use super::cas_digital_signature::{CASDigitalSignature, CASRSADigitalSignatureResult};
+use super::cas_digital_signature_rsa::{CASRSADigitalSignatureResult, CASRSADigitalSignature};
 
 pub struct SHA256RSADigitalSignature;
 
-impl CASDigitalSignature for SHA256RSADigitalSignature {
+impl CASRSADigitalSignature for SHA256RSADigitalSignature {
     fn digital_signature_rsa(
         rsa_key_size: u32,
         data_to_sign: Vec<u8>,

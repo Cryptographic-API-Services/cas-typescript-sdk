@@ -19,7 +19,14 @@ rand_chacha = "0.3.1"
 rsa = "0.9.6"
 scrypt = "0.11.0"
 sha3 = "0.10.8"
-x25519-dalek = {version = "2.0.0", features = ["static_secrets"] }
+x25519-dalek = {version = "2.0.0", features = ["static_secrets"]}
+rand_07 = { package = "rand", version = "0.7.0" }
+
+[profile.dev.package.num-bigint-dig]
+opt-level = 3
+
+[dependencies.ed25519-dalek]
+version = "1"
 
 [build-dependencies]
 napi-build = "1"
