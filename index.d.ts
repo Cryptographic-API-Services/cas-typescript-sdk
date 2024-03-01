@@ -33,6 +33,8 @@ export function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<
 export function sha512RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
 export function sha256RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CasrsaDigitalSignatureResult
 export function sha256RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
+export function sha512Ed25519DigitalSignature(dataToSign: Array<number>): Casshaed25519DalekDigitalSignatureResult
+export function sha512Ed25519DigitalSignatureVerify(publicKey: Array<number>, dataToVerify: Array<number>, signature: Array<number>): boolean
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
@@ -56,4 +58,10 @@ export class CasrsaDigitalSignatureResult {
   privateKey: string
   signature: Array<number>
   constructor(publicKey: string, privateKey: string, signature: Array<number>)
+}
+export type CASSHAED25519DalekDigitalSignatureResult = Casshaed25519DalekDigitalSignatureResult
+export class Casshaed25519DalekDigitalSignatureResult {
+  publicKey: Array<number>
+  signature: Array<number>
+  constructor(publicKey: Array<number>, signature: Array<number>)
 }
