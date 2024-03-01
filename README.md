@@ -4,6 +4,8 @@ Ever wanted all of your most useful cryptograpihc operations in one module and n
 CAS is here to provide a unified development experience as an abstract layer to the RustCrypto and Dalek-Cryptography suite of algorithms.
 The official NPM page can be found [here](https://www.npmjs.com/package/cas-typescript-sdk).
 
+## [Examples](./docs/EXAMPLES.md)
+
 ## Consuming Library Documentation
 **Note: All work is experimental and we understand some benchmarks might not be the most optimal.**
 
