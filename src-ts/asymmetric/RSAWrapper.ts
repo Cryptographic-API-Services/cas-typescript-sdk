@@ -1,14 +1,15 @@
 import { decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, RsaKeyPairResult, signRsa, verifyRsa } from "../../index";
 
 export class RSAWrapper {
-  public generateKeys(keySize: number): RsaKeyPairResult {
+
+  public GetKeyPair(keySize: number): RsaKeyPairResult {
     if (keySize !== 1024 && keySize !== 2048 && keySize !== 4096) {
         throw new Error("You must provide an appropriate key size to generate RSA keys");
     }
     return generateRsaKeys(keySize);
   }
 
-  public encrypt(publicKey: string, plaintext: Array<number>): Array<number> {
+  public RsaEncryptBytes(publicKey: string, plaintext: Array<number>): Array<number> {
     if (!publicKey) {
       throw new Error("You must provide a public key to encrypt with RSA");
     }
@@ -18,7 +19,7 @@ export class RSAWrapper {
     return encryptPlaintextRsa(publicKey, plaintext);
   }
 
-  public decrypt(privateKey: string, ciphertext: Array<number>): Array<number> {
+  public RsaDecryptBytes(privateKey: string, ciphertext: Array<number>): Array<number> {
     if (!privateKey) {
       throw new Error("You must provide a private key to encrypt with RSA");
     }
@@ -28,7 +29,7 @@ export class RSAWrapper {
     return decryptCiphertextRsa(privateKey, ciphertext);
   }
 
-  public sign(privateKey: string, hash: Array<number>): Array<number> {
+  public RsaSignWithKeyBytes(privateKey: string, hash: Array<number>): Array<number> {
     if (!privateKey) {
       throw new Error("You must provide a private key to sign with RSA");
     }
@@ -38,7 +39,7 @@ export class RSAWrapper {
     return signRsa(privateKey, hash);
   }
 
-  public verify(publicKey: string, hash: Array<number>, signature: Array<number>): boolean {
+  public RsaVerifyBytes(publicKey: string, hash: Array<number>, signature: Array<number>): boolean {
     if (!publicKey) {
       throw new Error("You must provide a public key to verify with RSA");
     }
