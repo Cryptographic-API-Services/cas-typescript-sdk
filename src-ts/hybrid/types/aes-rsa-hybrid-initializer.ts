@@ -15,7 +15,7 @@ export class AESRSAHybridInitializer {
         this.aesType = aesType;
         let aesWrapper = new AESWrapper();
         this.aesKey = (aesType === 128) ? aesWrapper.aes128Key() : aesWrapper.aes256Key();
-        this.aesNonce = aesWrapper.aesNonce();
+        this.aesNonce = aesWrapper.generateAESNonce();
         if (rsaSize !== 1028 && rsaSize !== 2048 && rsaSize !== 4096) {
             throw new Error("You must provide an appropriate RSA Key pair size to generate a hybrid initalizer");
         }

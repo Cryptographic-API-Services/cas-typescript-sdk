@@ -9,7 +9,7 @@ export class BCryptWrapper implements IPasswordHasherBase {
     return bcryptHash(password);
   }
 
-  public verifyPassword(
+  public verify(
     hashedPassword: string,
     passwordToVerify: string,
   ): boolean {

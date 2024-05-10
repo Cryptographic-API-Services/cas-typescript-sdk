@@ -9,7 +9,7 @@ export class Argon2Wrapper implements IPasswordHasherBase {
     return argon2Hash(password);
   }
 
-  public verifyPassword(hashedPassword: string, passwordToVerify: string): boolean {
+  public verify(hashedPassword: string, passwordToVerify: string): boolean {
     if (!hashedPassword || !passwordToVerify) {
       throw new Error("You must provide a hashed password and a plaintext password to verify with Argon2");
     }
