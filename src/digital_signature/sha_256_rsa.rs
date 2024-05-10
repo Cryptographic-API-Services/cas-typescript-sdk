@@ -8,15 +8,15 @@ use rsa::{
 use sha3::{Digest, Sha3_256};
 
 
-use super::cas_digital_signature_rsa::{CASRSADigitalSignatureResult, CASRSADigitalSignature};
+use super::cas_digital_signature_rsa::{RSADigitalSignatureResult, RSADigitalSignature};
 
 pub struct SHA256RSADigitalSignature;
 
-impl CASRSADigitalSignature for SHA256RSADigitalSignature {
+impl RSADigitalSignature for SHA256RSADigitalSignature {
     fn digital_signature_rsa(
         rsa_key_size: u32,
         data_to_sign: Vec<u8>,
-    ) -> CASRSADigitalSignatureResult {
+    ) -> RSADigitalSignatureResult {
         let mut hasher = Sha3_256::new();
         hasher.update(data_to_sign);
         let sha_hasher_result = hasher.finalize();
@@ -27,7 +27,7 @@ impl CASRSADigitalSignature for SHA256RSADigitalSignature {
         let mut signed_data = private_key
             .sign(Pkcs1v15Sign::new_unprefixed(), &sha_hasher_result)
             .unwrap();
-        let result = CASRSADigitalSignatureResult {
+        let result = RSADigitalSignatureResult {
             private_key: private_key
                 .to_pkcs8_pem(rsa::pkcs8::LineEnding::LF)
                 .unwrap()
@@ -63,7 +63,7 @@ impl CASRSADigitalSignature for SHA256RSADigitalSignature {
 pub fn sha_256_rsa_digital_signature(
     rsa_key_size: u32,
     data_to_sign: Vec<u8>,
-) -> CASRSADigitalSignatureResult {
+) -> RSADigitalSignatureResult {
     return SHA256RSADigitalSignature::digital_signature_rsa(rsa_key_size, data_to_sign);
 }
 
@@ -80,7 +80,7 @@ pub fn sha_256_rsa_verify_digital_signature(
 fn sha_256_rsa_digital_signature_test() {
     let key_size: u32 = 1024;
     let data_to_sign = b"GetTheseBytes".to_vec();
-    let signature_result: CASRSADigitalSignatureResult = SHA256RSADigitalSignature::digital_signature_rsa(key_size, data_to_sign.clone());
+    let signature_result: RSADigitalSignatureResult = SHA256RSADigitalSignature::digital_signature_rsa(key_size, data_to_sign.clone());
     let is_verified: bool = SHA256RSADigitalSignature::verify_rsa(signature_result.public_key, data_to_sign, signature_result.signature);
     assert_eq!(is_verified, true);
 }
@@ -89,7 +89,7 @@ fn sha_256_rsa_digital_signature_test() {
 fn sha_256_rsa_digital_signature_fail_test() {
     let key_size: u32 = 1024;
     let data_to_sign = b"GetTheseBytes".to_vec();
-    let signature_result: CASRSADigitalSignatureResult = SHA256RSADigitalSignature::digital_signature_rsa(key_size, data_to_sign.clone());
+    let signature_result: RSADigitalSignatureResult = SHA256RSADigitalSignature::digital_signature_rsa(key_size, data_to_sign.clone());
     let new_data = b"NOtTheOriginalData".to_vec();
     let is_verified: bool = SHA256RSADigitalSignature::verify_rsa(signature_result.public_key, new_data, signature_result.signature);
     assert_eq!(is_verified, false);
