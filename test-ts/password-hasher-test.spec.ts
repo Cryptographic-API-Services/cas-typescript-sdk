@@ -18,7 +18,7 @@ describe("Bcrypt Tests", () => {
     const hasher: BCryptWrapper = new BCryptWrapper();
     const password: string = "NotThisPassword!@";
     const hashedPassword: string = hasher.hashPassword(password);
-    const isValid: boolean = hasher.verifyPassword(hashedPassword, password);
+    const isValid: boolean = hasher.verify(hashedPassword, password);
     expect(isValid).to.equal(true);
   });
 
@@ -26,7 +26,7 @@ describe("Bcrypt Tests", () => {
     const hasher: BCryptWrapper = new BCryptWrapper();
     const password: string = "NotThisPassword!@";
     const hashedPassword: string = hasher.hashPassword(password);
-    const isValid: boolean = hasher.verifyPassword(
+    const isValid: boolean = hasher.verify(
       hashedPassword,
       "ThesePasswordsDoNotMatch",
     );
@@ -50,7 +50,7 @@ describe("Scrypt Tests", () => {
     );
     const password: string = "ScryptRocks1231231";
     const hashed: string = hasher.hashPassword(password);
-    const verified: boolean = hasher.verifyPassword(hashed, password);
+    const verified: boolean = hasher.verify(hashed, password);
     assert.isTrue(verified);
   });
 
@@ -60,7 +60,7 @@ describe("Scrypt Tests", () => {
     );
     const password: string = "ScryptRocksSomeGarbageText";
     const hashed: string = hasher.hashPassword(password);
-    const verified: boolean = hasher.verifyPassword(
+    const verified: boolean = hasher.verify(
       hashed,
       "make this fail, its not the same",
     );
@@ -84,7 +84,7 @@ describe("Argon2 Tests", () => {
     );
     const password: string = "ScryptRocks1231231";
     const hashed: string = hasher.hashPassword(password);
-    const verified: boolean = hasher.verifyPassword(hashed, password);
+    const verified: boolean = hasher.verify(hashed, password);
     assert.isTrue(verified);
   });
 
@@ -94,7 +94,7 @@ describe("Argon2 Tests", () => {
     );
     const password: string = "ScryptRocksSomeGarbageText";
     const hashed: string = hasher.hashPassword(password);
-    const verified: boolean = hasher.verifyPassword(
+    const verified: boolean = hasher.verify(
       hashed,
       "make this fail, its not the same",
     );
