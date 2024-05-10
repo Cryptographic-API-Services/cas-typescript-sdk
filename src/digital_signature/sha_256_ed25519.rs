@@ -53,8 +53,8 @@ pub fn sha_256_ed25519_digital_signature_verify(public_key: Vec<u8>, data_to_ver
 fn sha_256_ed25519_test() {
     let key_size: u32 = 1024;
     let data_to_sign = b"GetTheseBytes".to_vec();
-    let signature_result: SHAED25519DalekDigitalSignatureResult = SHA512ED25519DigitalSignature::digital_signature_ed25519(data_to_sign.clone());
-    let is_verified: bool = SHA512ED25519DigitalSignature::digital_signature_ed25519_verify(signature_result.public_key, data_to_sign, signature_result.signature);
+    let signature_result: SHAED25519DalekDigitalSignatureResult = SHA256ED25519DigitalSignature::digital_signature_ed25519(data_to_sign.clone());
+    let is_verified: bool = SHA256ED25519DigitalSignature::digital_signature_ed25519_verify(signature_result.public_key, data_to_sign, signature_result.signature);
     assert_eq!(is_verified, true);
 }
 
@@ -62,8 +62,8 @@ fn sha_256_ed25519_test() {
 fn sha_512_ed25519_test_fail() {
     let key_size: u32 = 1024;
     let data_to_sign = b"GetTheseBytes".to_vec();
-    let signature_result: SHAED25519DalekDigitalSignatureResult = SHA512ED25519DigitalSignature::digital_signature_ed25519(data_to_sign.clone());
+    let signature_result: SHAED25519DalekDigitalSignatureResult = SHA256ED25519DigitalSignature::digital_signature_ed25519(data_to_sign.clone());
     let not_original_data = b"NOtTHoseBytes".to_vec();
-    let is_verified: bool = SHA512ED25519DigitalSignature::digital_signature_ed25519_verify(signature_result.public_key, not_original_data, signature_result.signature);
+    let is_verified: bool = SHA256ED25519DigitalSignature::digital_signature_ed25519_verify(signature_result.public_key, not_original_data, signature_result.signature);
     assert_eq!(is_verified, false);
 }
