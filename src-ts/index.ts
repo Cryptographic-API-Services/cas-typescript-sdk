@@ -14,6 +14,12 @@ import {
   AESRSAHybridInitializer,
   HybridEncryptionWrapper,
 } from "./hybrid/index";
+import {
+  DigitalSignatureFactory,
+  DigitalSignatureSHA256Wrapper,
+  DigitalSignatureSHA512Wrapper,
+  DigitalSignatureType,
+} from "./digital-signature";
 
 export {
   AesRsaHybridEncryptResult,
@@ -31,4 +37,8 @@ export {
   ScryptWrapper,
   SHAWrapper,
   X25519Wrapper,
+  DigitalSignatureFactory,
+  DigitalSignatureSHA256Wrapper,
+  DigitalSignatureSHA512Wrapper,
+  DigitalSignatureType,
 };
