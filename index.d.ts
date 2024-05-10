@@ -29,12 +29,14 @@ export function encryptPlaintextRsa(publicKey: string, plaintext: Array<number>)
 export function decryptCiphertextRsa(privateKey: string, ciphertext: Array<number>): Array<number>
 export function signRsa(privateKey: string, hash: Array<number>): Array<number>
 export function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
-export function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CasrsaDigitalSignatureResult
+export function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): RsaDigitalSignatureResult
 export function sha512RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
-export function sha256RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CasrsaDigitalSignatureResult
+export function sha256RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): RsaDigitalSignatureResult
 export function sha256RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
-export function sha512Ed25519DigitalSignature(dataToSign: Array<number>): Casshaed25519DalekDigitalSignatureResult
+export function sha512Ed25519DigitalSignature(dataToSign: Array<number>): Shaed25519DalekDigitalSignatureResult
 export function sha512Ed25519DigitalSignatureVerify(publicKey: Array<number>, dataToVerify: Array<number>, signature: Array<number>): boolean
+export function sha256Ed25519DigitalSignature(dataToSign: Array<number>): Shaed25519DalekDigitalSignatureResult
+export function sha256Ed25519DigitalSignatureVerify(publicKey: Array<number>, dataToVerify: Array<number>, signature: Array<number>): boolean
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
@@ -52,15 +54,15 @@ export class RsaKeyPairResult {
   publicKey: string
   constructor(privateKey: string, publicKey: string)
 }
-export type CASRSADigitalSignatureResult = CasrsaDigitalSignatureResult
-export class CasrsaDigitalSignatureResult {
+export type RSADigitalSignatureResult = RsaDigitalSignatureResult
+export class RsaDigitalSignatureResult {
   publicKey: string
   privateKey: string
   signature: Array<number>
   constructor(publicKey: string, privateKey: string, signature: Array<number>)
 }
-export type CASSHAED25519DalekDigitalSignatureResult = Casshaed25519DalekDigitalSignatureResult
-export class Casshaed25519DalekDigitalSignatureResult {
+export type SHAED25519DalekDigitalSignatureResult = Shaed25519DalekDigitalSignatureResult
+export class Shaed25519DalekDigitalSignatureResult {
   publicKey: Array<number>
   signature: Array<number>
   constructor(publicKey: Array<number>, signature: Array<number>)

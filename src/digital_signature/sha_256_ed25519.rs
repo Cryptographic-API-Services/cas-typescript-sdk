@@ -1,22 +1,20 @@
 use ed25519_dalek::{Keypair, Signature, Signer, Verifier};
 use napi_derive::napi;
-use sha3::{Digest, Sha3_512};
+use sha3::{Digest, Sha3_256};
 
 use super::cas_digital_signature_rsa::{
     ED25519DigitalSignature, SHAED25519DalekDigitalSignatureResult,
 };
 
-pub struct SHA512ED25519DigitalSignature;
+pub struct SHA256ED25519DigitalSignature;
 
-impl ED25519DigitalSignature for SHA512ED25519DigitalSignature {
-    fn digital_signature_ed25519(
-        data_to_sign: Vec<u8>,
-    ) -> SHAED25519DalekDigitalSignatureResult {
-        let mut hasher = Sha3_512::new();
+impl ED25519DigitalSignature for SHA256ED25519DigitalSignature {
+    fn digital_signature_ed25519(data_to_sign: Vec<u8>) -> SHAED25519DalekDigitalSignatureResult {
+        let mut hasher = Sha3_256::new();
         hasher.update(data_to_sign);
         let sha_hasher_result = hasher.finalize();
         let mut csprng = rand_07::rngs::OsRng {};
-        let keypair = Keypair::generate(&mut csprng);
+        let keypair = ed25519_dalek::Keypair::generate(&mut csprng);
 
         let signature = keypair.sign(&sha_hasher_result);
         let signature_bytes = signature.to_bytes();
@@ -28,12 +26,8 @@ impl ED25519DigitalSignature for SHA512ED25519DigitalSignature {
         result
     }
 
-    fn digital_signature_ed25519_verify(
-        public_key: Vec<u8>,
-        data_to_verify: Vec<u8>,
-        signature: Vec<u8>,
-    ) -> bool {
-        let mut hasher = Sha3_512::new();
+    fn digital_signature_ed25519_verify(public_key: Vec<u8>, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool {
+        let mut hasher = Sha3_256::new();
         hasher.update(data_to_verify);
         let sha_hasher_result = hasher.finalize();
 
@@ -46,17 +40,17 @@ impl ED25519DigitalSignature for SHA512ED25519DigitalSignature {
 }
 
 #[napi]
-pub fn sha_512_ed25519_digital_signature(data_to_sign: Vec<u8>) -> SHAED25519DalekDigitalSignatureResult {
-    return SHA512ED25519DigitalSignature::digital_signature_ed25519(data_to_sign);
+pub fn sha_256_ed25519_digital_signature(data_to_sign: Vec<u8>) -> SHAED25519DalekDigitalSignatureResult {
+    return SHA256ED25519DigitalSignature::digital_signature_ed25519(data_to_sign);
 }
 
 #[napi]
-pub fn sha_512_ed25519_digital_signature_verify(public_key: Vec<u8>, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool {
-    return SHA512ED25519DigitalSignature::digital_signature_ed25519_verify(public_key, data_to_verify, signature)
+pub fn sha_256_ed25519_digital_signature_verify(public_key: Vec<u8>, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool {
+    return SHA256ED25519DigitalSignature::digital_signature_ed25519_verify(public_key, data_to_verify, signature)
 }
 
 #[test]
-fn sha_512_ed25519_test() {
+fn sha_256_ed25519_test() {
     let key_size: u32 = 1024;
     let data_to_sign = b"GetTheseBytes".to_vec();
     let signature_result: SHAED25519DalekDigitalSignatureResult = SHA512ED25519DigitalSignature::digital_signature_ed25519(data_to_sign.clone());

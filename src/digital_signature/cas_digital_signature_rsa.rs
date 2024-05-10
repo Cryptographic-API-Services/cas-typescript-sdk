@@ -1,27 +1,27 @@
 use napi_derive::napi;
 
 #[napi(constructor)]
-pub struct CASRSADigitalSignatureResult {
+pub struct RSADigitalSignatureResult {
     pub public_key: String,
     pub private_key: String,
     pub signature: Vec<u8>,
 }
 
 #[napi(constructor)]
-pub struct CASSHAED25519DalekDigitalSignatureResult {
+pub struct SHAED25519DalekDigitalSignatureResult {
     pub public_key: Vec<u8>,
     pub signature: Vec<u8>
 }
 
-pub trait CASRSADigitalSignature {
+pub trait RSADigitalSignature {
     fn digital_signature_rsa(
         rsa_key_size: u32,
         data_to_sign: Vec<u8>,
-    ) -> CASRSADigitalSignatureResult;
+    ) -> RSADigitalSignatureResult;
     fn verify_rsa(public_key: String, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool;
 }
 
-pub trait CASED25519DigitalSignature {
-    fn digital_signature_ed25519(data_to_sign: Vec<u8>) -> CASSHAED25519DalekDigitalSignatureResult;
+pub trait ED25519DigitalSignature {
+    fn digital_signature_ed25519(data_to_sign: Vec<u8>) -> SHAED25519DalekDigitalSignatureResult;
     fn digital_signature_ed25519_verify(public_key: Vec<u8>, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool;
 }
