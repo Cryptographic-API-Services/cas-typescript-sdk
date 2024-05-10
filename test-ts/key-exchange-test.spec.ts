@@ -8,11 +8,11 @@ describe("X25519 Key Exchange", () => {
     const alice = wrapper.generateSecretAndPublicKey();
     const bob = wrapper.generateSecretAndPublicKey();
 
-    const alice_shared_secret = wrapper.diffieHellman(
+    const alice_shared_secret = wrapper.generateSharedSecret(
       alice.secretKey,
       bob.publicKey,
     );
-    const bob_shared_secret = wrapper.diffieHellman(
+    const bob_shared_secret = wrapper.generateSharedSecret(
       bob.secretKey,
       alice.publicKey,
     );

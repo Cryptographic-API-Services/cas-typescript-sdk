@@ -5,7 +5,7 @@ export class X25519Wrapper {
         return x25519GenerateSecretAndPublicKey();
     }
 
-    public diffieHellman(secretKey: Array<number>, publicKey: Array<number>) {
+    public generateSharedSecret(secretKey: Array<number>, publicKey: Array<number>) {
         return x25519DiffieHellman(secretKey, publicKey);
     }
 }

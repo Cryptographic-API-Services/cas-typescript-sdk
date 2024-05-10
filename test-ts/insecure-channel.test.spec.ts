@@ -11,8 +11,8 @@ describe("Insecure Channel Tests", () => {
       const alice_keys: X25519SecretPublicKeyResult = x25519Wrapper.generateSecretAndPublicKey();
       const bob_keys: X25519SecretPublicKeyResult = x25519Wrapper.generateSecretAndPublicKey();
       
-      const alice_shared_secret = x25519Wrapper.diffieHellman(alice_keys.secretKey, bob_keys.publicKey);
-      const bob_shared_secret = x25519Wrapper.diffieHellman(bob_keys.secretKey, alice_keys.publicKey);
+      const alice_shared_secret = x25519Wrapper.generateSharedSecret(alice_keys.secretKey, bob_keys.publicKey);
+      const bob_shared_secret = x25519Wrapper.generateSharedSecret(bob_keys.secretKey, alice_keys.publicKey);
 
       const alice_aes_key = aesWrapper.aes256KeyFromX25519SharedSecret(alice_shared_secret);
       const bob_aes_key = aesWrapper.aes256KeyFromX25519SharedSecret(bob_shared_secret);
@@ -33,8 +33,8 @@ describe("Insecure Channel Tests", () => {
       const alice_keys: X25519SecretPublicKeyResult = x25519Wrapper.generateSecretAndPublicKey();
       const bob_keys: X25519SecretPublicKeyResult = x25519Wrapper.generateSecretAndPublicKey();
       
-      const alice_shared_secret = x25519Wrapper.diffieHellman(alice_keys.secretKey, bob_keys.publicKey);
-      const bob_shared_secret = x25519Wrapper.diffieHellman(bob_keys.secretKey, alice_keys.publicKey);
+      const alice_shared_secret = x25519Wrapper.generateSharedSecret(alice_keys.secretKey, bob_keys.publicKey);
+      const bob_shared_secret = x25519Wrapper.generateSharedSecret(bob_keys.secretKey, alice_keys.publicKey);
 
       const alice_aes_key = aesWrapper.aes128KeyFromX25519SharedSecret(alice_shared_secret);
       const bob_aes_key = aesWrapper.aes128KeyFromX25519SharedSecret(bob_shared_secret);
