@@ -20,7 +20,7 @@ export class AESWrapper {
         return aes256Key();
     }
 
-    public aesNonce(): Array<number> {
+    public generateAESNonce(): Array<number> {
         return aesNonce();
     }
 
@@ -40,11 +40,11 @@ export class AESWrapper {
         return aes256Decrypt(aesKey, nonce, ciphertext);
     }
 
-    public aes256KeyFromX25519SharedSecret(shared_secret: Array<number>): AesKeyFromX25519SharedSecret {
+    public aes256KeyNonceX25519DiffieHellman(shared_secret: Array<number>): AesKeyFromX25519SharedSecret {
          return aes256KeyFromX25519SharedSecret(shared_secret);
     }
 
-    public aes128KeyFromX25519SharedSecret(shared_secret: Array<number>): AesKeyFromX25519SharedSecret {
+    public aes128KeyNonceX25519DiffieHellman(shared_secret: Array<number>): AesKeyFromX25519SharedSecret {
         return aes128KeyFromX25519SharedSecret(shared_secret);
    }
 }

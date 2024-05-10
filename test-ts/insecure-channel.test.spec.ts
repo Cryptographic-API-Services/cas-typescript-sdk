@@ -14,8 +14,8 @@ describe("Insecure Channel Tests", () => {
       const alice_shared_secret = x25519Wrapper.generateSharedSecret(alice_keys.secretKey, bob_keys.publicKey);
       const bob_shared_secret = x25519Wrapper.generateSharedSecret(bob_keys.secretKey, alice_keys.publicKey);
 
-      const alice_aes_key = aesWrapper.aes256KeyFromX25519SharedSecret(alice_shared_secret);
-      const bob_aes_key = aesWrapper.aes256KeyFromX25519SharedSecret(bob_shared_secret);
+      const alice_aes_key = aesWrapper.aes256KeyNonceX25519DiffieHellman(alice_shared_secret);
+      const bob_aes_key = aesWrapper.aes256KeyNonceX25519DiffieHellman(bob_shared_secret);
 
       const tohashed: string = "This is my encrypt text";
       const encoder = new TextEncoder();
@@ -36,8 +36,8 @@ describe("Insecure Channel Tests", () => {
       const alice_shared_secret = x25519Wrapper.generateSharedSecret(alice_keys.secretKey, bob_keys.publicKey);
       const bob_shared_secret = x25519Wrapper.generateSharedSecret(bob_keys.secretKey, alice_keys.publicKey);
 
-      const alice_aes_key = aesWrapper.aes128KeyFromX25519SharedSecret(alice_shared_secret);
-      const bob_aes_key = aesWrapper.aes128KeyFromX25519SharedSecret(bob_shared_secret);
+      const alice_aes_key = aesWrapper.aes128KeyNonceX25519DiffieHellman(alice_shared_secret);
+      const bob_aes_key = aesWrapper.aes128KeyNonceX25519DiffieHellman(bob_shared_secret);
 
       const tohashed: string = "This is my encrypt text";
       const encoder = new TextEncoder();
