@@ -12,7 +12,7 @@ export class HybridEncryptionWrapper {
     this.rsaWrapper = new RSAWrapper();
   }
 
-  public encrypt(
+  public encryptAESRSAHybrid(
     dataToEncrypt: Array<number>,
     initalizer: AESRSAHybridInitializer,
   ): AesRsaHybridEncryptResult {
@@ -40,7 +40,7 @@ export class HybridEncryptionWrapper {
     return result;
   }
 
-  public decrypt(
+  public decryptAESRSAHybrid(
     privateKey: string,
     encryptResult: AesRsaHybridEncryptResult,
   ): Array<number> {
