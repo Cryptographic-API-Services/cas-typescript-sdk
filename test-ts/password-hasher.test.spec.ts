@@ -4,7 +4,7 @@ import { ScryptWrapper } from "../src-ts/password-hashers/index";
 import {
   PasswordHasherFactory,
   PasswordHasherType,
-} from "../src-ts/password-hashers/";
+} from "../src-ts/password-hashers";
 
 describe("Bcrypt Tests", () => {
   it("hash", () => {

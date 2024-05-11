@@ -37,6 +37,10 @@ export function sha512Ed25519DigitalSignature(dataToSign: Array<number>): Shaed2
 export function sha512Ed25519DigitalSignatureVerify(publicKey: Array<number>, dataToVerify: Array<number>, signature: Array<number>): boolean
 export function sha256Ed25519DigitalSignature(dataToSign: Array<number>): Shaed25519DalekDigitalSignatureResult
 export function sha256Ed25519DigitalSignatureVerify(publicKey: Array<number>, dataToVerify: Array<number>, signature: Array<number>): boolean
+export function ascon128KeyGenerate(): Array<number>
+export function ascon128NonceGenerate(): Array<number>
+export function ascon128Encrypt(key: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+export function ascon128Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 export type x25519SecretPublicKeyResult = X25519SecretPublicKeyResult
 export class X25519SecretPublicKeyResult {
   publicKey: Array<number>
