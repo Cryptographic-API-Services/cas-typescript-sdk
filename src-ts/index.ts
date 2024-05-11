@@ -20,13 +20,19 @@ import {
   DigitalSignatureSHA512Wrapper,
   DigitalSignatureType,
 } from "./digital-signature";
+import { AsconWrapper } from "./sponges/index";
 
 export {
   AesRsaHybridEncryptResult,
   AESRSAHybridInitializer,
   AESWrapper,
   Argon2Wrapper,
+  AsconWrapper,
   BCryptWrapper,
+  DigitalSignatureFactory,
+  DigitalSignatureSHA256Wrapper,
+  DigitalSignatureSHA512Wrapper,
+  DigitalSignatureType,
   HasherFactory,
   HasherType,
   HybridEncryptionWrapper,
@@ -37,8 +43,4 @@ export {
   ScryptWrapper,
   SHAWrapper,
   X25519Wrapper,
-  DigitalSignatureFactory,
-  DigitalSignatureSHA256Wrapper,
-  DigitalSignatureSHA512Wrapper,
-  DigitalSignatureType,
 };

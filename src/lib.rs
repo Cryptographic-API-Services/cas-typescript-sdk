@@ -33,3 +33,8 @@ mod digital_signature {
     pub mod sha_512_ed25519;
     pub mod sha_256_ed25519;
 }
+
+mod sponges {
+    pub mod cas_ascon_aead;
+    pub mod ascon_aead;
+}
