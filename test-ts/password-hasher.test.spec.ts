@@ -7,6 +7,22 @@ import {
 } from "../src-ts/password-hashers";
 
 describe("Bcrypt Tests", () => {
+
+  it("hash threadpool", () => {
+    const hasher: BCryptWrapper = new BCryptWrapper();
+    const password: string = "ThisOneBadPassword!@";
+    const hashedPassword: string = hasher.hashPasswordThreadPool(password);
+    assert.notEqual(hashedPassword, password);
+  });
+
+  it("verify threadpool", () => {
+    const hasher: BCryptWrapper = new BCryptWrapper();
+    const password: string = "NotThisPassword!@";
+    const hashedPassword: string = hasher.hashPassword(password);
+    const isValid: boolean = hasher.verifyThreadPool(hashedPassword, password);
+    expect(isValid).to.equal(true);
+  });
+
   it("hash", () => {
     const hasher: BCryptWrapper = new BCryptWrapper();
     const password: string = "ThisOneBadPassword!@";
