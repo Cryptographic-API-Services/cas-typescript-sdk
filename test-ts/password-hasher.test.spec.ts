@@ -51,6 +51,25 @@ describe("Bcrypt Tests", () => {
 });
 
 describe("Scrypt Tests", () => {
+  it("hash with threadpool", () => {
+    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+      PasswordHasherType.Scrypt,
+    );
+    const password: string = "ScryptRocks";
+    const hashed: string = hasher.hashPasswordThreadPool(password);
+    assert.notEqual(password, hashed);
+  });
+
+  it("verify pass with threadpool", () => {
+    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+      PasswordHasherType.Scrypt,
+    );
+    const password: string = "ScryptRocks1231231";
+    const hashed: string = hasher.hashPasswordThreadPool(password);
+    const verified: boolean = hasher.verifyThreadPool(hashed, password);
+    assert.isTrue(verified);
+  });
+
   it("hash with factory", () => {
     const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Scrypt,

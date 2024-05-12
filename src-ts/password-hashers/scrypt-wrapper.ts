@@ -1,14 +1,22 @@
-import { scryptHash, scryptVerify } from "../../index";
+import { scryptHash, scryptHashThreadpool, scryptVerify, scryptVerifyThreadpool } from "../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class ScryptWrapper implements IPasswordHasherBase {
 
   verifyThreadPool(hashedPassword: string, passwordToCheck: string): boolean {
-    throw new Error("Method not implemented.");
+    if (!hashedPassword || !passwordToCheck) {
+      throw new Error(
+        "You must provide a hashed password and a plaintext password to verify with Scrypt",
+      );
+    }
+    return scryptVerifyThreadpool(hashedPassword, passwordToCheck);
   }
-  
+
   hashPasswordThreadPool(password: string): string {
-    throw new Error("Method not implemented.");
+    if (!password) {
+      throw new Error("You must provide a password to hash with Scrypt");
+    }
+    return scryptHashThreadpool(password);
   }
 
   public hashPassword(password: string): string {

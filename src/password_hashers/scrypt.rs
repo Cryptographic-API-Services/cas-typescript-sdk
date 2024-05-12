@@ -1,3 +1,5 @@
+use std::sync::mpsc;
+
 use napi_derive::napi;
 
 use scrypt::{
@@ -34,6 +36,43 @@ pub fn scrypt_hash(password_to_hash: String) -> String {
 #[napi]
 pub fn scrypt_verify(hashed_password: String, password_to_verify: String) -> bool {
     return <CASScrypt as CASPasswordHasher>::verify_password(hashed_password, password_to_verify);
+}
+
+#[napi]
+pub fn scrypt_hash_threadpool(password_to_hash: String) -> String {
+    let (sender, receiver) = mpsc::channel();
+    rayon::spawn(move || {
+        let thread_result = <CASScrypt as CASPasswordHasher>::hash_password(password_to_hash);
+        sender.send(thread_result);
+    });
+    let result = receiver.recv().unwrap();
+    result
+}
+
+#[napi]
+pub fn scrypt_verify_threadpool(hashed_password: String, password_to_verify: String) -> bool {
+    let (sender, receiver) = mpsc::channel();
+    rayon::spawn(move || {
+        let thread_result = <CASScrypt as CASPasswordHasher>::verify_password(hashed_password, password_to_verify);
+        sender.send(thread_result);
+    });
+    let result = receiver.recv().unwrap();
+    result
+}
+
+#[test]
+pub fn scrypt_hash_threadpool_test() {
+    let password = "BadPassword".to_string();
+    let hashed_password = scrypt_hash_threadpool(password.clone());
+    assert_ne!(password, hashed_password);
+}
+
+#[test]
+pub fn scrypt_verify_threadpool_test() {
+    let password = "BadPassword".to_string();
+    let hashed_password = scrypt_hash_threadpool(password.clone());
+    let verified = scrypt_verify_threadpool(hashed_password, password);
+    assert_eq!(true, verified);
 }
 
 #[test]
