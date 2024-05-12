@@ -22,6 +22,7 @@ sha3 = "0.10.8"
 x25519-dalek = {version = "2.0.0", features = ["static_secrets"]}
 rand_07 = { package = "rand", version = "0.7.0" }
 ascon-aead = "0.4.2"
+rayon = "1.10.0"
 
 [profile.dev.package.num-bigint-dig]
 opt-level = 3

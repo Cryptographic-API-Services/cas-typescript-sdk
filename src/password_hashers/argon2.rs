@@ -1,4 +1,3 @@
-use std::net::ToSocketAddrs;
 
 use napi_derive::napi;
 
@@ -6,6 +5,8 @@ use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
+
+use crate::symmetric::aes::CASAES128;
 
 use super::cas_password_hasher::CASPasswordHasher;
 
@@ -35,9 +36,47 @@ pub fn argon2_hash(password: String) -> String {
     return <CASArgon as CASPasswordHasher>::hash_password(password);
 }
 
+#[napi] 
+pub fn argon2_hash_thread_pool(password: String) -> String {
+    let (sender, receiver) = std::sync::mpsc::channel();
+    rayon::spawn(move || {
+        let hash_result = <CASArgon as CASPasswordHasher>::hash_password(password);
+        sender.send(hash_result);
+    });
+    let result = receiver.recv().unwrap();
+    result
+}
+
 #[napi]
 pub fn argon2_verify(hashed_password: String, password_to_verify: String) -> bool {
     return <CASArgon as CASPasswordHasher>::verify_password(hashed_password, password_to_verify);
+}
+
+#[napi]
+pub fn argon2_verify_threadpool(hashed_password: String, password_to_verify: String) -> bool {
+    let (sender, receiver) = std::sync::mpsc::channel();
+    rayon::spawn(move || {
+        let verify_result = <CASArgon as CASPasswordHasher>::verify_password(hashed_password, password_to_verify);
+        sender.send(verify_result);
+    });
+    let result = receiver.recv().unwrap();
+    result
+}
+
+#[test]
+pub fn argon2_hash_threadpool_test() {
+    let password = "ThisIsNotMyPasswolrd".to_string();
+    let hashed = argon2_hash_thread_pool(password.clone());
+    assert_ne!(password, hashed);
+}
+
+#[test]
+pub fn argon2_verify_threadpool_test() {
+    let password = "ThisIsNotMyPasswolrd".to_string();
+    let passwordToCheck = "ThisIsNotMyPasswolrd".to_string();
+    let hashed = argon2_hash_thread_pool(password);
+    let result = argon2_verify_threadpool(hashed, passwordToCheck);
+    assert_eq!(result, true);
 }
 
 #[test]
