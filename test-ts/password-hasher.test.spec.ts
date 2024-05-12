@@ -1,5 +1,5 @@
 import { assert, expect } from "chai";
-import { BCryptWrapper } from "../src-ts/password-hashers/index";
+import { Argon2Wrapper, BCryptWrapper } from "../src-ts/password-hashers/index";
 import { ScryptWrapper } from "../src-ts/password-hashers/index";
 import {
   PasswordHasherFactory,
@@ -69,8 +69,15 @@ describe("Scrypt Tests", () => {
 });
 
 describe("Argon2 Tests", () => {
+  it("hash with threadpool", () => {
+    const argon2: Argon2Wrapper = PasswordHasherFactory.getHasher(PasswordHasherType.Argon2);
+    const password = "Argon2OverBCrypt";
+    const hashed = argon2.hashPasswordThreadPool(password);
+    assert.notEqual(password, hashed);
+  })
+
   it("hash with factory", () => {
-    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+    const hasher: Argon2Wrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Argon2,
     );
     const password: string = "ScryptRocks";
@@ -79,7 +86,7 @@ describe("Argon2 Tests", () => {
   });
 
   it("verify pass with factory", () => {
-    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+    const hasher: Argon2Wrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Argon2,
     );
     const password: string = "ScryptRocks1231231";

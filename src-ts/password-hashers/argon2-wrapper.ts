@@ -1,9 +1,17 @@
-import {argon2Hash, argon2Verify} from "./../../index";
-import { IPasswordHasherBase} from "./password-hasher-base";
+import { argon2Hash, argon2HashThreadPool, argon2Verify } from "./../../index";
+import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class Argon2Wrapper implements IPasswordHasherBase {
+
+  public hashPasswordThreadPool(password: string): string {
+    if (!password) {
+      throw new Error("You must provide a password to hash with Argon2");
+    }
+    return argon2HashThreadPool(password);
+  }
+
   public hashPassword(password: string): string {
-    if (!password){
+    if (!password) {
       throw new Error("You must provide a password to hash with Argon2");
     }
     return argon2Hash(password);
@@ -11,7 +19,9 @@ export class Argon2Wrapper implements IPasswordHasherBase {
 
   public verify(hashedPassword: string, passwordToVerify: string): boolean {
     if (!hashedPassword || !passwordToVerify) {
-      throw new Error("You must provide a hashed password and a plaintext password to verify with Argon2");
+      throw new Error(
+        "You must provide a hashed password and a plaintext password to verify with Argon2",
+      );
     }
     return argon2Verify(hashedPassword, passwordToVerify);
   }

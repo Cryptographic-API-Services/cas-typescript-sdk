@@ -2,6 +2,11 @@ import { IPasswordHasherBase } from "./password-hasher-base";
 import { bcryptHash, bcryptVerify } from "./../../index";
 
 export class BCryptWrapper implements IPasswordHasherBase {
+
+  public hashPasswordThreadPool(password: string): string {
+    throw new Error("Method not implemented.");
+  }
+
   public hashPassword(password: string): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Argon2");
