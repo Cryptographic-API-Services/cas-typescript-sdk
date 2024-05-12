@@ -1,7 +1,17 @@
-import { argon2Hash, argon2HashThreadPool, argon2Verify } from "./../../index";
+import { argon2Hash, argon2HashThreadPool, argon2Verify, argon2VerifyThreadpool } from "./../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class Argon2Wrapper implements IPasswordHasherBase {
+
+  verifyThreadPool(hashedPassword: string, passwordToCheck: string): boolean {
+    if (!hashedPassword) {
+      throw new Error("You must provide a password to verify with Argon2");
+    }
+    if (!passwordToCheck) {
+      throw new Error("You must provide a password to check to verify with Argon2");
+    }
+    return argon2VerifyThreadpool(hashedPassword, passwordToCheck);
+  }
 
   public hashPasswordThreadPool(password: string): string {
     if (!password) {

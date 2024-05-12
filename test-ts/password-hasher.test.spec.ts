@@ -76,6 +76,14 @@ describe("Argon2 Tests", () => {
     assert.notEqual(password, hashed);
   })
 
+  it("verify with threadpool", () => {
+    const argon2: Argon2Wrapper = PasswordHasherFactory.getHasher(PasswordHasherType.Argon2);
+    const password = "Argon2OverBCrypt";
+    const hashed = argon2.hashPasswordThreadPool(password);
+    const result = argon2.verifyThreadPool(hashed, password);
+    assert.equal(result, true);
+  });
+
   it("hash with factory", () => {
     const hasher: Argon2Wrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Argon2,

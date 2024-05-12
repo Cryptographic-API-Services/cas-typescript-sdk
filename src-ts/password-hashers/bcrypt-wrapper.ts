@@ -2,6 +2,10 @@ import { IPasswordHasherBase } from "./password-hasher-base";
 import { bcryptHash, bcryptVerify } from "./../../index";
 
 export class BCryptWrapper implements IPasswordHasherBase {
+  
+  verifyThreadPool(hashedPassword: string, passwordToCheck: string): boolean {
+    throw new Error("Method not implemented.");
+  }
 
   public hashPasswordThreadPool(password: string): string {
     throw new Error("Method not implemented.");

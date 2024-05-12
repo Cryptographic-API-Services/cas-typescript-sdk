@@ -2,6 +2,11 @@ import { scryptHash, scryptVerify } from "../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class ScryptWrapper implements IPasswordHasherBase {
+
+  verifyThreadPool(hashedPassword: string, passwordToCheck: string): boolean {
+    throw new Error("Method not implemented.");
+  }
+  
   hashPasswordThreadPool(password: string): string {
     throw new Error("Method not implemented.");
   }
