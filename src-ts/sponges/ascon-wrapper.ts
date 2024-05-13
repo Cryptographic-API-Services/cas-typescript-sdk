@@ -6,14 +6,29 @@ import {
 } from "../../index";
 
 export class AsconWrapper {
+  /**
+   * Generates an Ascon 128 key
+   * @returns Array<number>
+   */
   ascon128Key(): Array<number> {
     return ascon128KeyGenerate();
   }
 
+  /**
+   * Generates and Ascon 128 nonce.
+   * @returns Array<number>
+   */
   ascon128Nonce(): Array<number> {
     return ascon128NonceGenerate();
   }
 
+  /**
+   * Encrypts with Ascon 128 using the key and nonce generated from ascon128Key() and ascon128Nonce() respectively.
+   * @param key 
+   * @param nonce 
+   * @param plaintext 
+   * @returns 
+   */
   ascon128Encrypt(
     key: Array<number>,
     nonce: Array<number>,
@@ -31,6 +46,13 @@ export class AsconWrapper {
     return ascon128Encrypt(key, nonce, plaintext);
   }
 
+   /**
+   * Decrypts with Ascon 128 using the key and nonce generated from ascon128Key() and ascon128Nonce() respectively.
+   * @param key 
+   * @param nonce 
+   * @param ciphertext 
+   * @returns Array<number>
+   */
   ascon128Decrypt(
     key: Array<number>,
     nonce: Array<number>,

@@ -12,6 +12,12 @@ export class HybridEncryptionWrapper {
     this.rsaWrapper = new RSAWrapper();
   }
 
+  /**
+   * Encrypts data with RSA/AES hybrid encryption. The data is encrypted with AES-GCM and the AES key is encrypted with the RSA public key.
+   * @param dataToEncrypt 
+   * @param initalizer 
+   * @returns AesRsaHybridEncryptResult
+   */
   public encrypt(
     dataToEncrypt: Array<number>,
     initalizer: AESRSAHybridInitializer,
@@ -40,6 +46,12 @@ export class HybridEncryptionWrapper {
     return result;
   }
 
+  /**
+   * Decrypts data with RSA/AES hybrid encryption. The RSA private key decrypts the AES key and then the data is decrypted with AES-GCM.
+   * @param dataToEncrypt 
+   * @param initalizer 
+   * @returns AesRsaHybridEncryptResult
+   */
   public decrypt(
     privateKey: string,
     encryptResult: AesRsaHybridEncryptResult,
