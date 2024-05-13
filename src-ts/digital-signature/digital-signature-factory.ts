@@ -7,6 +7,12 @@ export enum DigitalSignatureType {
 }
 
 export class DigitalSignatureFactory {
+
+    /**
+     * Get the appropriate digital signature wrapper based upon the type passed in.
+     * @param type 
+     * @returns 
+     */
     public static get(type: DigitalSignatureType) {
         let ds = new DigitalSignatureSHA512Wrapper();
         switch (type) {

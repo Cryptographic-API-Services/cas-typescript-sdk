@@ -8,6 +8,11 @@ export class AESRSAHybridInitializer {
     public aesNonce: Array<number>;
     public rsaKeyPair: RsaKeyPairResult;
 
+    /**
+     * Constructs an initalizer to use with Hybrid Encryption wrapper. Generates your RSA key pair, AES nonce, and AES key based on the parameters passed in.
+     * @param aesType 
+     * @param rsaSize 
+     */
     constructor(aesType: number, rsaSize: number) {
         if (aesType !== 128 && aesType !== 256) {
             throw new Error("Need an appropriate AES size to generate a hybrid initalizer");

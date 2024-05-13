@@ -3,6 +3,12 @@ import { bcryptHash, bcryptHashThreadpool, bcryptVerify, bcryptVerifyThreadpool 
 
 export class BCryptWrapper implements IPasswordHasherBase {
 
+  /**
+   * Verifies a password with BCrypt on the threadpool.
+   * @param hashedPassword 
+   * @param passwordToCheck 
+   * @returns boolean
+   */
   verifyThreadPool(hashedPassword: string, passwordToCheck: string): boolean {
     if (!hashedPassword || !passwordToCheck) {
       throw new Error(
@@ -12,6 +18,11 @@ export class BCryptWrapper implements IPasswordHasherBase {
     return bcryptVerifyThreadpool(hashedPassword, passwordToCheck);
   }
 
+  /**
+   * Hashes a password with BCrypt on the threadpool.
+   * @param password 
+   * @returns string
+   */
   public hashPasswordThreadPool(password: string): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Argon2");
@@ -19,6 +30,11 @@ export class BCryptWrapper implements IPasswordHasherBase {
     return bcryptHashThreadpool(password);
   }
 
+  /**
+   * Hashes a password with BCrypt
+   * @param password 
+   * @returns string
+   */
   public hashPassword(password: string): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Argon2");
@@ -26,6 +42,12 @@ export class BCryptWrapper implements IPasswordHasherBase {
     return bcryptHash(password);
   }
 
+  /**
+   * Verifies that a password is the same as the hashed password with BCrypt.
+   * @param hashedPassword 
+   * @param passwordToVerify 
+   * @returns boolean
+   */
   public verify(
     hashedPassword: string,
     passwordToVerify: string,
