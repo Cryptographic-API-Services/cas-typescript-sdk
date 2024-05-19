@@ -1,5 +1,4 @@
 
-use aes_gcm::AeadCore;
 use cas_lib::sponges::{ascon_aead::AsconAead, cas_ascon_aead::CASAsconAead};
 use napi_derive::napi;
 

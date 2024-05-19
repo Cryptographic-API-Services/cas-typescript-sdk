@@ -1,4 +1,3 @@
-use aes_gcm::Key;
 use cas_lib::symmetric::{aes::{CASAES128, CASAES256}, cas_symmetric_encryption::CASAESEncryption};
 use napi_derive::napi;
 use rand::{RngCore, SeedableRng};
