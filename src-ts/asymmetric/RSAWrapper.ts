@@ -1,13 +1,13 @@
-import { decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, RsaKeyPairResult, signRsa, verifyRsa } from "../../index";
+import { CASRSAKeyPairResult, decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, signRsa, verifyRsa } from "../../index";
 
 export class RSAWrapper {
 
   /**
    * Generates an RSA key pair based of parameter sent in 1024, 2048, and 4096 are supported.
    * @param keySize 
-   * @returns RsaKeyPairResult
+   * @returns CASRSAKeyPairResult
    */
-  public generateKeys(keySize: number): RsaKeyPairResult {
+  public generateKeys(keySize: number): CASRSAKeyPairResult {
     if (keySize !== 1024 && keySize !== 2048 && keySize !== 4096) {
         throw new Error("You must provide an appropriate key size to generate RSA keys");
     }
