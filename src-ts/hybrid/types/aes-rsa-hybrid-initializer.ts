@@ -1,4 +1,4 @@
-import { RsaKeyPairResult } from "../../..";
+import { CASRSAKeyPairResult } from "../../..";
 import { RSAWrapper } from "../../asymmetric";
 import { AESWrapper } from "../../symmetric";
 
@@ -6,7 +6,7 @@ export class AESRSAHybridInitializer {
     public aesType: number;
     public aesKey: Array<number>;
     public aesNonce: Array<number>;
-    public rsaKeyPair: RsaKeyPairResult;
+    public rsaKeyPair: CASRSAKeyPairResult;
 
     /**
      * Constructs an initalizer to use with Hybrid Encryption wrapper. Generates your RSA key pair, AES nonce, and AES key based on the parameters passed in.

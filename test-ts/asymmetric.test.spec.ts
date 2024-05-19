@@ -1,11 +1,11 @@
 import { assert } from "chai";
-import { RSAWrapper, RsaKeyPairResult } from "..";
+import { CASRSAKeyPairResult, RSAWrapper } from "..";
 import { areEqual } from "./helpers/array";
 
 describe("Asymmetric Tests", () => {
     it("RSA 4096 encrypt and decrypt equals", () => {
       const rsaWrapper: RSAWrapper = new RSAWrapper();
-      const keys: RsaKeyPairResult = rsaWrapper.generateKeys(4096);
+      const keys: CASRSAKeyPairResult = rsaWrapper.generateKeys(4096);
       const tohashed: string = "This is my array to encrypt";
       const encoder = new TextEncoder();
       const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
@@ -17,7 +17,7 @@ describe("Asymmetric Tests", () => {
 
     it("RSA 2048 Sign and Verify", () => {
       const rsaWrapper = new RSAWrapper();
-      const keys: RsaKeyPairResult = rsaWrapper.generateKeys(2048);
+      const keys: CASRSAKeyPairResult = rsaWrapper.generateKeys(2048);
       const tohashed: string = "This is my encrypt";
       const encoder = new TextEncoder();
       const toSignBytes: Array<number> = Array.from(encoder.encode(tohashed));

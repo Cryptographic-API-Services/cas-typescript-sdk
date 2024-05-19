@@ -1,4 +1,4 @@
-import { x25519DiffieHellman, x25519GenerateSecretAndPublicKey, X25519SecretPublicKeyResult } from "../../index"
+import { CASx25519SecretPublicKeyResult, x25519DiffieHellman, x25519GenerateSecretAndPublicKey } from "../../index"
 
 export class X25519Wrapper {
     /**
@@ -6,7 +6,7 @@ export class X25519Wrapper {
      * User should share their public key with the other user and take the other user's public key and they can generate a Shared Secret.
      * @returns X25519SecretPublicKeyResult
      */
-    public generateSecretAndPublicKey(): X25519SecretPublicKeyResult {
+    public generateSecretAndPublicKey(): CASx25519SecretPublicKeyResult {
         return x25519GenerateSecretAndPublicKey();
     }
 
