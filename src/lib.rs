@@ -5,8 +5,6 @@ mod password_hashers {
 }
 
 mod hashers {
-    pub mod blake2;
-    pub mod cas_hasher;
     pub mod sha;
 }
 
