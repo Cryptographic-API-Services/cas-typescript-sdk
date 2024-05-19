@@ -6,7 +6,7 @@ export class DigitalSignatureSHA512Wrapper implements IDigitalSignature {
     /**
      * Creates an ED25519 siganture from an array of bytes with SHA3-512.
      * @param dataToSign 
-     * @returns SHAED25519DalekDigitalSignatureResult
+     * @returns CASSHAED25519DalekDigitalSignatureResult
      */
     createED25519(dataToSign: number[]): CASSHAED25519DalekDigitalSignatureResult {
         if (dataToSign?.length === 0) {
@@ -39,7 +39,7 @@ export class DigitalSignatureSHA512Wrapper implements IDigitalSignature {
      * Generates and RSA digital signature with SHA3-512
      * @param rsa_key_size 
      * @param data_to_sign 
-     * @returns RsaDigitalSignatureResult
+     * @returns CASRSADigitalSignatureResult
      */
     createRsa(rsa_key_size: number, data_to_sign: number[]): CASRSADigitalSignatureResult {
         if (rsa_key_size !== 1024 && rsa_key_size !== 2048 && rsa_key_size !== 4096) {
