@@ -9,8 +9,8 @@ mod hashers {
 }
 
 mod key_exchange {
-    pub mod cas_key_exchange;
     pub mod x25519;
+    pub mod types;
 }
 
 mod symmetric {
