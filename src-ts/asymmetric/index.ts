@@ -1,4 +1,4 @@
 import { RSAWrapper } from "./RSAWrapper";
-import { RsaKeyPairResult } from "../../index";
+import { CASRSAKeyPairResult } from "../../index";
 
-export { RSAWrapper, RsaKeyPairResult };
+export { RSAWrapper, CASRSAKeyPairResult };

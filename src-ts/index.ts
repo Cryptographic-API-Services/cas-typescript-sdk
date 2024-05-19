@@ -8,7 +8,7 @@ import {
 import { HasherFactory, HasherType, SHAWrapper } from "./hashers/index";
 import { X25519Wrapper } from "./key_exchange/index";
 import { AESWrapper } from "./symmetric/index";
-import { RsaKeyPairResult, RSAWrapper } from "./asymmetric/index";
+import { CASRSAKeyPairResult, RSAWrapper } from "./asymmetric/index";
 import {
   AesRsaHybridEncryptResult,
   AESRSAHybridInitializer,
@@ -38,7 +38,7 @@ export {
   HybridEncryptionWrapper,
   PasswordHasherFactory,
   PasswordHasherType,
-  RsaKeyPairResult,
+  CASRSAKeyPairResult,
   RSAWrapper,
   ScryptWrapper,
   SHAWrapper,
