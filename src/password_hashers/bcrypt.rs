@@ -1,21 +1,6 @@
-use std::sync::mpsc;
-
-use bcrypt::{hash, verify, DEFAULT_COST};
+use cas_lib::password_hashers::bcrypt::CASBCrypt;
+use cas_lib::password_hashers::cas_password_hasher::CASPasswordHasher;
 use napi_derive::napi;
-
-use super::cas_password_hasher::CASPasswordHasher;
-
-pub struct CASBCrypt;
-
-impl CASPasswordHasher for CASBCrypt {
-    fn hash_password(password_to_hash: String) -> String {
-        return hash(password_to_hash, DEFAULT_COST).unwrap();
-    }
-
-    fn verify_password(hashed_password: String, password_to_verify: String) -> bool {
-        return verify(password_to_verify, &hashed_password).unwrap();
-    }
-}
 
 #[napi]
 pub fn bcrypt_hash(password_to_hash: String) -> String {
@@ -24,13 +9,7 @@ pub fn bcrypt_hash(password_to_hash: String) -> String {
 
 #[napi]
 pub fn bcrypt_hash_threadpool(password_to_hash: String) -> String {
-    let (sender, receiver) =  mpsc::channel();
-    rayon::spawn(move || {
-        let thread_result = <CASBCrypt as CASPasswordHasher>::hash_password(password_to_hash);
-        sender.send(thread_result); 
-    });
-    let result = receiver.recv().unwrap();
-    result
+    return <CASBCrypt as CASPasswordHasher>::hash__password_threadpool(password_to_hash);
 }
 
 #[napi]
@@ -40,13 +19,7 @@ pub fn bcrypt_verify(hashed_password: String, password_to_verify: String) -> boo
 
 #[napi]
 pub fn bcrypt_verify_threadpool(password_to_hash: String, password_to_verify: String) -> bool {
-    let (sender, receiver) =  mpsc::channel();
-    rayon::spawn(move || {
-        let thread_result = <CASBCrypt as CASPasswordHasher>::verify_password(password_to_hash, password_to_verify);
-        sender.send(thread_result); 
-    });
-    let result = receiver.recv().unwrap();
-    result
+    return <CASBCrypt as CASPasswordHasher>::verify_password_threadpool(password_to_hash, password_to_verify);
 }
 
 #[test]
