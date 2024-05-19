@@ -1,4 +1,4 @@
-import { RsaDigitalSignatureResult, SHAED25519DalekDigitalSignatureResult, Shaed25519DalekDigitalSignatureResult, sha256Ed25519DigitalSignature, sha256Ed25519DigitalSignatureVerify, sha256RsaDigitalSignature, sha256RsaVerifyDigitalSignature, sha512Ed25519DigitalSignature } from "../../index";
+import { CASRSADigitalSignatureResult, CASSHAED25519DalekDigitalSignatureResult, sha256Ed25519DigitalSignature, sha256Ed25519DigitalSignatureVerify, sha256RsaDigitalSignature, sha256RsaVerifyDigitalSignature, sha512Ed25519DigitalSignature } from "../../index";
 import { IDigitalSignature } from "./digital-signature-base";
 
 export class DigitalSignatureSHA256Wrapper implements IDigitalSignature {
@@ -8,7 +8,7 @@ export class DigitalSignatureSHA256Wrapper implements IDigitalSignature {
      * @param dataToSign 
      * @returns SHAED25519DalekDigitalSignatureResult
      */
-    createED25519(dataToSign: number[]): Shaed25519DalekDigitalSignatureResult {
+    createED25519(dataToSign: number[]): CASSHAED25519DalekDigitalSignatureResult {
         if (dataToSign?.length === 0) {
             throw new Error("Must provide allocated data to sign");
         }
@@ -41,7 +41,7 @@ export class DigitalSignatureSHA256Wrapper implements IDigitalSignature {
      * @param data_to_sign 
      * @returns RsaDigitalSignatureResult
      */
-    createRsa(rsa_key_size: number, data_to_sign: number[]): RsaDigitalSignatureResult {
+    createRsa(rsa_key_size: number, data_to_sign: number[]): CASRSADigitalSignatureResult {
         if (rsa_key_size !== 1024 && rsa_key_size !== 2048 && rsa_key_size !== 4096) {
             throw new Error("You need to provide an appropriate RSA key size.");
         }

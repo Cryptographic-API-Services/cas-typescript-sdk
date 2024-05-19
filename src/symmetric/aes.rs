@@ -61,7 +61,7 @@ impl CASAESEncryption for CASAES128 {
 
     fn decrypt_ciphertext(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> Vec<u8> {
         let key = GenericArray::from_slice(&aes_key);
-        let mut cipher = Aes128Gcm::new(&key);
+        let cipher = Aes128Gcm::new(&key);
         let nonce = Nonce::from_slice(&nonce);
         let plaintext = cipher.decrypt(nonce, ciphertext.as_ref()).unwrap();
         plaintext
