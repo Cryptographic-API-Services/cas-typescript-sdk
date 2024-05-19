@@ -31,6 +31,5 @@ mod digital_signature {
 }
 
 mod sponges {
-    pub mod cas_ascon_aead;
     pub mod ascon_aead;
 }
