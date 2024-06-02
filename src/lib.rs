@@ -33,3 +33,7 @@ mod digital_signature {
 mod sponges {
     pub mod ascon_aead;
 }
+
+mod message {
+    pub mod hmac;
+}
