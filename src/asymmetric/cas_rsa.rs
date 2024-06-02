@@ -1,4 +1,4 @@
-use cas_lib::asymmetric::{cas_asymmetric_encryption::{CASRSAEncryption, RSAKeyPairResult}, cas_rsa::CASRSA};
+use cas_lib::asymmetric::{cas_asymmetric_encryption::CASRSAEncryption, cas_rsa::CASRSA, types::RSAKeyPairResult};
 use napi_derive::napi;
 
 #[napi(constructor)]
@@ -18,7 +18,7 @@ impl From<RSAKeyPairResult> for CASRSAKeyPairResult {
 
 #[napi]
 pub fn generate_rsa_keys(key_size: u32) -> CASRSAKeyPairResult {
-    return CASRSA::generate_rsa_keys(key_size).into();
+    return CASRSA::generate_rsa_keys(key_size as usize).into();
 }
 
 #[napi]
