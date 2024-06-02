@@ -1,17 +1,11 @@
 use cas_lib::symmetric::{aes::{CASAES128, CASAES256}, cas_symmetric_encryption::CASAESEncryption};
 use napi_derive::napi;
-use rand::{RngCore, SeedableRng};
-use rand_chacha::ChaCha20Rng;
 
 use super::types::CASAesKeyFromX25519SharedSecret;
 
 #[napi]
 pub fn aes_nonce() -> Vec<u8> {
-    let mut rng = ChaCha20Rng::from_entropy();
-    let mut random_bytes = Vec::with_capacity(12);
-    random_bytes.resize(12, 0);
-    rng.fill_bytes(&mut random_bytes);
-    random_bytes
+    return <CASAES256 as CASAESEncryption>::generate_nonce();
 }
 
 #[napi]
