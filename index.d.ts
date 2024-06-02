@@ -47,6 +47,10 @@ export function ascon128KeyGenerate(): Array<number>
 export function ascon128NonceGenerate(): Array<number>
 export function ascon128Encrypt(key: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
 export function ascon128Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
+export function hmacSign(key: Array<number>, message: Array<number>): Array<number>
+export function hmacSignThreadpool(key: Array<number>, message: Array<number>): Array<number>
+export function hmacVerify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
+export function hmacVerifyThreadpool(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
 export type CASx25519SecretPublicKeyResult = CaSx25519SecretPublicKeyResult
 export class CaSx25519SecretPublicKeyResult {
   publicKey: Array<number>
