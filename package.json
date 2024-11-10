@@ -9,7 +9,7 @@
     "test": "cargo test && npm run build && mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
     "node:test": "mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
     "rust:test": "cargo test",
-    "build": "npm run build:rust && rm -rf lib && tsc",
+    "build": "npm run build:rust && tsc",
     "build:rust": "napi build --release",
     "prepare": "npm run build"
   },
