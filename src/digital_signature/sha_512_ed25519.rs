@@ -1,4 +1,4 @@
-use cas_lib::digital_signature::{cas_digital_signature_rsa::{ED25519DigitalSignature, SHAED25519DalekDigitalSignatureResult}, sha_512_ed25519::SHA512ED25519DigitalSignature};
+use cas_lib::digital_signature::{cas_digital_signature_rsa::ED25519DigitalSignature, sha_512_ed25519::SHA512ED25519DigitalSignature};
 
 use napi_derive::napi;
 
