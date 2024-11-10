@@ -1,4 +1,4 @@
-import { CASRSAKeyPairResult, decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, signRsa, verifyRsa } from "../../index";
+import { CASRSAKeyPairResult, generateRsaKeys, signRsa, verifyRsa } from "../../index";
 
 export class RSAWrapper {
 
@@ -20,33 +20,6 @@ export class RSAWrapper {
    * @param plaintext 
    * @returns Array<number>
    */
-
-  public encrypt(publicKey: string, plaintext: Array<number>): Array<number> {
-    if (!publicKey) {
-      throw new Error("You must provide a public key to encrypt with RSA");
-    }
-    if (!plaintext || plaintext.length === 0) {
-      throw new Error("You must provide an array of plaintext bytes to encrypt with RSA");
-    }
-    return encryptPlaintextRsa(publicKey, plaintext);
-  }
-
-  /**
-   * Decrypts a ciphertext with an RSA private key.
-   * @param privateKey 
-   * @param ciphertext 
-   * @returns Array<number>
-   */
-
-  public decrypt(privateKey: string, ciphertext: Array<number>): Array<number> {
-    if (!privateKey) {
-      throw new Error("You must provide a private key to encrypt with RSA");
-    }
-    if (!ciphertext || ciphertext.length === 0) {
-      throw new Error("You must provide an array of ciphertext bytes to encrypt with RSA");
-    }
-    return decryptCiphertextRsa(privateKey, ciphertext);
-  }
 
   /**
    * Signs a byte array with an RSA private key for verification.
