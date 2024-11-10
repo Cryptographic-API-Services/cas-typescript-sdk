@@ -50,31 +50,31 @@ export declare function hmacSignThreadpool(key: Array<number>, message: Array<nu
 export declare function hmacVerify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
 export declare function hmacVerifyThreadpool(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
 export type CASx25519SecretPublicKeyResult = CaSx25519SecretPublicKeyResult
-export class CaSx25519SecretPublicKeyResult {
+export declare class CaSx25519SecretPublicKeyResult {
   publicKey: Array<number>
   secretKey: Array<number>
   constructor(publicKey: Array<number>, secretKey: Array<number>)
 }
 export type CASAesKeyFromX25519SharedSecret = CasAesKeyFromX25519SharedSecret
-export class CasAesKeyFromX25519SharedSecret {
+export declare class CasAesKeyFromX25519SharedSecret {
   aesKey: Array<number>
   aesNonce: Array<number>
   constructor(aesKey: Array<number>, aesNonce: Array<number>)
 }
 export type CASRSAKeyPairResult = CasrsaKeyPairResult
-export class CasrsaKeyPairResult {
+export declare class CasrsaKeyPairResult {
   privateKey: string
   publicKey: string
   constructor(privateKey: string, publicKey: string)
 }
 export type CASSHAED25519DalekDigitalSignatureResult = Casshaed25519DalekDigitalSignatureResult
-export class Casshaed25519DalekDigitalSignatureResult {
+export declare class Casshaed25519DalekDigitalSignatureResult {
   publicKey: Array<number>
   signature: Array<number>
   constructor(publicKey: Array<number>, signature: Array<number>)
 }
 export type CASRSADigitalSignatureResult = CasrsaDigitalSignatureResult
-export class CasrsaDigitalSignatureResult {
+export declare class CasrsaDigitalSignatureResult {
   publicKey: string
   privateKey: string
   signature: Array<number>
