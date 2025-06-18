@@ -13,5 +13,8 @@ napi-derive = "2"
 csbindgen = "1.9.1"
 cas-lib = "0.1.6"
 
+[profile.dev.package.num-bigint-dig]
+opt-level = 3
+
 [build-dependencies]
 napi-build = "1"
