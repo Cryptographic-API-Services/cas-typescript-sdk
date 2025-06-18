@@ -1,4 +1,4 @@
-import { argon2Hash, argon2HashThreadPool, argon2Verify, argon2VerifyThreadpool } from "./../../index";
+import { argon2Hash, argon2HashThreadPool, argon2Verify, argon2VerifyThreadpool } from "./../../index.d";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class Argon2Wrapper implements IPasswordHasherBase {
