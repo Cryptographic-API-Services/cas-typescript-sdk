@@ -13,7 +13,7 @@ export class DigitalSignatureFactory {
      * @param type 
      * @returns 
      */
-    public static get(type: DigitalSignatureType) {
+    public static get(type: DigitalSignatureType): DigitalSignatureSHA512Wrapper | DigitalSignatureSHA256Wrapper {
         let ds = new DigitalSignatureSHA512Wrapper();
         switch (type) {
             case DigitalSignatureType.SHA256:
