@@ -1,4 +1,4 @@
-import { hmacSign, hmacSignThreadpool, hmacVerify, hmacVerifyThreadpool } from "../../index";
+import { hmacSign, hmacSignThreadpool, hmacVerify, hmacVerifyThreadpool } from "../../index.d";
 
 export class HmacWrapper {
     public hmacSignBytes(key: Array<number>, message: Array<number>): Array<number> {

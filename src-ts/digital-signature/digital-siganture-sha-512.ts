@@ -1,4 +1,4 @@
-import { CASRSADigitalSignatureResult, CASSHAED25519DalekDigitalSignatureResult, sha512Ed25519DigitalSignature, sha512Ed25519DigitalSignatureVerify, sha512RsaDigitalSignature, sha512RsaVerifyDigitalSignature } from "../../index";
+import { CASRSADigitalSignatureResult, CASSHAED25519DalekDigitalSignatureResult, sha512Ed25519DigitalSignature, sha512Ed25519DigitalSignatureVerify, sha512RsaDigitalSignature, sha512RsaVerifyDigitalSignature } from "../../index.d";
 import { IDigitalSignature } from "./digital-signature-base";
 
 export class DigitalSignatureSHA512Wrapper implements IDigitalSignature {

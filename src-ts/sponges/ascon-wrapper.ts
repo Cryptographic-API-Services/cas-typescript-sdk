@@ -3,7 +3,7 @@ import {
   ascon128Encrypt,
   ascon128KeyGenerate,
   ascon128NonceGenerate,
-} from "../../index";
+} from "../../index.d";
 
 export class AsconWrapper {
   /**

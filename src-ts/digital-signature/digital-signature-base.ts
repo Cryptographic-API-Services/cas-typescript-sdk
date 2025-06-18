@@ -1,4 +1,4 @@
-import { CASRSADigitalSignatureResult, CASSHAED25519DalekDigitalSignatureResult } from "../../index";
+import { CASRSADigitalSignatureResult, CASSHAED25519DalekDigitalSignatureResult } from "../../index.d";
 
 export interface IDigitalSignature {
     createRsa(rsa_key_size: number, data_to_sign: Array<number>): CASRSADigitalSignatureResult;

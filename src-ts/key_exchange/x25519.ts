@@ -1,4 +1,4 @@
-import { CASx25519SecretPublicKeyResult, x25519DiffieHellman, x25519GenerateSecretAndPublicKey } from "../../index"
+import { CASx25519SecretPublicKeyResult, x25519DiffieHellman, x25519GenerateSecretAndPublicKey } from "../../index.d"
 
 export class X25519Wrapper {
     /**
