@@ -1,5 +1,5 @@
 import { IPasswordHasherBase } from "./password-hasher-base";
-import { bcryptHash, bcryptHashThreadpool, bcryptVerify, bcryptVerifyThreadpool } from "./../../index.d.d";
+import { bcryptHash, bcryptHashThreadpool, bcryptVerify, bcryptVerifyThreadpool } from "./../../index.d";
 
 export class BCryptWrapper implements IPasswordHasherBase {
 
