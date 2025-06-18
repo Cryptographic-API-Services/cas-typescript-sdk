@@ -9,7 +9,7 @@ import {
   aes256Key,
   aes256KeyFromX25519SharedSecret,
   aesNonce,
-} from "../../index.d";
+} from "../../index";
 
 
 export class AESWrapper {

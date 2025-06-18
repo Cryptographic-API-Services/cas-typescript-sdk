@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { areEqual } from "./helpers/array";
-import { CASRSAKeyPairResult, RSAWrapper } from "../lib";
+import { CASRSAKeyPairResult, RSAWrapper } from "../src-ts/asymmetric/index";
 
 describe("Asymmetric Tests", () => {
     it("RSA 4096 encrypt and decrypt equals", () => {

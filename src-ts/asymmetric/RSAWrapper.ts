@@ -1,4 +1,4 @@
-import { CASRSAKeyPairResult, decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, signRsa, verifyRsa } from "../../index.d";
+import { CASRSAKeyPairResult, decryptCiphertextRsa, encryptPlaintextRsa, generateRsaKeys, signRsa, verifyRsa } from "../../index";
 
 export class RSAWrapper {
 

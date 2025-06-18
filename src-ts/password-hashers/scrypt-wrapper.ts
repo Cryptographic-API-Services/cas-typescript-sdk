@@ -1,4 +1,4 @@
-import { scryptHash, scryptHashThreadpool, scryptVerify, scryptVerifyThreadpool } from "../../index.d";
+import { scryptHash, scryptHashThreadpool, scryptVerify, scryptVerifyThreadpool } from "../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class ScryptWrapper implements IPasswordHasherBase {

@@ -5,7 +5,6 @@
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "type": "module",
   "scripts": {
     "test": "cargo test && npm run build && mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
     "node:test": "mocha -r ts-node/register ./test-ts/**/*.spec.ts --timeout 20000 --recursive",
