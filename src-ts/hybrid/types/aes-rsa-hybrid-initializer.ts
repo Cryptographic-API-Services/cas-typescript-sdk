@@ -1,5 +1,5 @@
-import { CASRSAKeyPairResult } from "../../..";
-import { RSAWrapper } from "../../asymmetric";
+
+import { CASRSAKeyPairResult, RSAWrapper } from "../../asymmetric";
 import { AESWrapper } from "../../symmetric";
 
 export class AESRSAHybridInitializer {
