@@ -31,8 +31,6 @@ export declare function aes256Decrypt(aesKey: Array<number>, nonce: Array<number
 export declare function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>): CASAesKeyFromX25519SharedSecret
 export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>): CASAesKeyFromX25519SharedSecret
 export declare function generateRsaKeys(keySize: number): CasrsaKeyPairResult
-export declare function encryptPlaintextRsa(publicKey: string, plaintext: Array<number>): Array<number>
-export declare function decryptCiphertextRsa(privateKey: string, ciphertext: Array<number>): Array<number>
 export declare function signRsa(privateKey: string, hash: Array<number>): Array<number>
 export declare function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
 export declare function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CASRSADigitalSignatureResult
