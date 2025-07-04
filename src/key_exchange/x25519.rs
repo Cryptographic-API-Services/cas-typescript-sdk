@@ -11,7 +11,7 @@ pub fn x25519_generate_secret_and_public_key() -> CASx25519SecretPublicKeyResult
 
 #[napi]
 pub fn x25519_diffie_hellman(my_secret_key: Vec<u8>, users_public_key: Vec<u8>) -> Vec<u8> {
-    return <X25519 as CASKeyExchange>::diffie_hellman(my_secret_key, users_public_key);
+    return <X25519 as CASKeyExchange>::diffie_hellman(my_secret_key, users_public_key).to_vec();
 }
 
 #[test]

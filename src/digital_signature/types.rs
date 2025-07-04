@@ -10,8 +10,8 @@ pub struct CASSHAED25519DalekDigitalSignatureResult {
 impl From<SHAED25519DalekDigitalSignatureResult> for CASSHAED25519DalekDigitalSignatureResult {
     fn from(value: SHAED25519DalekDigitalSignatureResult) -> Self {
         CASSHAED25519DalekDigitalSignatureResult {
-            public_key: value.public_key,
-            signature: value.signature
+            public_key: value.public_key.to_vec(),
+            signature: value.signature.to_vec()
         }
     }
 }

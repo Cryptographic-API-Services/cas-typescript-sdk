@@ -13,7 +13,7 @@ pub fn scrypt_verify(hashed_password: String, password_to_verify: String) -> boo
 
 #[napi]
 pub fn scrypt_hash_threadpool(password_to_hash: String) -> String {
-    return <CASScrypt as CASPasswordHasher>::hash__password_threadpool(password_to_hash);
+    return <CASScrypt as CASPasswordHasher>::hash_password_threadpool(password_to_hash);
 }
 
 #[napi]

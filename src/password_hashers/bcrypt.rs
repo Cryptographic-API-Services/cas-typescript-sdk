@@ -9,7 +9,7 @@ pub fn bcrypt_hash(password_to_hash: String) -> String {
 
 #[napi]
 pub fn bcrypt_hash_threadpool(password_to_hash: String) -> String {
-    return <CASBCrypt as CASPasswordHasher>::hash__password_threadpool(password_to_hash);
+    return <CASBCrypt as CASPasswordHasher>::hash_password_threadpool(password_to_hash);
 }
 
 #[napi]
