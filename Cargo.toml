@@ -8,10 +8,10 @@ path = "src/lib.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = "2.16.13"
-napi-derive = "2.16.12"
-csbindgen = "1.9.1"
-cas-lib = "0.2.2"
+napi = "2.16.17"
+napi-derive = "2.16.13"
+csbindgen = "1.9.3"
+cas-lib = "0.1.6"
 
 [build-dependencies]
 napi-build = "1"
