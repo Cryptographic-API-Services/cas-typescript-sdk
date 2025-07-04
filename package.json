@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "cargo test --release && npm run build && mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
-    "node:test": "mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
+    "node:test": "mocha -r ts-node/register ./test-ts/**/*.test.spec.ts --timeout 20000 --recursive",
     "rust:test": "cargo test --release",
     "build": "npm run build:rust && rimraf lib && tsc",
     "build:rust": "napi build --release",
