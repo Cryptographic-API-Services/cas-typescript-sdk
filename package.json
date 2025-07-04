@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "cargo test && npm run build && mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
+    "test": "cargo test --release && npm run build && mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
     "node:test": "mocha -r ts-node/register ./test-ts/**/*.ts --timeout 20000 --recursive",
     "rust:test": "cargo test",
     "build": "npm run build:rust && rimraf lib && tsc",

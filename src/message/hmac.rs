@@ -23,8 +23,8 @@ pub fn hmac_verify_threadpool(key: Vec<u8>, message: Vec<u8>, signature: Vec<u8>
 
 #[test]
 fn hmac_sign_and_verify_test() {
-    let mut key = b"ThisIsMyKeyForHmac".to_vec();
-    let mut message = b"ThisIsMyMessageToSign".to_vec();
+    let key = b"ThisIsMyKeyForHmac".to_vec();
+    let message = b"ThisIsMyMessageToSign".to_vec();
     let signature = hmac_sign(key.clone(), message.clone());
     let result = hmac_verify(key, message, signature);
     assert_eq!(true, result);
@@ -32,8 +32,8 @@ fn hmac_sign_and_verify_test() {
 
 #[test]
 fn hmac_sign_and_verify_threadpool_test() {
-    let mut key = b"ThisIsMyKeyForHmac7789".to_vec();
-    let mut message = b"ThisIsMyMessageToSign1230".to_vec();
+    let key = b"ThisIsMyKeyForHmac7789".to_vec();
+    let message = b"ThisIsMyMessageToSign1230".to_vec();
     let signature = hmac_sign_threadpool(key.clone(), message.clone());
     let result = hmac_verify_threadpool(key, message, signature);
     assert_eq!(true, result);
