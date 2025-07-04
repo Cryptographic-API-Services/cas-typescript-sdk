@@ -1,4 +1,4 @@
-use cas_lib::asymmetric::{cas_asymmetric_encryption::CASRSAEncryption, cas_rsa::CASRSA, types::RSAKeyPairResult};
+use cas_lib::asymmetric::{cas_rsa::CASRSA, types::{CASRSAEncryption, RSAKeyPairResult}};
 use napi_derive::napi;
 
 #[napi(constructor)]

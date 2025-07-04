@@ -39,7 +39,7 @@ pub fn sha_512_verify_test() {
 #[test]
 pub fn sha_512_verify_fail_test() {
     let data_to_hash = "NotMyDataToHash".as_bytes().to_vec();
-    let hashed_data = sha_512(data_to_hash.clone());
+    let _hashed_data = sha_512(data_to_hash.clone());
     let data_to_verify = "NotMyDataToHash2".as_bytes().to_vec();
     assert_ne!(true, sha_512_verify(data_to_hash, data_to_verify));
 }
@@ -54,7 +54,7 @@ pub fn sha_256_test() {
 #[test]
 pub fn sha_256_verify_test() {
     let data_to_hash = "NotMyDataToHash".as_bytes().to_vec();
-    let hashed_data = sha_256(data_to_hash.clone());
+    let _hashed_data = sha_256(data_to_hash.clone());
     let data_to_verify = "NotMyDataToHash".as_bytes().to_vec();
     assert_ne!(true, sha_256_verify(data_to_hash, data_to_verify));
 }
@@ -62,7 +62,7 @@ pub fn sha_256_verify_test() {
 #[test]
 pub fn sha_256_verify_fail_test() {
     let data_to_hash = "NotMyDataToHash".as_bytes().to_vec();
-    let hashed_data = sha_256(data_to_hash.clone());
+    let _hashed_data = sha_256(data_to_hash.clone());
     let data_to_verify = "NotMyDataToHash2".as_bytes().to_vec();
     assert_ne!(true, sha_256_verify(data_to_hash, data_to_verify));
 }
