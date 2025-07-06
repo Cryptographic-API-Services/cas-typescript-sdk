@@ -38,3 +38,7 @@ mod sponges {
 mod message {
     pub mod hmac;
 }
+
+mod signatures {
+    pub mod ed25519_dalek;
+}
