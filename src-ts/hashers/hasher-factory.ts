@@ -1,3 +1,4 @@
+import { Blake2Wrapper } from "./blake2-wrapper";
 import { HasherType } from "./hasher-type";
 import { SHAWrapper } from "./sha-wrapper";
 
@@ -10,7 +11,8 @@ export class HasherFactory {
     getHasher(type: HasherType): any {
         let result: SHAWrapper = new SHAWrapper();
         switch(type) {
-
+            case HasherType.Blake2:
+                result = new Blake2Wrapper(); 
         }
         return result;
     }

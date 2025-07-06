@@ -6,6 +6,7 @@ mod password_hashers {
 
 mod hashers {
     pub mod sha;
+    pub mod blake2;
 }
 
 mod key_exchange {

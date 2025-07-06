@@ -19,6 +19,14 @@ export declare function sha512(dataToHash: Array<number>): Array<number>
 export declare function sha512Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
 export declare function sha256(dataToHash: Array<number>): Array<number>
 export declare function sha256Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
+export declare function blake2Sha512(dataToHash: Array<number>): Array<number>
+export declare function blake2Sha512Threadpool(dataToHash: Array<number>): Array<number>
+export declare function blake2Sha512Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
+export declare function blake2Sha512VerifyThreadpool(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
+export declare function blake2Sha256(dataToHash: Array<number>): Array<number>
+export declare function blake2Sha256Threadpool(dataToHash: Array<number>): Array<number>
+export declare function blake2Sha256Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
+export declare function blake2Sha256VerifyThreadpool(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
 export declare function x25519GenerateSecretAndPublicKey(): CASx25519SecretPublicKeyResult
 export declare function x25519DiffieHellman(mySecretKey: Array<number>, usersPublicKey: Array<number>): Array<number>
 export declare function aesNonce(): Array<number>
