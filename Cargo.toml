@@ -11,8 +11,9 @@ crate-type = ["cdylib"]
 napi = "2.16.17"
 napi-derive = "2.16.13"
 csbindgen = "1.9.3"
-cas-lib = "0.2.50"
+cas-lib = "0.2.52"
 zeroize = "1.8.1"
+zeroizing-alloc = "0.1.0"
 
 [build-dependencies]
 napi-build = "1"

@@ -26,9 +26,7 @@ pub fn test_ascon128_nonce_generate() {
 
 #[napi]
 pub fn ascon128_encrypt(key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> Vec<u8> {
-    let key_arr: [u8; 16] = key.try_into().expect("Key must be 16 bytes");
-    let nonce_arr: [u8; 16] = nonce.try_into().expect("Nonce must be 16 bytes");
-    return <AsconAead as CASAsconAead>::encrypt(key_arr, nonce_arr, plaintext);
+    return <AsconAead as CASAsconAead>::encrypt(key, nonce, plaintext);
 }
 
 #[test]
@@ -46,9 +44,7 @@ pub fn test_ascon128_encrypt() {
 
 #[napi]
 pub fn ascon128_decrypt(key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> Vec<u8> {
-    let key_arr: [u8; 16] = key.try_into().expect("Key must be 16 bytes");
-    let nonce_arr: [u8; 16] = nonce.try_into().expect("Nonce must be 16 bytes");
-    return <AsconAead as CASAsconAead>::decrypt(key_arr, nonce_arr, ciphertext);
+    return <AsconAead as CASAsconAead>::decrypt(key, nonce, ciphertext);
 }
 
 #[test]

@@ -20,46 +20,36 @@ pub fn aes256_key() -> Vec<u8> {
 
 #[napi]
 pub fn aes128_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> Vec<u8> {
-    let key: [u8; 16] = aes_key.try_into().expect("Key must be 16 bytes");
-    let nonce_arr: [u8; 12] = nonce.try_into().expect("Nonce must be 12 bytes");
-    <CASAES128 as CASAES128Encryption>::encrypt_plaintext(key, nonce_arr, plaintext)
+    <CASAES128 as CASAES128Encryption>::encrypt_plaintext(aes_key, nonce, plaintext)
 }
 
 #[napi]
 pub fn aes128_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> Vec<u8> {
-    let key: [u8; 16] = aes_key.try_into().expect("Key must be 16 bytes");
-    let nonce_arr: [u8; 12] = nonce.try_into().expect("Nonce must be 12 bytes");
-    <CASAES128 as CASAES128Encryption>::decrypt_ciphertext(key, nonce_arr, ciphertext)
+    <CASAES128 as CASAES128Encryption>::decrypt_ciphertext(aes_key, nonce, ciphertext)
 }
 
 #[napi]
 pub fn aes256_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> Vec<u8> {
-    let key: [u8; 32] = aes_key.try_into().expect("Key must be 32 bytes");
-    let nonce_arr: [u8; 12] = nonce.try_into().expect("Nonce must be 12 bytes");
-    <CASAES256 as CASAES256Encryption>::encrypt_plaintext(key, nonce_arr, plaintext)
+    <CASAES256 as CASAES256Encryption>::encrypt_plaintext(aes_key, nonce, plaintext)
 }
 
 #[napi]
 pub fn aes256_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> Vec<u8> {
-    let key: [u8; 32] = aes_key.try_into().expect("Key must be 32 bytes");
-    let nonce_arr: [u8; 12] = nonce.try_into().expect("Nonce must be 12 bytes");
-    <CASAES256 as CASAES256Encryption>::decrypt_ciphertext(key, nonce_arr, ciphertext)
+    <CASAES256 as CASAES256Encryption>::decrypt_ciphertext(aes_key, nonce, ciphertext)
 }
 
 #[napi]
 pub fn aes_256_key_from_x25519_shared_secret(
     shared_secret: Vec<u8>,
 ) -> CASAesKeyFromX25519SharedSecret {
-    let shared_secret_arr: [u8; 32] = shared_secret.try_into().expect("Shared secret must be 32 bytes");
-    return <CASAES256 as CASAES256Encryption>::key_from_x25519_shared_secret(shared_secret_arr).into();
+    return <CASAES256 as CASAES256Encryption>::key_from_x25519_shared_secret(shared_secret).into();
 }
 
 #[napi]
 pub fn aes_128_key_from_x25519_shared_secret(
     shared_secret: Vec<u8>,
 ) -> CASAesKeyFromX25519SharedSecret {
-    let shared_secret_arr: [u8; 32] = shared_secret.try_into().expect("Shared secret must be 32 bytes");
-    return <CASAES128 as CASAES128Encryption>::key_from_x25519_shared_secret(shared_secret_arr).into();
+    return <CASAES128 as CASAES128Encryption>::key_from_x25519_shared_secret(shared_secret).into();
 }
 
 #[test]
