@@ -6,9 +6,7 @@ Ever wanted all of your most useful cryptographic operations in one module and n
 CAS is here to provide a unified development experience as an abstract layer to the RustCrypto and Dalek-Cryptography suite of algorithms.
 The official NPM page can be found [here](https://www.npmjs.com/package/cas-typescript-sdk).
 
-**Note: All work is experimental and we understand some benchmarks might not be the most optimal.**
-
-**[You can find some usage examples here](https://github.com/Cryptographic-API-Services/cas-typescript-sdk/blob/main/docs/EXAMPLES.md)**
+**Note: All work is experimental and we understand some benchmarks might not be the most optimal.**\
 
 ## Consuming Library Documentation
 This Node.js NPM module is dependent on our Rust layer [cas-lib](https://github.com/Cryptographic-API-Services/cas-lib). that contains methods to run industry-standard cryptographic operations sequentially, on threads, and the thread pool.
