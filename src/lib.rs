@@ -42,3 +42,8 @@ mod sponges {
 mod message {
     pub mod hmac;
 }
+
+mod hybrid {
+    pub mod hpke;
+    pub mod types;
+}
