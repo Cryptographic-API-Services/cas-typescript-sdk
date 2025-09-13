@@ -7,35 +7,9 @@ pub fn argon2_hash(password: String) -> String {
     return CASArgon::hash_password(password);
 }
 
-#[napi] 
-pub fn argon2_hash_thread_pool(password: String) -> String {
-    return CASArgon::hash_password_threadpool(password);
-}
-
 #[napi]
 pub fn argon2_verify(hashed_password: String, password_to_verify: String) -> bool {
     return CASArgon::verify_password(hashed_password, password_to_verify);
-}
-
-#[napi]
-pub fn argon2_verify_threadpool(hashed_password: String, password_to_verify: String) -> bool {
-    return CASArgon::verify_password_threadpool(hashed_password, password_to_verify);
-}
-
-#[test]
-pub fn argon2_hash_threadpool_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
-    let hashed = argon2_hash_thread_pool(password.clone());
-    assert_ne!(password, hashed);
-}
-
-#[test]
-pub fn argon2_verify_threadpool_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
-    let passwordToCheck = "ThisIsNotMyPasswolrd".to_string();
-    let hashed = argon2_hash_thread_pool(password);
-    let result = argon2_verify_threadpool(hashed, passwordToCheck);
-    assert_eq!(result, true);
 }
 
 #[test]

@@ -8,18 +8,8 @@ pub fn bcrypt_hash(password_to_hash: String) -> String {
 }
 
 #[napi]
-pub fn bcrypt_hash_threadpool(password_to_hash: String) -> String {
-    return <CASBCrypt as CASPasswordHasher>::hash_password_threadpool(password_to_hash);
-}
-
-#[napi]
 pub fn bcrypt_verify(hashed_password: String, password_to_verify: String) -> bool {
     return <CASBCrypt as CASPasswordHasher>::verify_password(hashed_password, password_to_verify);
-}
-
-#[napi]
-pub fn bcrypt_verify_threadpool(password_to_hash: String, password_to_verify: String) -> bool {
-    return <CASBCrypt as CASPasswordHasher>::verify_password_threadpool(password_to_hash, password_to_verify);
 }
 
 #[test]
@@ -30,25 +20,10 @@ pub fn bcrypt_hash_test() {
 }
 
 #[test]
-pub fn bcrypt_hash_threadpool_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
-    let hashed = bcrypt_hash_threadpool(password.clone());
-    assert_ne!(password, hashed);
-}
-
-#[test]
 pub fn bcrypt_verify_test() {
     let password = "ThisIsNotMyPasswolrd".to_string();
     let hashed = bcrypt_hash(password.clone());
     let verified = bcrypt_verify(hashed, password);
-    assert_eq!(true, verified);
-}
-
-#[test]
-pub fn bcrypt_verify_threadpool_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
-    let hashed = bcrypt_hash_threadpool(password.clone());
-    let verified = bcrypt_verify_threadpool(hashed, password);
     assert_eq!(true, verified);
 }
 
