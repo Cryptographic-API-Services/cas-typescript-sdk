@@ -9,13 +9,12 @@ The official NPM page can be found [here](https://www.npmjs.com/package/cas-type
 **Note: All work is experimental and we understand some benchmarks might not be the most optimal.**\
 
 ## Consuming Library Documentation
-This Node.js NPM module is dependent on our Rust layer [cas-lib](https://github.com/Cryptographic-API-Services/cas-lib). that contains methods to run industry-standard cryptographic operations sequentially, on threads, and the thread pool.
+This Node.js NPM module is dependent on our Rust layer [cas-lib](https://github.com/Cryptographic-API-Services/cas-lib) that contains methods to run industry-standard cryptographic operations.
 
 We utilize some smart people's existing work and we believe their documentation should be reviewed when possible.
 - [Spin Research](https://github.com/SpinResearch)
 - [Dalek-Cryptography](https://github.com/dalek-cryptography)
 - [Rust Crypto](https://github.com/RustCrypto)
-- [Rayon](https://github.com/rayon-rs/rayon)
 
 ## [Examples](./docs/EXAMPLES.md)
 
