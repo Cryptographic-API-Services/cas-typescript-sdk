@@ -1,6 +1,6 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -38,6 +38,6 @@
     "@types/node-fetch": "^2.6.12",
     "chai": "^4.5.0",
     "mocha": "^10.8.2",
-    "ts-node": "^10.9.2",
+    "ts-node": "^10.9.2"
   }
 }
