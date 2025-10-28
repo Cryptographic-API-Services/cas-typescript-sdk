@@ -1,6 +1,6 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,7 +10,7 @@
     "rust:test": "cargo test --release",
     "build": "npm run build:rust && rimraf lib && tsc",
     "build:rust": "napi build --release",
-    "prepare": "npm run build"
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
