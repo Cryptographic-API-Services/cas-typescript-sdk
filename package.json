@@ -1,6 +1,6 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.0.39",
+  "version": "1.0.40",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "@napi-rs/cli": "^2.18.4",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/chai": "^4.3.20",
@@ -38,6 +39,5 @@
     "chai": "^4.5.0",
     "mocha": "^10.8.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
   }
 }
