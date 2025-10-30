@@ -46,48 +46,4 @@ describe("Digital Signature", () => {
         const verify = shaDsWrapper.verifyRSa(dsResult.publicKey, badBytes, dsResult.signature);
         assert.equal(verify, false);
     });
-
-    it("SHA 512 ED25519 pass", () => {
-        const shaDsWrapper = DigitalSignatureFactory.get(DigitalSignatureType.SHA512)
-        const toHash: string = "This is my array to encrypt";
-        const encoder = new TextEncoder();
-        const toHashBytes: Array<number> = Array.from(encoder.encode(toHash));
-        const dsResult = shaDsWrapper.createED25519(toHashBytes);
-        const verify = shaDsWrapper.verifyED25519(dsResult.publicKey, toHashBytes, dsResult.signature);
-        assert.equal(verify, true);
-    });
-
-    it("SHA 512 ED25519 fails", () => {
-        const shaDsWrapper = DigitalSignatureFactory.get(DigitalSignatureType.SHA512)
-        const toHash: string = "This is my array to encrypt";
-        const notOriginal: string = "This is not a fun time";
-        const encoder = new TextEncoder();
-        const toHashBytes: Array<number> = Array.from(encoder.encode(toHash));
-        const badBytes: Array<number> = Array.from(encoder.encode(notOriginal));
-        const dsResult = shaDsWrapper.createED25519(toHashBytes);
-        const verify = shaDsWrapper.verifyED25519(dsResult.publicKey, badBytes, dsResult.signature);
-        assert.equal(verify, false);
-    });
-
-    it("SHA 256 ED25519 pass", () => {
-        const shaDsWrapper = DigitalSignatureFactory.get(DigitalSignatureType.SHA256)
-        const toHash: string = "This is my array to encrypt";
-        const encoder = new TextEncoder();
-        const toHashBytes: Array<number> = Array.from(encoder.encode(toHash));
-        const dsResult = shaDsWrapper.createED25519(toHashBytes);
-        const verify = shaDsWrapper.verifyED25519(dsResult.publicKey, toHashBytes, dsResult.signature);
-        assert.equal(verify, true);
-    });
-
-    it("SHA 256 ED25519 fails", () => {
-        const shaDsWrapper = DigitalSignatureFactory.get(DigitalSignatureType.SHA256)
-        const toHash: string = "This is my array to encrypt";
-        const notOriginal: string = "This is not a fun time";
-        const encoder = new TextEncoder();
-        const toHashBytes: Array<number> = Array.from(encoder.encode(toHash));
-        const badBytes: Array<number> = Array.from(encoder.encode(notOriginal));
-        const dsResult = shaDsWrapper.createED25519(toHashBytes);
-        const verify = shaDsWrapper.verifyED25519(dsResult.publicKey, badBytes, dsResult.signature);
-        assert.equal(verify, false);
-    });
 });

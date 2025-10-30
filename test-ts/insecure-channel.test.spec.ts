@@ -21,8 +21,10 @@ describe("Insecure Channel Tests", () => {
       const encoder = new TextEncoder();
       const toEncrypt: Array<number> = Array.from(encoder.encode(tohashed));
 
-      const encrypted = aesWrapper.aes256Encrypt(alice_aes_key?.aesKey, alice_aes_key?.aesNonce, toEncrypt);
-      const decrypted = aesWrapper.aes256Decrypt(bob_aes_key?.aesKey, bob_aes_key?.aesNonce, encrypted);
+      const nonce = aesWrapper.generateAESNonce();
+
+      const encrypted = aesWrapper.aes256Encrypt(alice_aes_key, nonce, toEncrypt);
+      const decrypted = aesWrapper.aes256Decrypt(bob_aes_key, nonce, encrypted);
       let result = areEqual(decrypted, toEncrypt);
       assert.isTrue(result);
     });
@@ -43,8 +45,10 @@ describe("Insecure Channel Tests", () => {
       const encoder = new TextEncoder();
       const toEncrypt: Array<number> = Array.from(encoder.encode(tohashed));
 
-      const encrypted = aesWrapper.aes128Encrypt(alice_aes_key?.aesKey, alice_aes_key?.aesNonce, toEncrypt);
-      const decrypted = aesWrapper.aes128Decrypt(bob_aes_key?.aesKey, bob_aes_key?.aesNonce, encrypted);
+      const nonce = aesWrapper.generateAESNonce();
+
+      const encrypted = aesWrapper.aes128Encrypt(alice_aes_key, nonce, toEncrypt);
+      const decrypted = aesWrapper.aes128Decrypt(bob_aes_key, nonce, encrypted);
       let result = areEqual(decrypted, toEncrypt);
       assert.isTrue(result);
     });

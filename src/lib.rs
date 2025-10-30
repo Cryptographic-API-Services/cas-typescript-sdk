@@ -20,7 +20,6 @@ mod key_exchange {
 
 mod symmetric {
     pub mod aes;
-    mod types;
 }
 
 mod asymmetric {
@@ -30,8 +29,6 @@ mod asymmetric {
 mod digital_signature {
     pub mod sha_512_rsa;
     pub mod sha_256_rsa;
-    pub mod sha_512_ed25519;
-    pub mod sha_256_ed25519;
     mod types;
 }
 
