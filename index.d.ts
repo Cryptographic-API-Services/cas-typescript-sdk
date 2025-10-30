@@ -31,6 +31,9 @@ export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<numb
 export declare function generateRsaKeys(keySize: number): CasrsaKeyPairResult
 export declare function signRsa(privateKey: string, hash: Array<number>): Array<number>
 export declare function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
+export declare function generateEd25519Keys(): Cased25519KeyPairResult
+export declare function signEd25519(privateKey: Array<number>, message: Array<number>): Array<number>
+export declare function verifyEd25519(publicKey: Array<number>, message: Array<number>, signature: Array<number>): boolean
 export declare function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CASRSADigitalSignatureResult
 export declare function sha512RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
 export declare function sha256RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CASRSADigitalSignatureResult
@@ -52,6 +55,12 @@ export declare class CasrsaKeyPairResult {
   privateKey: string
   publicKey: string
   constructor(privateKey: string, publicKey: string)
+}
+export type CASED25519KeyPairResult = Cased25519KeyPairResult
+export declare class Cased25519KeyPairResult {
+  privateKey: Array<number>
+  publicKey: Array<number>
+  constructor(privateKey: Array<number>, publicKey: Array<number>)
 }
 export type CASSHAED25519DalekDigitalSignatureResult = Casshaed25519DalekDigitalSignatureResult
 export declare class Casshaed25519DalekDigitalSignatureResult {

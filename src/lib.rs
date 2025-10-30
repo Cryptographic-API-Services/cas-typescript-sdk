@@ -24,6 +24,7 @@ mod symmetric {
 
 mod asymmetric {
     pub mod cas_rsa;
+    pub mod cas_ed25519;
 }
 
 mod digital_signature {

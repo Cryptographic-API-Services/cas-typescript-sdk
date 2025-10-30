@@ -6,3 +6,4 @@ export * from "./asymmetric/index";
 export * from "./digital-signature";
 export * from "./sponges/index";
 export * from "./message/index";
+export * from "./signature/index";
