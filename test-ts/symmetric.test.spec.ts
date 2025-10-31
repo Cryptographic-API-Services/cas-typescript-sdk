@@ -42,12 +42,14 @@ describe("Symmetric Tests", () => {
     const aliceAesKey = aesWrapper.aes256KeyNonceX25519DiffieHellman(aliceSharedSecret);
     const bobAesKey = aesWrapper.aes256KeyNonceX25519DiffieHellman(bobSharedSecret);
 
+    const nonce = aesWrapper.generateAESNonce();
+
     const tohashed: string = "This is my array to encrypt";
     const encoder = new TextEncoder();
     const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
 
-    const aliceCiphertext = aesWrapper.aes256Encrypt(aliceAesKey.aesKey, aliceAesKey.aesNonce, tohashBytes);
-    const bobPlaintext = aesWrapper.aes256Decrypt(bobAesKey.aesKey, aliceAesKey.aesNonce, aliceCiphertext);
+    const aliceCiphertext = aesWrapper.aes256Encrypt(aliceAesKey, nonce, tohashBytes);
+    const bobPlaintext = aesWrapper.aes256Decrypt(bobAesKey, nonce, aliceCiphertext);
 
     var result = areEqual(bobPlaintext, tohashBytes);
     assert.isTrue(result);
@@ -69,8 +71,10 @@ describe("Symmetric Tests", () => {
     const encoder = new TextEncoder();
     const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
 
-    const aliceCiphertext = aesWrapper.aes128Encrypt(aliceAesKey.aesKey, aliceAesKey.aesNonce, tohashBytes);
-    const bobPlaintext = aesWrapper.aes128Decrypt(bobAesKey.aesKey, aliceAesKey.aesNonce, aliceCiphertext);
+    const nonce = aesWrapper.generateAESNonce();
+
+    const aliceCiphertext = aesWrapper.aes128Encrypt(aliceAesKey, nonce, tohashBytes);
+    const bobPlaintext = aesWrapper.aes128Decrypt(bobAesKey, nonce, aliceCiphertext);
 
     var result = areEqual(bobPlaintext, tohashBytes);
     assert.isTrue(result);

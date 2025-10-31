@@ -1,5 +1,4 @@
 import {
-  CASAesKeyFromX25519SharedSecret,
   aes128Decrypt,
   aes128Encrypt,
   aes128Key,
@@ -87,7 +86,7 @@ export class AESWrapper {
      * @param shared_secret 
      * @returns 
      */
-    public aes256KeyNonceX25519DiffieHellman(shared_secret: Array<number>): CASAesKeyFromX25519SharedSecret {
+    public aes256KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
          return aes256KeyFromX25519SharedSecret(shared_secret);
     }
 
@@ -96,7 +95,7 @@ export class AESWrapper {
      * @param shared_secret 
      * @returns 
      */
-    public aes128KeyNonceX25519DiffieHellman(shared_secret: Array<number>): CASAesKeyFromX25519SharedSecret {
+    public aes128KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
         return aes128KeyFromX25519SharedSecret(shared_secret);
    }
 }

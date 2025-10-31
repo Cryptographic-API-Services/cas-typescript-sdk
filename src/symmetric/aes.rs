@@ -1,8 +1,6 @@
 use cas_lib::symmetric::{aes::{CASAES128, CASAES256}, cas_symmetric_encryption::{CASAES128Encryption, CASAES256Encryption}};
 use napi_derive::napi;
 
-use super::types::CASAesKeyFromX25519SharedSecret;
-
 #[napi]
 pub fn aes_nonce() -> Vec<u8> {
     return <CASAES256 as CASAES256Encryption>::generate_nonce().to_vec();
@@ -41,14 +39,14 @@ pub fn aes256_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> 
 #[napi]
 pub fn aes_256_key_from_x25519_shared_secret(
     shared_secret: Vec<u8>,
-) -> CASAesKeyFromX25519SharedSecret {
+) -> Vec<u8> {
     return <CASAES256 as CASAES256Encryption>::key_from_x25519_shared_secret(shared_secret).into();
 }
 
 #[napi]
 pub fn aes_128_key_from_x25519_shared_secret(
     shared_secret: Vec<u8>,
-) -> CASAesKeyFromX25519SharedSecret {
+) -> Vec<u8> {
     return <CASAES128 as CASAES128Encryption>::key_from_x25519_shared_secret(shared_secret).into();
 }
 
