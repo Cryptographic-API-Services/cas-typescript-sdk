@@ -1,6 +1,6 @@
 # cas-typescript-sdk
 
-[![image](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/7bXXCQj45q)
+[![image](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/UAGqKfmvUS)
 
 Ever wanted all of your most useful cryptographic operations in one module and not had to surf documentation for various packages? 
 CAS is here to provide a unified development experience as an abstract layer to the RustCrypto and Dalek-Cryptography suite of algorithms.
@@ -20,4 +20,5 @@ We utilize some smart people's existing work and we believe their documentation 
 
 ## Disclaimer
 Many of the cryptographic crates that are utilized in our core FFI [layer](./src) have never had a security audit performed. Utilize this SDK at your own risk.
+
 
