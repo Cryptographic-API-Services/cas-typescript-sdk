@@ -1,6 +1,6 @@
 # CAS TypeScript SDK
 
-[![image](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/7bXXCQj45q)
+[![image](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/UAGqKfmvUS)
 
 ## Overview
 
@@ -29,4 +29,5 @@ This SDK leverages several cryptographic crates via our core FFI [layer](./src).
 
 ---
 For questions, support, or to contribute, join our Discord or visit the [GitHub repository](https://github.com/Cryptographic-API-Services/cas-typescript-sdk).
+
 

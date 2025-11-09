@@ -36,6 +36,20 @@ export declare class CaSx25519SecretPublicKeyResult {
 }
 export type CASx25519SecretPublicKeyResult = CaSx25519SecretPublicKeyResult
 
+export declare class HpkeEncryptResult {
+  tag: Array<number>
+  ciphertext: Array<number>
+  encapsulatedKey: Array<number>
+  constructor(tag: Array<number>, ciphertext: Array<number>, encapsulatedKey: Array<number>)
+}
+
+export declare class HpkeKeyResult {
+  publicKey: Array<number>
+  secretKey: Array<number>
+  infoStr: Array<number>
+  constructor(publicKey: Array<number>, secretKey: Array<number>, infoStr: Array<number>)
+}
+
 export declare function aes128Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
 export declare function aes128Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
@@ -80,11 +94,19 @@ export declare function blake2Sha512Verify(dataToHash: Array<number>, dataToVeri
 
 export declare function generateEd25519Keys(): Cased25519KeyPairResult
 
+export declare function generateInfoStr(): Array<number>
+
 export declare function generateRsaKeys(keySize: number): CasrsaKeyPairResult
 
 export declare function hmacSign(key: Array<number>, message: Array<number>): Array<number>
 
 export declare function hmacVerify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
+
+export declare function hpkeDecrypt(ciphertext: Array<number>, privateKey: Array<number>, encappedKey: Array<number>, tag: Array<number>, infoStr: Array<number>): Array<number>
+
+export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<number>, infoStr: Array<number>): HpkeEncryptResult
+
+export declare function hpkeGenerateKeypair(): HpkeKeyResult
 
 export declare function scryptHash(passwordToHash: string): string
 
