@@ -1,23 +1,32 @@
-# cas-typescript-sdk
+# CAS TypeScript SDK
 
 [![image](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/7bXXCQj45q)
 
-Ever wanted all of your most useful cryptographic operations in one module and not had to surf documentation for various packages? 
-CAS is here to provide a unified development experience as an abstract layer to the RustCrypto and Dalek-Cryptography suite of algorithms.
-The official NPM page can be found [here](https://www.npmjs.com/package/cas-typescript-sdk).
+## Overview
 
-**Note: All work is experimental and we understand some benchmarks might not be the most optimal.**
+CAS TypeScript SDK is a comprehensive cryptographic toolkit for Node.js, designed to provide developers with a unified, high-level interface to industry-standard cryptographic algorithms. This library acts as an abstraction layer over the powerful RustCrypto and Dalek-Cryptography suites, enabling secure and efficient cryptographic operations through a simple TypeScript API.
 
-## Consuming Library Documentation
-This Node.js NPM module is dependent on our Rust layer [cas-lib](https://github.com/Cryptographic-API-Services/cas-lib) that contains methods to run industry-standard cryptographic operations.
+- **Official NPM Package:** [cas-typescript-sdk](https://www.npmjs.com/package/cas-typescript-sdk)
 
-We utilize some smart people's existing work and we believe their documentation should be reviewed when possible.
+## Features
+- Modern cryptographic primitives: symmetric encryption, asymmetric encryption, digital signatures, hashing, password hashing, key exchange, and more
+- Seamless integration with [cas-lib](https://github.com/Cryptographic-API-Services/cas-lib) Rust FFI layer for optimal performance
+- TypeScript-first API for type safety and developer productivity
+- Unified interface: no need to manage multiple cryptography packages or surf disparate documentation
+- Built on trusted, open-source cryptography libraries
+
+## Documentation & References
+We build on the work of leading cryptography projects. For in-depth algorithm details and implementation notes, please refer to:
 - [Spin Research](https://github.com/SpinResearch)
 - [Dalek-Cryptography](https://github.com/dalek-cryptography)
 - [Rust Crypto](https://github.com/RustCrypto)
 
-## [Examples](./docs/EXAMPLES.md)
+## Usage Examples
+See practical usage and code samples in our [Examples](./docs/EXAMPLES.md).
 
 ## Disclaimer
-Many of the cryptographic crates that are utilized in our core FFI [layer](./src) have never had a security audit performed. Utilize this SDK at your own risk.
+This SDK leverages several cryptographic crates via our core FFI [layer](./src). Please note that many of these crates have not undergone formal security audits. Use this library at your own risk and always review the underlying cryptographic implementations for your security requirements.
+
+---
+For questions, support, or to contribute, join our Discord or visit the [GitHub repository](https://github.com/Cryptographic-API-Services/cas-typescript-sdk).
 
