@@ -103,7 +103,17 @@ jobs:
       - name: List binaries
         run: ls -la *.node
 
+      - name: Verify package contents
+        run: |
+          echo "Checking package contents..."
+          npm pack --dry-run
+          echo "Verifying binary files..."
+          ls -la *.node || echo "No .node files found!"
+
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+          npm config set access public
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
