@@ -16,10 +16,10 @@ jobs:
           # Linux builds (on Ubuntu)
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-zig
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl  
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
@@ -56,12 +56,14 @@ jobs:
         with:
           toolchain: stable
           targets: ${{ matrix.settings.target }}
+          components: rustfmt, clippy
 
       - name: Build in Docker
         if: ${{ matrix.settings.docker }}
         run: |
           docker run --rm -v "$(pwd)":/build -w /build ${{ matrix.settings.docker }} sh -c "
             npm ci && 
+            cargo update &&
             npm run build:ts &&
             npx napi build --platform --release --target ${{ matrix.settings.target }}
           "
@@ -69,6 +71,7 @@ jobs:
       - name: Build native
         if: ${{ !matrix.settings.docker }}
         run: |
+          cargo update
           npm run build:ts
           npx napi build --platform --release --target ${{ matrix.settings.target }}
 
