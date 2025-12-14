@@ -1,10 +1,16 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "description": "",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "module": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    }
+  },
   "scripts": {
     "test": "npm run rust:test && npm run build && npm run node:test",
     "node:test": "npx playwright test",
