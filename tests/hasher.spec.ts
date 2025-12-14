@@ -1,17 +1,17 @@
-import { assert } from "chai";
+import { test, expect } from "@playwright/test";
 import { Blake2Wrapper, SHAWrapper } from "../src-ts/hashers/index";
 
-describe("SHA512 Tests", () => {
-  it("hash", () => {
+test.describe("SHA512 Tests", () => {
+  test("hash", () => {
     const wrapper = new SHAWrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
     const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
     const hashed = wrapper.hash512(tohashBytes);
-    assert.notEqual(tohashBytes, hashed);
+    expect(hashed).not.toEqual(tohashBytes);
   });
 
-  it("verify pass", () => {
+  test("verify pass", () => {
     const wrapper = new SHAWrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
@@ -19,10 +19,10 @@ describe("SHA512 Tests", () => {
     const hashed = wrapper.hash512(tohashBytes);
     const toVerifyBytes: Array<number> = Array.from(encoder.encode(tohashed));
     const verified = wrapper.verify512(hashed, toVerifyBytes);
-    assert.equal(true, verified);
+    expect(verified).toBe(true);
   });
 
-  it("verify fail", () => {
+  test("verify fail", () => {
     const wrapper = new SHAWrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
@@ -31,22 +31,21 @@ describe("SHA512 Tests", () => {
     const toVerify = "This Is Not The Same";
     const toVerifyBytes: Array<number> = Array.from(encoder.encode(toVerify));
     const verified = wrapper.verify512(hashed, toVerifyBytes);
-    assert.equal(false, verified);
+    expect(verified).toBe(false);
   });
 });
 
-
-describe("SHA256 Tests", () => {
-  it("hash", () => {
+test.describe("SHA256 Tests", () => {
+  test("hash", () => {
     const wrapper = new SHAWrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
     const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
     const hashed = wrapper.hash256(tohashBytes);
-    assert.notEqual(tohashBytes, hashed);
+    expect(hashed).not.toEqual(tohashBytes);
   });
 
-  it("verify pass", () => {
+  test("verify pass", () => {
     const wrapper = new SHAWrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
@@ -54,10 +53,10 @@ describe("SHA256 Tests", () => {
     const hashed = wrapper.hash256(tohashBytes);
     const toVerifyBytes: Array<number> = Array.from(encoder.encode(tohashed));
     const verified = wrapper.verify256(hashed, toVerifyBytes);
-    assert.equal(true, verified);
+    expect(verified).toBe(true);
   });
 
-  it("verify fail", () => {
+  test("verify fail", () => {
     const wrapper = new SHAWrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
@@ -66,21 +65,21 @@ describe("SHA256 Tests", () => {
     const toVerify = "This Is Not The Same";
     const toVerifyBytes: Array<number> = Array.from(encoder.encode(toVerify));
     const verified = wrapper.verify256(hashed, toVerifyBytes);
-    assert.equal(false, verified);
+    expect(verified).toBe(false);
   });
 });
 
-describe("Blake2 512", () => {
-  it("hash", () => {
+test.describe("Blake2 512", () => {
+  test("hash", () => {
     const wrapper = new Blake2Wrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
     const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
     const hashed = wrapper.hash512(tohashBytes);
-    assert.notEqual(tohashBytes, hashed);
+    expect(hashed).not.toEqual(tohashBytes);
   });
 
-  it("verify pass", () => {
+  test("verify pass", () => {
     const wrapper = new Blake2Wrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
@@ -88,10 +87,10 @@ describe("Blake2 512", () => {
     const hashed = wrapper.hash512(tohashBytes);
     const toVerifyBytes: Array<number> = Array.from(encoder.encode(tohashed));
     const verified = wrapper.verify512(hashed, toVerifyBytes);
-    assert.equal(true, verified);
+    expect(verified).toBe(true);
   });
 
-  it("verify fail", () => {
+  test("verify fail", () => {
     const wrapper = new Blake2Wrapper();
     const tohashed: string = "This is my array to hash";
     const encoder = new TextEncoder();
@@ -100,20 +99,20 @@ describe("Blake2 512", () => {
     const toVerify = "This Is Not The Same";
     const toVerifyBytes: Array<number> = Array.from(encoder.encode(toVerify));
     const verified = wrapper.verify512(hashed, toVerifyBytes);
-    assert.equal(false, verified);
+    expect(verified).toBe(false);
   });
 
-  describe("Blake2 256", () => {
-    it("hash", () => {
+  test.describe("Blake2 256", () => {
+    test("hash", () => {
       const wrapper = new Blake2Wrapper();
       const tohashed: string = "This is my array to hash";
       const encoder = new TextEncoder();
       const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
       const hashed = wrapper.hash256(tohashBytes);
-      assert.notEqual(tohashBytes, hashed);
+      expect(hashed).not.toEqual(tohashBytes);
     });
 
-    it("verify pass", () => {
+    test("verify pass", () => {
       const wrapper = new Blake2Wrapper();
       const tohashed: string = "This is my array to hash";
       const encoder = new TextEncoder();
@@ -121,10 +120,10 @@ describe("Blake2 512", () => {
       const hashed = wrapper.hash256(tohashBytes);
       const toVerifyBytes: Array<number> = Array.from(encoder.encode(tohashed));
       const verified = wrapper.verify256(hashed, toVerifyBytes);
-      assert.equal(true, verified);
+      expect(verified).toBe(true);
     });
 
-    it("verify fail", () => {
+    test("verify fail", () => {
       const wrapper = new Blake2Wrapper();
       const tohashed: string = "This is my array to hash";
       const encoder = new TextEncoder();
@@ -133,7 +132,7 @@ describe("Blake2 512", () => {
       const toVerify = "This Is Not The Same";
       const toVerifyBytes: Array<number> = Array.from(encoder.encode(toVerify));
       const verified = wrapper.verify256(hashed, toVerifyBytes);
-      assert.equal(false, verified);
+      expect(verified).toBe(false);
     });
   });
 });

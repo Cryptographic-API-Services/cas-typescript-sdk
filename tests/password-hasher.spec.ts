@@ -1,4 +1,5 @@
-import { assert, expect } from "chai";
+import {test, expect } from '@playwright/test';
+import { assert } from "chai";
 import { Argon2Wrapper, BCryptWrapper } from "../src-ts/password-hashers/index";
 import { ScryptWrapper } from "../src-ts/password-hashers/index";
 import {
@@ -6,24 +7,24 @@ import {
   PasswordHasherType,
 } from "../src-ts/password-hashers";
 
-describe("Bcrypt Tests", () => {
+test.describe("Bcrypt Tests", () => {
 
-  it("hash", () => {
+  test("hash", () => {
     const hasher: BCryptWrapper = new BCryptWrapper();
     const password: string = "ThisOneBadPassword!@";
     const hashedPassword: string = hasher.hashPassword(password);
-    assert.notEqual(hashedPassword, password);
+    expect(hashedPassword).not.toBe(password);
   });
 
-  it("verify pass", () => {
+  test("verify pass", () => {
     const hasher: BCryptWrapper = new BCryptWrapper();
     const password: string = "NotThisPassword!@";
     const hashedPassword: string = hasher.hashPassword(password);
     const isValid: boolean = hasher.verify(hashedPassword, password);
-    expect(isValid).to.equal(true);
+    expect(isValid).toBe(true);
   });
 
-  it("verify fail", () => {
+  test("verify fail", () => {
     const hasher: BCryptWrapper = new BCryptWrapper();
     const password: string = "NotThisPassword!@";
     const hashedPassword: string = hasher.hashPassword(password);
@@ -31,31 +32,31 @@ describe("Bcrypt Tests", () => {
       hashedPassword,
       "ThesePasswordsDoNotMatch",
     );
-    expect(isValid).to.equal(false);
+    expect(isValid).toBe(false);
   });
 });
 
-describe("Scrypt Tests", () => {
-  it("hash with factory", () => {
+test.describe("Scrypt Tests", () => {
+  test("hash with factory", () => {
     const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Scrypt,
     );
     const password: string = "ScryptRocks";
     const hashed: string = hasher.hashPassword(password);
-    assert.notEqual(password, hashed);
+    expect(hashed).not.toBe(password);
   });
 
-  it("verify pass with factory", () => {
+  test("verify pass with factory", () => {
     const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Scrypt,
     );
     const password: string = "ScryptRocks1231231";
     const hashed: string = hasher.hashPassword(password);
     const verified: boolean = hasher.verify(hashed, password);
-    assert.isTrue(verified);
+    expect(verified).toBe(true);
   });
 
-  it("verify fail with factory", () => {
+  test("verify fail with factory", () => {
     const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Scrypt,
     );
@@ -65,31 +66,31 @@ describe("Scrypt Tests", () => {
       hashed,
       "make this fail, its not the same",
     );
-    assert.isNotTrue(verified);
+    expect(verified).toBe(false);
   });
 });
 
-describe("Argon2 Tests", () => { 
-  it("hash with factory", () => {
+test.describe("Argon2 Tests", () => { 
+  test("hash with factory", () => {
     const hasher: Argon2Wrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Argon2,
     );
     const password: string = "ScryptRocks";
     const hashed: string = hasher.hashPassword(password);
-    assert.notEqual(password, hashed);
+    expect(hashed).not.toBe(password);
   });
 
-  it("verify pass with factory", () => {
+  test("verify pass with factory", () => {
     const hasher: Argon2Wrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Argon2,
     );
     const password: string = "ScryptRocks1231231";
     const hashed: string = hasher.hashPassword(password);
     const verified: boolean = hasher.verify(hashed, password);
-    assert.isTrue(verified);
+    expect(verified).toBe(true);
   });
 
-  it("verify fail with factory", () => {
+  test("verify fail with factory", () => {
     const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Argon2,
     );
@@ -99,6 +100,6 @@ describe("Argon2 Tests", () => {
       hashed,
       "make this fail, its not the same",
     );
-    assert.isNotTrue(verified);
+    expect(verified).toBe(false);
   });
 });

@@ -4,9 +4,10 @@
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "module": "module",
   "scripts": {
     "test": "npm run rust:test && npm run build && npm run node:test",
-    "node:test": "mocha -r ts-node/register ./test-ts/**/*.test.spec.ts --timeout 20000 --recursive",
+    "node:test": "npx playwright test",
     "rust:test": "cargo test --release",
     "build:ts": "rimraf lib && tsc",
     "build:rust": "napi build --release --platform",
@@ -40,11 +41,7 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.20",
-    "@types/mocha": "^10.0.10",
-    "@types/node-fetch": "^2.6.12",
-    "chai": "^4.5.0",
-    "mocha": "^10.8.2",
-    "ts-node": "^10.9.2"
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.2"
   }
 }

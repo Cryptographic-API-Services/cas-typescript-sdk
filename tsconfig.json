@@ -1,22 +1,21 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "display": "Node 18",
-  
-    "compilerOptions": {
-      "lib": ["es2022"],
-      "module": "commonjs",
-      "target": "es2022",
-  
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-  
-      "outDir": "lib",
-      "declaration": true
-    },
-  
-    "include": [
-      "src-ts/**/*"
-    ]
-  }
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 24",
+
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "lib",
+    "declaration": true,
+    "declarationMap": true,        // optional but handy for consumers
+    "sourceMap": true              // optional if you ship maps
+  },
+
+  "include": ["src-ts/**/*"]
+}

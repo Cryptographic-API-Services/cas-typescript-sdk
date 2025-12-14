@@ -1,8 +1,8 @@
-import { assert } from "chai";
+import {test, expect} from '@playwright/test';
 import { HmacWrapper } from "../src-ts/message/index";
 
-describe("HMAC Tests", () => {
-  it("Sign and Verify", () => {
+test.describe("HMAC Tests", () => {
+  test("Sign and Verify", () => {
     const wrapper = new HmacWrapper();
     const key: string = "This is my array to hash";
     const encoder = new TextEncoder();
@@ -11,6 +11,6 @@ describe("HMAC Tests", () => {
     const messageBytes = Array.from(encoder.encode(message));
     const signature = wrapper.hmacSignBytes(keyBytes, messageBytes);
     const result = wrapper.hmacVerifyBytes(keyBytes, messageBytes, signature);
-    assert.equal(true, result);
+    expect(result).toBe(true);
   });
 });
