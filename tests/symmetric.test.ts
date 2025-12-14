@@ -1,10 +1,10 @@
-import { assert } from "chai";
+import {test, expect} from '@playwright/test';
 import { AESWrapper } from "../src-ts/symmetric/aes-wrapper";
 import { X25519Wrapper } from '../src-ts/key_exchange/x25519';
 import { areEqual } from "./helpers/array";
 
-describe("Symmetric Tests", () => {
-  it("aes 128 encrypt and decrypt equals", () => {
+test.describe("Symmetric Tests", () => {
+  test("aes 128 encrypt and decrypt equals", () => {
     const aesWrapper: AESWrapper = new AESWrapper();
     const aesKey = aesWrapper.aes128Key();
     const aesNonce = aesWrapper.generateAESNonce();
@@ -14,10 +14,10 @@ describe("Symmetric Tests", () => {
     const ciphertext = aesWrapper.aes128Encrypt(aesKey, aesNonce, tohashBytes);
     const plaintxt = aesWrapper.aes128Decrypt(aesKey, aesNonce, ciphertext);
     var result = areEqual(plaintxt, tohashBytes);
-    assert.isTrue(result);
+    expect(result).toBe(true);
   });
 
-  it("aes 256 encrypt and decrypt equals", () => {
+  test("aes 256 encrypt and decrypt equals", () => {
     const aesWrapper: AESWrapper = new AESWrapper();
     const aesKey = aesWrapper.aes256Key();
     const aesNonce = aesWrapper.generateAESNonce();
@@ -27,10 +27,10 @@ describe("Symmetric Tests", () => {
     const ciphertext = aesWrapper.aes256Encrypt(aesKey, aesNonce, tohashBytes);
     const plaintxt = aesWrapper.aes256Decrypt(aesKey, aesNonce, ciphertext);
     var result = areEqual(plaintxt, tohashBytes);
-    assert.isTrue(result);
+    expect(result).toBe(true);
   });
 
-  it("ase 256 X25519 Diffie-Hellman encrypt and decrypt", () => {
+  test("ase 256 X25519 Diffie-Hellman encrypt and decrypt", () => {
     const x25519 = new X25519Wrapper();
     const alice= x25519.generateSecretAndPublicKey();
     const bob = x25519.generateSecretAndPublicKey();
@@ -52,10 +52,10 @@ describe("Symmetric Tests", () => {
     const bobPlaintext = aesWrapper.aes256Decrypt(bobAesKey, nonce, aliceCiphertext);
 
     var result = areEqual(bobPlaintext, tohashBytes);
-    assert.isTrue(result);
+    expect(result).toBe(true);
   });
 
-  it("ase 128 X25519 Diffie-Hellman encrypt and decrypt", () => {
+  test("ase 128 X25519 Diffie-Hellman encrypt and decrypt", () => {
     const x25519 = new X25519Wrapper();
     const alice= x25519.generateSecretAndPublicKey();
     const bob = x25519.generateSecretAndPublicKey();
@@ -77,6 +77,6 @@ describe("Symmetric Tests", () => {
     const bobPlaintext = aesWrapper.aes128Decrypt(bobAesKey, nonce, aliceCiphertext);
 
     var result = areEqual(bobPlaintext, tohashBytes);
-    assert.isTrue(result);
+    expect(result).toBe(true);
   });
 });

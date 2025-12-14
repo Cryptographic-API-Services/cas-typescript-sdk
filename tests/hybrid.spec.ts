@@ -1,8 +1,8 @@
 import { HpkeWrapper } from "../src-ts/hybrid/hpke";
-import { assert } from "chai";
+import {test, expect} from '@playwright/test';
 
-describe("Hybrid Encryption", () => {
-    it("HPKE Encrypt and Decrypt", () => {
+test.describe("Hybrid Encryption", () => {
+    test("HPKE Encrypt and Decrypt", () => {
         const hpkeWrapper = new HpkeWrapper();
         const keyPair = hpkeWrapper.generateKeyPair();
         const encoder = new TextEncoder();
@@ -18,6 +18,6 @@ describe("Hybrid Encryption", () => {
         );
         const decoder = new TextDecoder();
         const decryptedMessage = decoder.decode(new Uint8Array(decrypted));
-        assert.equal(decryptedMessage, message);
+        expect(decryptedMessage).toBe(message);
     });
 });

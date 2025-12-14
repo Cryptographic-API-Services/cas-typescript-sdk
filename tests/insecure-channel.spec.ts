@@ -2,10 +2,10 @@ import {AESWrapper} from "../src-ts/symmetric/index";
 import {X25519Wrapper} from "../src-ts/key_exchange/index";
 import {CASx25519SecretPublicKeyResult} from "../index";
 import { areEqual } from "./helpers/array";
-import { assert } from "chai";
+import {test, expect} from '@playwright/test';
 
-describe("Insecure Channel Tests", () => {
-    it("AES256-GBC Diffie Hellman X25519", () => {
+test.describe("Insecure Channel Tests", () => {
+    test("AES256-GBC Diffie Hellman X25519", () => {
       const aesWrapper = new AESWrapper();
       const x25519Wrapper = new X25519Wrapper();
       const alice_keys: CASx25519SecretPublicKeyResult = x25519Wrapper.generateSecretAndPublicKey();
@@ -26,10 +26,10 @@ describe("Insecure Channel Tests", () => {
       const encrypted = aesWrapper.aes256Encrypt(alice_aes_key, nonce, toEncrypt);
       const decrypted = aesWrapper.aes256Decrypt(bob_aes_key, nonce, encrypted);
       let result = areEqual(decrypted, toEncrypt);
-      assert.isTrue(result);
+      expect(result).toBe(true);
     });
 
-    it("AES128-GBC Diffie Hellman X25519", () => {
+    test("AES128-GBC Diffie Hellman X25519", () => {
       const aesWrapper = new AESWrapper();
       const x25519Wrapper = new X25519Wrapper();
       const alice_keys: CASx25519SecretPublicKeyResult = x25519Wrapper.generateSecretAndPublicKey();
@@ -50,6 +50,6 @@ describe("Insecure Channel Tests", () => {
       const encrypted = aesWrapper.aes128Encrypt(alice_aes_key, nonce, toEncrypt);
       const decrypted = aesWrapper.aes128Decrypt(bob_aes_key, nonce, encrypted);
       let result = areEqual(decrypted, toEncrypt);
-      assert.isTrue(result);
+      expect(result).toBe(true);
     });
 });
