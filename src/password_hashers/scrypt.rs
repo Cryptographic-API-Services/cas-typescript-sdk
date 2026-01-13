@@ -1,14 +1,26 @@
-use cas_lib::password_hashers::{cas_password_hasher::CASPasswordHasher, scrypt::CASScrypt};
+use cas_lib::password_hashers::{scrypt::CASScrypt};
 use napi_derive::napi;
 
 #[napi]
 pub fn scrypt_hash(password_to_hash: String) -> String {
-    return <CASScrypt as CASPasswordHasher>::hash_password(password_to_hash);
+    return CASScrypt::hash_password(password_to_hash);
 }
 
 #[napi]
 pub fn scrypt_verify(hashed_password: String, password_to_verify: String) -> bool {
-    return <CASScrypt as CASPasswordHasher>::verify_password(hashed_password, password_to_verify);
+    return CASScrypt::verify_password(hashed_password, password_to_verify);
+}
+
+#[napi]
+pub fn scrypt_hash_params(password: String, cpu_memory_cost: u8, block_size: u32, parallelism: u32) -> String {
+    return CASScrypt::hash_password_customized(password, cpu_memory_cost, block_size, parallelism);
+}
+
+#[test]
+pub fn scrypt_hash_params_test() {
+    let password = "BadPassword".to_string();
+    let hashed = scrypt_hash_params(password.clone(), 15, 8, 1);
+    assert_ne!(password, hashed);
 }
 
 #[test]

@@ -1,4 +1,4 @@
-import { argon2Hash, argon2Verify} from "./../../index";
+import { argon2Hash, argon2HashParams, argon2Verify} from "./../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class Argon2Wrapper implements IPasswordHasherBase {
@@ -12,6 +12,21 @@ export class Argon2Wrapper implements IPasswordHasherBase {
       throw new Error("You must provide a password to hash with Argon2");
     }
     return argon2Hash(password);
+  }
+  
+  /**
+   * Hashes a password with Argon2 using custom parameters
+   * @param password 
+   * @param memoryCost 
+   * @param timeCost 
+   * @param parallelism 
+   * @returns 
+   */
+  public hashPasswordParams(password: string, memoryCost: number, timeCost: number, parallelism: number): string {
+    if (!password) {
+      throw new Error("You must provide a password to hash with Argon2");
+    }
+    return argon2HashParams(memoryCost, timeCost, parallelism, password);
   }
 
   /**

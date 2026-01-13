@@ -1,4 +1,4 @@
-import { scryptHash, scryptVerify} from "../../index";
+import { scryptHash, scryptHashParams, scryptVerify} from "../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class ScryptWrapper implements IPasswordHasherBase {
@@ -13,6 +13,21 @@ export class ScryptWrapper implements IPasswordHasherBase {
       throw new Error("You must provide a password to hash with Scrypt");
     }
     return scryptHash(password);
+  }
+
+  /**
+   * Hashes a password with SCrypt using custom parameters
+   * @param password 
+   * @param cpuCost 
+   * @param blockSize 
+   * @param parallelism 
+   * @returns 
+   */
+  public hashPasswordParams(password: string, cpuCost: number, blockSize: number, parallelism: number): string {
+    if (!password) {
+      throw new Error("You must provide a password to hash with Scrypt");
+    }
+    return scryptHashParams(password, cpuCost, blockSize, parallelism);
   }
 
   /**
