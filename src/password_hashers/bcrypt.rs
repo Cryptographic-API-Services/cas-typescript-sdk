@@ -11,6 +11,18 @@ pub fn bcrypt_verify(hashed_password: String, password_to_verify: String) -> boo
     return CASBCrypt::verify_password(hashed_password, password_to_verify);
 }
 
+#[napi]
+pub fn bcrypt_hash_params(cost: u32, password: String) -> String {
+    return CASBCrypt::hash_password_customized(password, cost);
+}
+
+#[test]
+pub fn bcrypt_hash_params_test() {
+    let password = "ThisIsNotMyPasswolrd".to_string();
+    let hashed = bcrypt_hash_params(12, password.clone());  
+    assert_ne!(password, hashed);
+}
+
 #[test]
 pub fn bcrypt_hash_test() {
     let password = "ThisIsNotMyPasswolrd".to_string();

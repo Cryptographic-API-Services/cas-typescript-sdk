@@ -11,6 +11,18 @@ pub fn scrypt_verify(hashed_password: String, password_to_verify: String) -> boo
     return CASScrypt::verify_password(hashed_password, password_to_verify);
 }
 
+#[napi]
+pub fn scrypt_hash_params(password: String, cpu_memory_cost: u8, block_size: u32, parallelism: u32) -> String {
+    return CASScrypt::hash_password_customized(password, cpu_memory_cost, block_size, parallelism);
+}
+
+#[test]
+pub fn scrypt_hash_params_test() {
+    let password = "BadPassword".to_string();
+    let hashed = scrypt_hash_params(password.clone(), 15, 8, 1);
+    assert_ne!(password, hashed);
+}
+
 #[test]
 pub fn scrypt_hash_test() {
     let password = "BadPassword".to_string();
