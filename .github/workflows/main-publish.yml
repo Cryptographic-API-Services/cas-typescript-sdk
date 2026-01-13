@@ -16,10 +16,10 @@ jobs:
           # Linux builds (on Ubuntu)
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-zig
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl  
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
           # Windows builds (on Windows)
           - host: windows-latest
             target: x86_64-pc-windows-msvc
@@ -52,6 +52,7 @@ jobs:
         if: ${{ matrix.settings.docker }}
         run: |
           docker run --rm -v "$(pwd)":/build -w /build ${{ matrix.settings.docker }} sh -c "
+            apk add --no-cache openssl-dev pkgconf &&
             rustup toolchain install nightly &&
             rustup default nightly &&
             npm ci && 
