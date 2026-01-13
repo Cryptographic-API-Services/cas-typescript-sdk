@@ -1,15 +1,14 @@
 use cas_lib::password_hashers::bcrypt::CASBCrypt;
-use cas_lib::password_hashers::cas_password_hasher::CASPasswordHasher;
 use napi_derive::napi;
 
 #[napi]
 pub fn bcrypt_hash(password_to_hash: String) -> String {
-    return <CASBCrypt as CASPasswordHasher>::hash_password(password_to_hash);
+    return CASBCrypt::hash_password(password_to_hash);
 }
 
 #[napi]
 pub fn bcrypt_verify(hashed_password: String, password_to_verify: String) -> bool {
-    return <CASBCrypt as CASPasswordHasher>::verify_password(hashed_password, password_to_verify);
+    return CASBCrypt::verify_password(hashed_password, password_to_verify);
 }
 
 #[test]
