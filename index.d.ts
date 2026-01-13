@@ -70,6 +70,8 @@ export declare function aesNonce(): Array<number>
 
 export declare function argon2Hash(password: string): string
 
+export declare function argon2HashParams(memoryCost: number, iterations: number, parallelism: number, password: string): string
+
 export declare function argon2Verify(hashedPassword: string, passwordToVerify: string): boolean
 
 export declare function ascon128Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
@@ -81,6 +83,8 @@ export declare function ascon128KeyGenerate(): Array<number>
 export declare function ascon128NonceGenerate(): Array<number>
 
 export declare function bcryptHash(passwordToHash: string): string
+
+export declare function bcryptHashParams(cost: number, password: string): string
 
 export declare function bcryptVerify(hashedPassword: string, passwordToVerify: string): boolean
 
@@ -109,6 +113,8 @@ export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<n
 export declare function hpkeGenerateKeypair(): HpkeKeyResult
 
 export declare function scryptHash(passwordToHash: string): string
+
+export declare function scryptHashParams(password: string, cpuMemoryCost: number, blockSize: number, parallelism: number): string
 
 export declare function scryptVerify(hashedPassword: string, passwordToVerify: string): boolean
 

@@ -1,5 +1,5 @@
 import { IPasswordHasherBase } from "./password-hasher-base";
-import { bcryptHash, bcryptVerify } from "./../../index";
+import { bcryptHash, bcryptHashParams, bcryptVerify } from "./../../index";
 
 export class BCryptWrapper implements IPasswordHasherBase {
 
@@ -10,9 +10,22 @@ export class BCryptWrapper implements IPasswordHasherBase {
    */
   public hashPassword(password: string): string {
     if (!password) {
-      throw new Error("You must provide a password to hash with Argon2");
+      throw new Error("You must provide a password to hash with BCrypt");
     }
     return bcryptHash(password);
+  }
+
+  /**
+   * Hashes a password with BCrypt using custom cost
+   * @param password 
+   * @param cost 
+   * @returns 
+   */
+  public hashPasswordParams(password: string, cost: number): string {
+    if (!password) {
+      throw new Error("You must provide a password to hash with BCrypt");
+    }
+    return bcryptHashParams(cost, password);
   }
 
   /**
@@ -27,7 +40,7 @@ export class BCryptWrapper implements IPasswordHasherBase {
   ): boolean {
     if (!hashedPassword || !passwordToVerify) {
       throw new Error(
-        "You must provide a hashed password and a plaintext password to verify with Argon2",
+        "You must provide a hashed password and a plaintext password to verify with BCrypt",
       );
     }
     return bcryptVerify(hashedPassword, passwordToVerify);
