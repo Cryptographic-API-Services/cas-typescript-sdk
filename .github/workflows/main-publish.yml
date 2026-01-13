@@ -16,10 +16,10 @@ jobs:
           # Linux builds (on Ubuntu)
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-zig
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl  
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
           # Windows builds (on Windows)
           - host: windows-latest
             target: x86_64-pc-windows-msvc
