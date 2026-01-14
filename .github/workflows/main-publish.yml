@@ -14,6 +14,9 @@ jobs:
       matrix:
         settings:
           - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+          - host: ubuntu-latest
             target: x86_64-unknown-linux-musl  
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
           # Windows builds (on Windows)
