@@ -58,7 +58,7 @@ jobs:
               apk add --no-cache openssl-dev pkgconf
             elif command -v apt-get >/dev/null 2>&1; then
               apt-get update
-              apt-get install -y --no-install-recommends pkg-config libssl-dev ca-certificates
+              apt-get install -y --no-install-recommends pkg-config libssl-dev ca-certificates debian-keyring patch bzr libssl-doc dpkg-dev libfile-fcntllock-perl liblocale-gettext-perl
               rm -rf /var/lib/apt/lists/*
             else
               echo "No supported package manager found (apk/apt-get)."
