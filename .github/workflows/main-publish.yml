@@ -57,7 +57,7 @@ jobs:
               apk add --no-cache openssl-dev pkgconf
             elif command -v apt-get >/dev/null 2>&1; then
               apt-get update
-              apt-get install -y --no-install-recommends pkg-config libssl-dev ca-certificates
+              apt-get install -y pkg-config libssl-dev ca-certificates
               rm -rf /var/lib/apt/lists/*
               export OPENSSL_INCLUDE_DIR=/usr/include
               export OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
