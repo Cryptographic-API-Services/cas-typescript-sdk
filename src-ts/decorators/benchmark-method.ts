@@ -1,7 +1,13 @@
-export function benchmarkMethod() {
+import { CASConfiguration } from "..";
+
+export const benchmarkMethod = () => {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
+      if (!canSendBenchmark()) {
+        return originalMethod.apply(this, args);
+      }
+      
       const className = this.constructor.name;
       const startTime = performance.now();
       const result = originalMethod.apply(this, args); // Method executes here
@@ -13,4 +19,12 @@ export function benchmarkMethod() {
     };
     return descriptor;
   };
+}
+
+const canSendBenchmark = () => {
+  let result = true;
+  if (!CASConfiguration.apiKey) {
+    result = false;
+  }
+  return result;
 }
