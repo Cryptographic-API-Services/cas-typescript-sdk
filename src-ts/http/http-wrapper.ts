@@ -14,7 +14,6 @@ export class HttpWrapper {
             throw new Error("API key must be a allocated string.");
         }
         const result = setApiKey(apiKey);
-        console.log(`Hell yes, ${result}`);
         if (!result) {
             throw new Error("Failed to set API key.");
         }
