@@ -4,11 +4,13 @@ import {
   signEd25519,
   verifyEd25519,
 } from "../../index";
+import { benchmarkMethod } from "../decorators/benchmark-method";
 
 export class Ed25519Wrapper {
   /**
    * Generates a new Ed25519 key pair
    */
+  @benchmarkMethod()
   public getKeyPair(): Cased25519KeyPairResult {
     return generateEd25519Keys();
   }
@@ -19,6 +21,7 @@ export class Ed25519Wrapper {
    * @param message The message to sign
    * @returns The signature
    */
+  @benchmarkMethod()
   public signMessage(privateKey: number[], message: number[]): number[] {
     return signEd25519(privateKey, message);
   }
@@ -30,6 +33,7 @@ export class Ed25519Wrapper {
    * @param signature The signature to verify
    * @returns True if the signature is valid, false otherwise
    */
+  @benchmarkMethod()
   public verifyMessage(publicKey: number[], message: number[], signature: number[]): boolean {
     return verifyEd25519(publicKey, message, signature);
   }

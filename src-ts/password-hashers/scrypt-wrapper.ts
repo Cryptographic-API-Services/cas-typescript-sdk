@@ -1,4 +1,5 @@
 import { scryptHash, scryptHashParams, scryptVerify} from "../../index";
+import { benchmarkMethod } from "../decorators/benchmark-method";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 export class ScryptWrapper implements IPasswordHasherBase {
@@ -8,6 +9,7 @@ export class ScryptWrapper implements IPasswordHasherBase {
    * @param password 
    * @returns string
    */
+  @benchmarkMethod()
   public hashPassword(password: string): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Scrypt");
@@ -23,6 +25,7 @@ export class ScryptWrapper implements IPasswordHasherBase {
    * @param parallelism 
    * @returns 
    */
+  @benchmarkMethod()
   public hashPasswordParams(password: string, cpuCost: number, blockSize: number, parallelism: number): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Scrypt");
@@ -36,6 +39,7 @@ export class ScryptWrapper implements IPasswordHasherBase {
    * @param passwordToVerify 
    * @returns boolean
    */
+  @benchmarkMethod()
   public verify(hashedPassword: string, passwordToVerify: string): boolean {
     if (!hashedPassword || !passwordToVerify) {
       throw new Error(

@@ -11,6 +11,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "useDefineForClassFields": false,
     "outDir": "lib",
     "declaration": true,
     "declarationMap": true,        // optional but handy for consumers

@@ -1,4 +1,5 @@
 import { sha256, sha256Verify, sha512, sha512Verify } from "../../index";
+import { benchmarkMethod } from "../decorators/benchmark-method";
 import { IHasherBase } from "./hasher-base";
 
 export class SHAWrapper implements IHasherBase {
@@ -7,6 +8,7 @@ export class SHAWrapper implements IHasherBase {
      * @param dataToHash 
      * @returns number[]
      */
+    @benchmarkMethod()
     hash512(dataToHash: number[]): number[] {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
@@ -20,6 +22,7 @@ export class SHAWrapper implements IHasherBase {
      * @param dataToVerify 
      * @returns boolean
      */
+    @benchmarkMethod()
     verify512(dataToHash: number[], dataToVerify: number[]): boolean {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
@@ -35,6 +38,7 @@ export class SHAWrapper implements IHasherBase {
      * @param dataToHash 
      * @returns number[]
      */
+    @benchmarkMethod()
     hash256(dataToHash: number[]): number[] {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
@@ -48,6 +52,7 @@ export class SHAWrapper implements IHasherBase {
      * @param dataToVerify 
      * @returns boolean
      */
+    @benchmarkMethod()
     verify256(dataToHash: number[], dataToVerify: number[]): boolean {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
