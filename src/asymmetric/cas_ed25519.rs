@@ -1,5 +1,5 @@
 
-use cas_lib::signatures::cas_ed25519::{Ed25519ByteKeyPair, Ed25519ByteSignature};
+use cas_lib::signatures::cas_ed25519::Ed25519ByteKeyPair;
 use cas_lib::signatures::ed25519::{get_ed25519_key_pair, ed25519_sign_with_key_pair, ed25519_verify_with_public_key};
 use napi_derive::napi;
 

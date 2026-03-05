@@ -1,3 +1,5 @@
+import { HttpWrapper } from "./http/http-wrapper";
+
 class CASConfiguration {
     /**
      * Indicates whether the SDK is running in development mode. If true, the SDK will use the local development server URL.
@@ -31,6 +33,8 @@ class CASConfiguration {
         if (!value) {
             throw new Error("API key must be a allocated string.");
         }
+        HttpWrapper.setBaseUrl(this.url);
+        HttpWrapper.setApiKey(value);
         this._apiKey = value;
     }
 

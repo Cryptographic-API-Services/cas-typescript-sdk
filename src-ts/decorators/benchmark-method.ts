@@ -1,31 +1,40 @@
 import { CASConfiguration } from "..";
+import { HttpWrapper } from "../http/http-wrapper";
 
-export const benchmarkMethod = () => {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+export function benchmarkMethod(): MethodDecorator {
+  return function (
+    target: any,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor
+  ): void | PropertyDescriptor {
+
+    if (!descriptor) return;
+
     const originalMethod = descriptor.value;
+
     descriptor.value = function (...args: any[]) {
+
       if (!canSendBenchmark()) {
         return originalMethod.apply(this, args);
       }
 
       const className = this.constructor.name;
       const startTime = performance.now();
-      console.log(`Benchmarking ${className}.${propertyKey}...`); // Pre-execution logic
-      const result = originalMethod.apply(this, args); // Method executes here
+
+      const result = originalMethod.apply(this, args);
+
       const endTime = performance.now();
       const timespan = Math.round(endTime - startTime);
-      // TODO: send the timespan to the cas website
 
-      return result; // Return result after post-execution logic
+      HttpWrapper.sendBenchmark(timespan, className, propertyKey.toString());
+
+      return result;
     };
+
     return descriptor;
   };
 }
 
 const canSendBenchmark = () => {
-  let result = true;
-  if (!CASConfiguration.apiKey) {
-    result = false;
-  }
-  return result;
-}
+  return !!CASConfiguration.apiKey;
+};
