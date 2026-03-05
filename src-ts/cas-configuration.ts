@@ -33,6 +33,10 @@ class CASConfiguration {
         }
         this._apiKey = value;
     }
+
+    public get apiKey(): string | null {
+        return this._apiKey;
+    }
 }
 
 export default new CASConfiguration();

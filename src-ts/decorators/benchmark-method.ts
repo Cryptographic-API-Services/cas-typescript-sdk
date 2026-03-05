@@ -7,9 +7,10 @@ export const benchmarkMethod = () => {
       if (!canSendBenchmark()) {
         return originalMethod.apply(this, args);
       }
-      
+
       const className = this.constructor.name;
       const startTime = performance.now();
+      console.log(`Benchmarking ${className}.${propertyKey}...`); // Pre-execution logic
       const result = originalMethod.apply(this, args); // Method executes here
       const endTime = performance.now();
       const timespan = Math.round(endTime - startTime);
