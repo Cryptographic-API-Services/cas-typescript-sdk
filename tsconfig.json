@@ -3,14 +3,15 @@
   "display": "Node 24",
 
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
+    "target": "ES2020",
+    "module": "commonjs",
     "lib": ["ES2022"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
     "outDir": "lib",
     "declaration": true,
     "declarationMap": true,        // optional but handy for consumers

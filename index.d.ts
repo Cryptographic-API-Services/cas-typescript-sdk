@@ -118,6 +118,12 @@ export declare function scryptHashParams(password: string, cpuMemoryCost: number
 
 export declare function scryptVerify(hashedPassword: string, passwordToVerify: string): boolean
 
+export declare function sendBenchmarkToApi(timeInMilliseconds: number, className: string, methodName: string): void
+
+export declare function setApiKey(apiKey: string): boolean
+
+export declare function setBaseUrl(baseUrl: string): void
+
 export declare function sha256(dataToHash: Array<number>): Array<number>
 
 export declare function sha256RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CASRSADigitalSignatureResult

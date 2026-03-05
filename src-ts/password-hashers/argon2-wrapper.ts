@@ -1,3 +1,4 @@
+import { benchmarkMethod } from "../decorators/benchmark-method";
 import { argon2Hash, argon2HashParams, argon2Verify} from "./../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
@@ -7,6 +8,8 @@ export class Argon2Wrapper implements IPasswordHasherBase {
    * @param password 
    * @returns string
    */
+
+  @benchmarkMethod()
   public hashPassword(password: string): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Argon2");
@@ -22,6 +25,7 @@ export class Argon2Wrapper implements IPasswordHasherBase {
    * @param parallelism 
    * @returns 
    */
+  @benchmarkMethod()
   public hashPasswordParams(password: string, memoryCost: number, timeCost: number, parallelism: number): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Argon2");
