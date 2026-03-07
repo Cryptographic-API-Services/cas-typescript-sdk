@@ -84,8 +84,8 @@ test("ED25519 Sign and Verify", () => {
   const message = Array.from(
     new TextEncoder().encode("This is a test message")
   );
-  const signature = ed25519.signMessage(keyPair.privateKey, message);
-  const isValid = ed25519.verifyMessage(keyPair.publicKey, message, signature);
+  const signature = ed25519.signBytes(keyPair.privateKey, message);
+  const isValid = ed25519.verifyBytes(keyPair.publicKey, message, signature);
   expect(isValid).toBe(true);
 });
 
@@ -98,8 +98,8 @@ test("ED25519 Verify Fails with Wrong Message", () => {
   const wrongMessage = Array.from(
     new TextEncoder().encode("This is a different message")
   );
-  const signature = ed25519.signMessage(keyPair.privateKey, message);
-  const isValid = ed25519.verifyMessage(
+  const signature = ed25519.signBytes(keyPair.privateKey, message);
+  const isValid = ed25519.verifyBytes(
     keyPair.publicKey,
     wrongMessage,
     signature
