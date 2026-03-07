@@ -9,7 +9,7 @@ export class RSAWrapper {
    * @returns CASRSAKeyPairResult
    */
   @benchmarkMethod()
-  public generateKeys(keySize: number): CASRSAKeyPairResult {
+  public getKeyPair(keySize: number): CASRSAKeyPairResult {
     if (keySize !== 1024 && keySize !== 2048 && keySize !== 4096) {
         throw new Error("You must provide an appropriate key size to generate RSA keys");
     }

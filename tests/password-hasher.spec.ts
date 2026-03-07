@@ -37,7 +37,7 @@ test.describe("Bcrypt Tests", () => {
   test("hash with params", () => {
     const hasher: BCryptWrapper = new BCryptWrapper();
     const password: string = "ThisOneBadPassword!@";
-    const hashedPassword: string = hasher.hashPasswordParams(password, 12);
+    const hashedPassword: string = hasher.hashPasswordWithParameters(password, 12);
     expect(hashedPassword).not.toBe(password);
   })
 });
@@ -78,7 +78,7 @@ test.describe("Scrypt Tests", () => {
   test("hash with params", () => {
     const hasher: ScryptWrapper = new ScryptWrapper();
     const password: string = "ScryptRocks";
-    const hashed: string = hasher.hashPasswordParams(password, 17, 8, 1);
+    const hashed: string = hasher.hashPasswordWithParameters(password, 17, 8, 1);
     expect(hashed).not.toBe(password);
   });
 });
@@ -104,7 +104,7 @@ test.describe("Argon2 Tests", () => {
   });
 
   test("verify fail with factory", () => {
-    const hasher: ScryptWrapper = PasswordHasherFactory.getHasher(
+    const hasher: Argon2Wrapper = PasswordHasherFactory.getHasher(
       PasswordHasherType.Argon2,
     );
     const password: string = "ScryptRocksSomeGarbageText";
@@ -119,7 +119,7 @@ test.describe("Argon2 Tests", () => {
   test("hash with params", () => {
     const hasher: Argon2Wrapper = new Argon2Wrapper();
     const password: string = "Argon2Rocks";
-    const hashed: string = hasher.hashPasswordParams(password, 1024, 3, 1);
+    const hashed: string = hasher.hashPasswordWithParameters(password, 1024, 3, 1);
     expect(hashed).not.toBe(password);
   });
 });

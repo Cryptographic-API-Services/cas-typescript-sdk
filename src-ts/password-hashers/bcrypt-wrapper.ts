@@ -24,7 +24,7 @@ export class BCryptWrapper implements IPasswordHasherBase {
    * @returns 
    */
   @benchmarkMethod()
-  public hashPasswordParams(password: string, cost: number): string {
+  public hashPasswordWithParameters(password: string, cost: number): string {
     if (!password) {
       throw new Error("You must provide a password to hash with BCrypt");
     }

@@ -27,6 +27,7 @@ export class DigitalSignatureSHA512Wrapper implements IDigitalSignature {
      * @param signature 
      * @returns boolean
      */
+    @benchmarkMethod()
     verifyRSa(public_key: string, data_to_verify: number[], signature: number[]): boolean {
         if (!public_key) {
             throw new Error("Must provide a public key");

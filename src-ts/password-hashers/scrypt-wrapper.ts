@@ -26,7 +26,7 @@ export class ScryptWrapper implements IPasswordHasherBase {
    * @returns 
    */
   @benchmarkMethod()
-  public hashPasswordParams(password: string, cpuCost: number, blockSize: number, parallelism: number): string {
+  public hashPasswordWithParameters(password: string, cpuCost: number, blockSize: number, parallelism: number): string {
     if (!password) {
       throw new Error("You must provide a password to hash with Scrypt");
     }

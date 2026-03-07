@@ -22,7 +22,7 @@ export class Ed25519Wrapper {
    * @returns The signature
    */
   @benchmarkMethod()
-  public signMessage(privateKey: number[], message: number[]): number[] {
+  public signBytes(privateKey: number[], message: number[]): number[] {
     return signEd25519(privateKey, message);
   }
 
@@ -34,7 +34,7 @@ export class Ed25519Wrapper {
    * @returns True if the signature is valid, false otherwise
    */
   @benchmarkMethod()
-  public verifyMessage(publicKey: number[], message: number[], signature: number[]): boolean {
+  public verifyBytes(publicKey: number[], message: number[], signature: number[]): boolean {
     return verifyEd25519(publicKey, message, signature);
   }
 }
