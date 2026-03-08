@@ -47,3 +47,4 @@ mod hybrid {
 }
 
 pub mod http;
+pub mod compression;

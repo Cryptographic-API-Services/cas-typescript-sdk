@@ -151,3 +151,7 @@ export declare function verifyRsa(publicKey: string, hash: Array<number>, signat
 export declare function x25519DiffieHellman(mySecretKey: Array<number>, usersPublicKey: Array<number>): Array<number>
 
 export declare function x25519GenerateSecretAndPublicKey(): CASx25519SecretPublicKeyResult
+
+export declare function ztsdCompress(data: Array<number>, level: number): Array<number>
+
+export declare function ztsdDecompress(data: Array<number>): Array<number>
