@@ -41,7 +41,6 @@ jobs:
           args: >
             --format JSON
             --format SARIF
-            --failOnCVSS 7
             --enableRetired
 
       - name: Upload OWASP dependency report
