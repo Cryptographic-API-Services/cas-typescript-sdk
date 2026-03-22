@@ -6,7 +6,8 @@ name: Windows Build / Test
 on:
   pull_request:
     branches: [ "main" ]
-
+  workflow_dispatch:
+    
 jobs:
   build:
 
