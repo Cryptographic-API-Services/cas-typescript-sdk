@@ -1,0 +1,94 @@
+name: OWASP Dependency Check (CAS TypeScript SDK)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+  push:
+    branches: [ main ]
+    paths:
+      - "src/**"
+      - "src-ts/**"
+      - "lib/**"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "tsconfig.json"
+      - ".github/workflows/owasp-dependency-check.yml"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "src/**"
+      - "src-ts/**"
+      - "lib/**"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "tsconfig.json"
+      - ".github/workflows/owasp-dependency-check.yml"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  dependency-check:
+    name: Scan dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Prepare Dependency-Check data directory
+        run: mkdir -p .dependency-check-data
+
+      - name: Cache Dependency-Check data
+        uses: actions/cache@v4
+        with:
+          path: .dependency-check-data
+          key: dependency-check-data-${{ runner.os }}-${{ hashFiles('package-lock.json', 'Cargo.lock') }}
+          restore-keys: |
+            dependency-check-data-${{ runner.os }}-
+
+      - name: Run OWASP Dependency-Check (Docker)
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p dependency-check-report
+          docker run --rm \
+            -e NVD_API_KEY="${NVD_API_KEY:-}" \
+            -v "${{ github.workspace }}:/src" \
+            -v "${{ github.workspace }}/.dependency-check-data:/usr/share/dependency-check/data" \
+            -v "${{ github.workspace }}/dependency-check-report:/report" \
+            owasp/dependency-check:latest \
+            --project "cas-typescript-sdk" \
+            --scan /src/src \
+            --scan /src/src-ts \
+            --scan /src/lib \
+            --format "HTML" \
+            --format "JSON" \
+            --format "SARIF" \
+            --out /report \
+            --failOnCVSS 7 \
+            ${NVD_API_KEY:+--nvdApiKey "${NVD_API_KEY}"}
+
+      - name: Upload OWASP dependency report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: dependency-check-report
+          retention-days: 7
+
+      - name: Upload SARIF to code scanning
+        if: success() && hashFiles('dependency-check-report/*.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: dependency-check-report/dependency-check-report.sarif
