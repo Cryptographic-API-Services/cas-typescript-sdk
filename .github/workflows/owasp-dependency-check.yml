@@ -1,57 +1,63 @@
-name: OWASP Dependency Check
+name: OWASP Dependency Scan
 
 on:
-  push:
-    branches: [ main ]        
   pull_request:
-    branches: [ main ]
-
-permissions:
-  contents: read
-  security-events: write
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  dependency-check:
-    name: Scan dependencies
+  depscan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - uses: actions/checkout@v4
 
-      - name: Cache Dependency-Check data
-        uses: actions/cache@v4
-        with:
-          path: ~/.dependency-check
-          key: dependency-check-${{ runner.os }}-${{ hashFiles('package-lock.json', 'Cargo.lock') }}
-          restore-keys: |
-            dependency-check-${{ runner.os }}-
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Run OWASP Dependency-Check
-        uses: dependency-check/Dependency-Check_Action@main
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        with:
-          project: "cas-typescript-sdk"
-          path: "."
-          format: "HTML"
-          out: "dependency-check-report"
-          args: >
-            --format JSON
-            --format SARIF
-            --enableRetired
+      - name: Generate lockfile when missing
+        run: |
+          if [ ! -f Cargo.lock ]; then
+            cargo generate-lockfile
+          fi
 
-      - name: Upload OWASP dependency report
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: cargo build --release --verbose
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install OWASP scanning tools
+        run: |
+          npm install -g @cyclonedx/cdxgen
+          python -m pip install --upgrade pip
+          pip install owasp-depscan
+
+      - name: Create reports directory
+        run: mkdir -p reports
+
+      - name: Generate CycloneDX SBOM
+        run: cdxgen -o reports/sbom.json .
+
+      - name: Run OWASP dep-scan
+        run: depscan --bom reports/sbom.json --reports-dir reports
+
+      - name: Upload dependency scan reports
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: dependency-check-report
-          path: dependency-check-report
-          retention-days: 7
-
-      - name: Upload SARIF to code scanning
-        if: success() && hashFiles('dependency-check-report/*.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: dependency-check-report/dependency-check-report.sarif
+          name: dependency-scan-reports
+          path: reports/
