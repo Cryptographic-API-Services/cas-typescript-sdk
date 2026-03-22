@@ -8,7 +8,42 @@ on:
     branches: [ "main" ]
 
 jobs:
+  dependency-check:
+    name: OWASP Dependency Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node for dependency scan
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies for scan
+        run: npm ci
+
+      - name: Run OWASP Dependency-Check
+        id: dependency_check
+        uses: dependency-check/Dependency-Check_Action@1.1.0
+        with:
+          project: 'cas-typescript-sdk'
+          path: '.'
+          format: 'HTML'
+          args: >-
+            --failOnCVSS 7
+
+      - name: Upload Dependency-Check report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report-pr-linux
+          path: reports
+          if-no-files-found: error
+
   build:
+    needs: dependency-check
 
     runs-on: ubuntu-latest
 
