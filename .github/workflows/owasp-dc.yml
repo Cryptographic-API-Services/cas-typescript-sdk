@@ -1,94 +1,63 @@
-name: OWASP Dependency Check (CAS TypeScript SDK)
+name: OWASP Dependency Scan
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 9 * * 1"
-  push:
-    branches: [ main ]
-    paths:
-      - "src/**"
-      - "src-ts/**"
-      - "lib/**"
-      - "tests/**"
-      - "package.json"
-      - "package-lock.json"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "tsconfig.json"
-      - ".github/workflows/owasp-dependency-check.yml"
   pull_request:
-    branches: [ main ]
-    paths:
-      - "src/**"
-      - "src-ts/**"
-      - "lib/**"
-      - "tests/**"
-      - "package.json"
-      - "package-lock.json"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "tsconfig.json"
-      - ".github/workflows/owasp-dependency-check.yml"
-
-permissions:
-  contents: read
-  security-events: write
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  dependency-check:
-    name: Scan dependencies
+  depscan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - uses: actions/checkout@v4
 
-      - name: Prepare Dependency-Check data directory
-        run: mkdir -p .dependency-check-data
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache Dependency-Check data
-        uses: actions/cache@v4
-        with:
-          path: .dependency-check-data
-          key: dependency-check-data-${{ runner.os }}-${{ hashFiles('package-lock.json', 'Cargo.lock') }}
-          restore-keys: |
-            dependency-check-data-${{ runner.os }}-
-
-      - name: Run OWASP Dependency-Check (Docker)
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      - name: Generate lockfile when missing
         run: |
-          set -euo pipefail
-          mkdir -p dependency-check-report
-          docker run --rm \
-            -e NVD_API_KEY="${NVD_API_KEY:-}" \
-            -v "${{ github.workspace }}:/src" \
-            -v "${{ github.workspace }}/.dependency-check-data:/usr/share/dependency-check/data" \
-            -v "${{ github.workspace }}/dependency-check-report:/report" \
-            owasp/dependency-check:latest \
-            --project "cas-typescript-sdk" \
-            --scan /src/src \
-            --scan /src/src-ts \
-            --scan /src/lib \
-            --format "HTML" \
-            --format "JSON" \
-            --format "SARIF" \
-            --out /report \
-            --failOnCVSS 7 \
-            ${NVD_API_KEY:+--nvdApiKey "${NVD_API_KEY}"}
+          if [ ! -f Cargo.lock ]; then
+            cargo generate-lockfile
+          fi
 
-      - name: Upload OWASP dependency report
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: cargo build --release --verbose
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install OWASP scanning tools
+        run: |
+          npm install -g @cyclonedx/cdxgen
+          python -m pip install --upgrade pip
+          pip install owasp-depscan
+
+      - name: Create reports directory
+        run: mkdir -p reports
+
+      - name: Generate CycloneDX SBOM
+        run: cdxgen -o reports/sbom.json .
+
+      - name: Run OWASP dep-scan
+        run: depscan --bom reports/sbom.json --reports-dir reports
+
+      - name: Upload dependency scan reports
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: dependency-check-report
-          path: dependency-check-report
-          retention-days: 7
-
-      - name: Upload SARIF to code scanning
-        if: success() && hashFiles('dependency-check-report/*.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: dependency-check-report/dependency-check-report.sarif
+          name: dependency-scan-reports
+          path: reports/
