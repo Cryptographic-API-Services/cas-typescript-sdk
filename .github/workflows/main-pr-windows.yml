@@ -32,9 +32,9 @@ jobs:
           project: 'cas-typescript-sdk'
           path: '.'
           format: 'HTML'
-          out: 'dependency-check-report-pr'
           args: >-
             --failOnCVSS 7
+            --out dependency-check-report-pr
 
       - name: Upload Dependency-Check report
         uses: actions/upload-artifact@v4
