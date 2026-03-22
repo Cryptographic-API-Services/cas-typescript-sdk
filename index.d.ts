@@ -7,27 +7,12 @@ export declare class Cased25519KeyPairResult {
 }
 export type CASED25519KeyPairResult = Cased25519KeyPairResult
 
-export declare class CasrsaDigitalSignatureResult {
-  publicKey: string
-  privateKey: string
-  signature: Array<number>
-  constructor(publicKey: string, privateKey: string, signature: Array<number>)
-}
-export type CASRSADigitalSignatureResult = CasrsaDigitalSignatureResult
-
 export declare class CasrsaKeyPairResult {
   privateKey: string
   publicKey: string
   constructor(privateKey: string, publicKey: string)
 }
 export type CASRSAKeyPairResult = CasrsaKeyPairResult
-
-export declare class Casshaed25519DalekDigitalSignatureResult {
-  publicKey: Array<number>
-  signature: Array<number>
-  constructor(publicKey: Array<number>, signature: Array<number>)
-}
-export type CASSHAED25519DalekDigitalSignatureResult = Casshaed25519DalekDigitalSignatureResult
 
 export declare class CaSx25519SecretPublicKeyResult {
   publicKey: Array<number>
@@ -118,25 +103,11 @@ export declare function scryptHashParams(password: string, cpuMemoryCost: number
 
 export declare function scryptVerify(hashedPassword: string, passwordToVerify: string): boolean
 
-export declare function sendBenchmarkToApi(timeInMilliseconds: number, className: string, methodName: string): void
-
-export declare function setApiKey(apiKey: string): boolean
-
-export declare function setBaseUrl(baseUrl: string): void
-
 export declare function sha256(dataToHash: Array<number>): Array<number>
-
-export declare function sha256RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CASRSADigitalSignatureResult
-
-export declare function sha256RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
 
 export declare function sha256Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
 
 export declare function sha512(dataToHash: Array<number>): Array<number>
-
-export declare function sha512RsaDigitalSignature(rsaKeySize: number, dataToSign: Array<number>): CASRSADigitalSignatureResult
-
-export declare function sha512RsaVerifyDigitalSignature(publicKey: string, dataToVerify: Array<number>, signature: Array<number>): boolean
 
 export declare function sha512Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
 
