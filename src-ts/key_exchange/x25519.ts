@@ -1,5 +1,5 @@
 import { CASx25519SecretPublicKeyResult, x25519DiffieHellman, x25519GenerateSecretAndPublicKey } from "../../index"
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 
 export class X25519Wrapper {
     /**
@@ -7,7 +7,7 @@ export class X25519Wrapper {
      * User should share their public key with the other user and take the other user's public key and they can generate a Shared Secret.
      * @returns X25519SecretPublicKeyResult
      */
-    @benchmarkMethod()
+    
     public generateSecretAndPublicKey(): CASx25519SecretPublicKeyResult {
         return x25519GenerateSecretAndPublicKey();
     }
@@ -19,7 +19,7 @@ export class X25519Wrapper {
      * @param publicKey 
      * @returns Array<number>
      */
-    @benchmarkMethod()
+    
     public generateSharedSecret(secretKey: Array<number>, publicKey: Array<number>): Array<number> {
         return x25519DiffieHellman(secretKey, publicKey);
     }

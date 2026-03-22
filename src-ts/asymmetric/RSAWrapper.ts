@@ -1,5 +1,5 @@
 import { CASRSAKeyPairResult, generateRsaKeys, signRsa, verifyRsa } from "../../index";
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 
 export class RSAWrapper {
 
@@ -8,7 +8,7 @@ export class RSAWrapper {
    * @param keySize 
    * @returns CASRSAKeyPairResult
    */
-  @benchmarkMethod()
+  
   public getKeyPair(keySize: number): CASRSAKeyPairResult {
     if (keySize !== 1024 && keySize !== 2048 && keySize !== 4096) {
         throw new Error("You must provide an appropriate key size to generate RSA keys");
@@ -29,7 +29,7 @@ export class RSAWrapper {
    * @param hash 
    * @returns Array<number>
    */
-  @benchmarkMethod()
+  
   public sign(privateKey: string, dataToSign: Array<number>): Array<number> {
     if (!privateKey) {
       throw new Error("You must provide a private key to sign with RSA");
@@ -47,7 +47,7 @@ export class RSAWrapper {
    * @param signature 
    * @returns boolean
    */
-  @benchmarkMethod()
+  
   public verify(publicKey: string, hash: Array<number>, signature: Array<number>): boolean {
     if (!publicKey) {
       throw new Error("You must provide a public key to verify with RSA");

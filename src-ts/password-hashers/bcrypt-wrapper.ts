@@ -1,6 +1,6 @@
 import { IPasswordHasherBase } from "./password-hasher-base";
 import { bcryptHash, bcryptHashParams, bcryptVerify } from "./../../index";
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 
 export class BCryptWrapper implements IPasswordHasherBase {
 
@@ -9,7 +9,7 @@ export class BCryptWrapper implements IPasswordHasherBase {
    * @param password 
    * @returns string
    */
-  @benchmarkMethod()
+  
   public hashPassword(password: string): string {
     if (!password) {
       throw new Error("You must provide a password to hash with BCrypt");
@@ -23,7 +23,7 @@ export class BCryptWrapper implements IPasswordHasherBase {
    * @param cost 
    * @returns 
    */
-  @benchmarkMethod()
+  
   public hashPasswordWithParameters(password: string, cost: number): string {
     if (!password) {
       throw new Error("You must provide a password to hash with BCrypt");
@@ -37,7 +37,7 @@ export class BCryptWrapper implements IPasswordHasherBase {
    * @param passwordToVerify 
    * @returns boolean
    */
-  @benchmarkMethod()
+  
   public verify(
     hashedPassword: string,
     passwordToVerify: string,

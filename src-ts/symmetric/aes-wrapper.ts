@@ -9,7 +9,7 @@ import {
   aes256KeyFromX25519SharedSecret,
   aesNonce,
 } from "../../index";
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 
 
 export class AESWrapper {
@@ -18,7 +18,7 @@ export class AESWrapper {
      * @description Generates a 128 bit AES key
      * @returns returns a 128 bit AES key
      */
-    @benchmarkMethod()
+    
     public aes128Key(): Array<number> {
         return aes128Key();
     }
@@ -27,7 +27,7 @@ export class AESWrapper {
      * @description Generates a 256 bit AES key
      * @returns returns a 256 bit AES key
      */
-    @benchmarkMethod()
+    
     public aes256Key(): Array<number> {
         return aes256Key();
     }
@@ -36,7 +36,7 @@ export class AESWrapper {
      * Generates an 96 bit AES nonce
      * @returns Array<number>
      */
-    @benchmarkMethod()
+    
     public generateAESNonce(): Array<number> {
         return aesNonce();
     }
@@ -48,7 +48,7 @@ export class AESWrapper {
      * @param plaintext 
      * @returns Array<number>
      */
-    @benchmarkMethod()
+    
     public aes128Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number> {
         return aes128Encrypt(aesKey, nonce, plaintext);
     }
@@ -60,7 +60,7 @@ export class AESWrapper {
      * @param ciphertext 
      * @returns Array<number>
      */
-    @benchmarkMethod()
+    
     public aes128Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number> {
         return aes128Decrypt(aesKey, nonce, ciphertext);
     }
@@ -72,7 +72,7 @@ export class AESWrapper {
      * @param plaintext 
      * @returns 
      */
-    @benchmarkMethod()
+    
     public aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number> {
         return aes256Encrypt(aesKey, nonce, plaintext);
     }
@@ -84,7 +84,7 @@ export class AESWrapper {
      * @param ciphertext 
      * @returns 
      */
-    @benchmarkMethod()
+    
     public aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number> {
         return aes256Decrypt(aesKey, nonce, ciphertext);
     }
@@ -94,7 +94,7 @@ export class AESWrapper {
      * @param shared_secret 
      * @returns 
      */
-    @benchmarkMethod()
+    
     public aes256KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
          return aes256KeyFromX25519SharedSecret(shared_secret);
     }
@@ -104,7 +104,7 @@ export class AESWrapper {
      * @param shared_secret 
      * @returns 
      */
-    @benchmarkMethod()
+    
     public aes128KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
         return aes128KeyFromX25519SharedSecret(shared_secret);
    }

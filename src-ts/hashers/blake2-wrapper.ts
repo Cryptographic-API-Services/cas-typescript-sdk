@@ -4,7 +4,7 @@ import {
   blake2Sha256,
   blake2Sha512,
 } from "../../index";
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 import { IHasherBase } from "./hasher-base";
 
 export class Blake2Wrapper implements IHasherBase {
@@ -13,7 +13,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @param dataToHash The data to hash
    * @returns The hashed output
    */
-  @benchmarkMethod()
+  
   hash512(dataToHash: number[]): number[] {
     return blake2Sha512(dataToHash);
   }
@@ -24,7 +24,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @param dataToVerify The data to verify
    * @returns True if the verification is successful, false otherwise
    */
-  @benchmarkMethod()
+  
   verify512(dataToHash: number[], dataToVerify: number[]): boolean {
     return blake2Sha512Verify(dataToHash, dataToVerify);
   }
@@ -33,7 +33,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @param dataToHash The data to hash
    * @returns The hashed output
    */
-  @benchmarkMethod()
+  
   hash256(dataToHash: number[]): number[] {
     return blake2Sha256(dataToHash);
   }
@@ -44,7 +44,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @param dataToVerify The data to verify
    * @returns True if the verification is successful, false otherwise
    */
-  @benchmarkMethod()
+  
   verify256(dataToHash: number[], dataToVerify: number[]): boolean {
     return blake2Sha256Verify(dataToHash, dataToVerify);
   }

@@ -4,14 +4,14 @@ import {
   ascon128KeyGenerate,
   ascon128NonceGenerate,
 } from "../../index";
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 
 export class AsconWrapper {
   /**
    * Generates an Ascon 128 key
    * @returns Array<number>
    */
-  @benchmarkMethod()
+  
   ascon128Key(): Array<number> {
     return ascon128KeyGenerate();
   }
@@ -20,7 +20,7 @@ export class AsconWrapper {
    * Generates and Ascon 128 nonce.
    * @returns Array<number>
    */
-  @benchmarkMethod()
+  
   ascon128Nonce(): Array<number> {
     return ascon128NonceGenerate();
   }
@@ -32,7 +32,7 @@ export class AsconWrapper {
    * @param plaintext 
    * @returns 
    */
-  @benchmarkMethod()
+  
   ascon128Encrypt(
     key: Array<number>,
     nonce: Array<number>,
@@ -57,7 +57,7 @@ export class AsconWrapper {
    * @param ciphertext 
    * @returns Array<number>
    */
-  @benchmarkMethod()
+  
   ascon128Decrypt(
     key: Array<number>,
     nonce: Array<number>,

@@ -1,5 +1,5 @@
 import { CASRSADigitalSignatureResult, CASSHAED25519DalekDigitalSignatureResult, sha512RsaDigitalSignature, sha512RsaVerifyDigitalSignature } from "../../index";
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 import { IDigitalSignature } from "./digital-signature-base";
 
 export class DigitalSignatureSHA512Wrapper implements IDigitalSignature {
@@ -9,7 +9,7 @@ export class DigitalSignatureSHA512Wrapper implements IDigitalSignature {
      * @param data_to_sign 
      * @returns CASRSADigitalSignatureResult
      */
-    @benchmarkMethod()
+    
     createRsa(rsa_key_size: number, data_to_sign: number[]): CASRSADigitalSignatureResult {
         if (rsa_key_size !== 1024 && rsa_key_size !== 2048 && rsa_key_size !== 4096) {
             throw new Error("You need to provide an appropriate RSA key size.");
@@ -27,7 +27,7 @@ export class DigitalSignatureSHA512Wrapper implements IDigitalSignature {
      * @param signature 
      * @returns boolean
      */
-    @benchmarkMethod()
+    
     verifyRSa(public_key: string, data_to_verify: number[], signature: number[]): boolean {
         if (!public_key) {
             throw new Error("Must provide a public key");

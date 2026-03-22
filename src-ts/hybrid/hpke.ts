@@ -1,5 +1,5 @@
 import { hpkeGenerateKeypair, hpkeEncrypt, hpkeDecrypt, generateInfoStr, HpkeKeyResult, HpkeEncryptResult} from "../../index"
-import { benchmarkMethod } from "../decorators/benchmark-method";
+
 
 export class HpkeWrapper {
 
@@ -7,7 +7,7 @@ export class HpkeWrapper {
      * Generate a new HPKE key pair along with an info string
      * @returns HpkeKeyResult
      */
-    @benchmarkMethod()
+    
     public generateKeyPair(): HpkeKeyResult {
         return hpkeGenerateKeypair();
     }
@@ -16,7 +16,7 @@ export class HpkeWrapper {
      * Generate a new info string for HPKE
      * @returns A byte array representing the info string
      */
-    @benchmarkMethod()
+    
     public generateInfoString(): number[] {
         return generateInfoStr();
     }
@@ -28,7 +28,7 @@ export class HpkeWrapper {
      * @param infoStr Additional information to include in the encryption
      * @returns HpkeEncryptResult
      */
-    @benchmarkMethod()
+    
     public encrypt(plaintext: number[], publicKey: number[], infoStr: number[]): HpkeEncryptResult {
         return hpkeEncrypt(plaintext, publicKey, infoStr);
     }
@@ -42,7 +42,7 @@ export class HpkeWrapper {
      * @param infoStr Additional information to include in the decryption
      * @returns The decrypted message
      */
-    @benchmarkMethod()
+    
     public decrypt(ciphertext: number[], privateKey: number[], encapsulatedKey: number[], tag: number[], infoStr: number[]): number[] {
         return hpkeDecrypt(ciphertext, privateKey, encapsulatedKey, tag, infoStr);
     }
