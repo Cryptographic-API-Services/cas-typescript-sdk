@@ -15,6 +15,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup node for dependency scan
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies for scan
+        run: npm ci
+
       - name: Run OWASP Dependency-Check
         id: dependency_check
         uses: dependency-check/Dependency-Check_Action@1.1.0
