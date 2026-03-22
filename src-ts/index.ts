@@ -1,5 +1,3 @@
-import CASConfiguration from "./cas-configuration";
-
 export * from "./password-hashers/index";
 export * from "./hashers/index";
 export * from "./key_exchange/index";
@@ -11,4 +9,3 @@ export * from "./message/index";
 export * from "./signature/index";
 export * from "./hybrid/index";
 export * from "./compression/index";
-export { CASConfiguration };
