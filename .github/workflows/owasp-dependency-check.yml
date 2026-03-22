@@ -1,35 +1,10 @@
-name: OWASP Dependency Check (CAS TypeScript SDK)
+name: OWASP Dependency Check
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 9 * * 1"
   push:
-    branches: [ main ]
-    paths:
-      - "src/**"
-      - "src-ts/**"
-      - "lib/**"
-      - "tests/**"
-      - "package.json"
-      - "package-lock.json"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "tsconfig.json"
-      - ".github/workflows/owasp-dependency-check.yml"
+    branches: [ main ]        
   pull_request:
     branches: [ main ]
-    paths:
-      - "src/**"
-      - "src-ts/**"
-      - "lib/**"
-      - "tests/**"
-      - "package.json"
-      - "package-lock.json"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "tsconfig.json"
-      - ".github/workflows/owasp-dependency-check.yml"
 
 permissions:
   contents: read
@@ -46,39 +21,28 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Prepare Dependency-Check data directory
-        run: mkdir -p .dependency-check-data
-
       - name: Cache Dependency-Check data
         uses: actions/cache@v4
         with:
-          path: .dependency-check-data
-          key: dependency-check-data-${{ runner.os }}-${{ hashFiles('package-lock.json', 'Cargo.lock') }}
+          path: ~/.dependency-check
+          key: dependency-check-${{ runner.os }}-${{ hashFiles('package-lock.json', 'Cargo.lock') }}
           restore-keys: |
-            dependency-check-data-${{ runner.os }}-
+            dependency-check-${{ runner.os }}-
 
-      - name: Run OWASP Dependency-Check (Docker)
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: |
-          set -euo pipefail
-          mkdir -p dependency-check-report
-          docker run --rm \
-            -e NVD_API_KEY="${NVD_API_KEY:-}" \
-            -v "${{ github.workspace }}:/src" \
-            -v "${{ github.workspace }}/.dependency-check-data:/usr/share/dependency-check/data" \
-            -v "${{ github.workspace }}/dependency-check-report:/report" \
-            owasp/dependency-check:latest \
-            --project "cas-typescript-sdk" \
-            --scan /src/src \
-            --scan /src/src-ts \
-            --scan /src/lib \
-            --format "HTML" \
-            --format "JSON" \
-            --format "SARIF" \
-            --out /report \
-            --failOnCVSS 7 \
-            ${NVD_API_KEY:+--nvdApiKey "${NVD_API_KEY}"}
+        with:
+          project: "cas-typescript-sdk"
+          path: "."
+          format: "HTML"
+          out: "dependency-check-report"
+          args: >
+            --format JSON
+            --format SARIF
+            --failOnCVSS 7
+            --enableRetired
 
       - name: Upload OWASP dependency report
         uses: actions/upload-artifact@v4
