@@ -34,13 +34,12 @@ jobs:
           format: 'HTML'
           args: >-
             --failOnCVSS 7
-            --out dependency-check-report-pr-linux
 
       - name: Upload Dependency-Check report
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report-pr-linux
-          path: dependency-check-report-pr-linux
+          path: reports
           if-no-files-found: error
 
   build:
