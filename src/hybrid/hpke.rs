@@ -22,14 +22,14 @@ pub fn hpke_encrypt(
     plaintext: Vec<u8>,
     public_key: Vec<u8>,
     info_str: Vec<u8>,
-) -> HpkeEncryptResult {
+) -> napi::Result<HpkeEncryptResult> {
     let encrypt_result: (Vec<u8>, Vec<u8>, Vec<u8>) =
-        <CASHPKE as CASHybrid>::encrypt(plaintext, public_key, info_str);
-    return HpkeEncryptResult {
+        crate::map_cas_err(<CASHPKE as CASHybrid>::encrypt(plaintext, public_key, info_str))?;
+    Ok(HpkeEncryptResult {
         tag: encrypt_result.2,
         ciphertext: encrypt_result.1,
         encapsulated_key: encrypt_result.0,
-    }
+    })
 }
 
 #[napi]
@@ -39,8 +39,8 @@ pub fn hpke_decrypt(
     encapped_key: Vec<u8>,
     tag: Vec<u8>,
     info_str: Vec<u8>,
-) -> Vec<u8> {
-    return <CASHPKE as CASHybrid>::decrypt(ciphertext, private_key, encapped_key, tag, info_str);
+) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASHPKE as CASHybrid>::decrypt(ciphertext, private_key, encapped_key, tag, info_str))
 }
 
 #[test]
@@ -51,13 +51,13 @@ pub fn hpke_encrypt_decrypt_test() {
         plaintext.clone(),
         hpke_keypair.public_key,
         hpke_keypair.info_str.clone(),
-    );
+    ).unwrap();
     let decrypted_plaintext = hpke_decrypt(
         encrypt_result.ciphertext,
         hpke_keypair.secret_key,
         encrypt_result.encapsulated_key,
         encrypt_result.tag,
         hpke_keypair.info_str,
-    );
+    ).unwrap();
     assert_eq!(plaintext, decrypted_plaintext);
 }

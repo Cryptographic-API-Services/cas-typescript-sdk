@@ -17,37 +17,37 @@ pub fn aes256_key() -> Vec<u8> {
 }
 
 #[napi]
-pub fn aes128_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> Vec<u8> {
-    <CASAES128 as CASAES128Encryption>::encrypt_plaintext(aes_key, nonce, plaintext)
+pub fn aes128_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128 as CASAES128Encryption>::encrypt_plaintext(aes_key, nonce, plaintext))
 }
 
 #[napi]
-pub fn aes128_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> Vec<u8> {
-    <CASAES128 as CASAES128Encryption>::decrypt_ciphertext(aes_key, nonce, ciphertext)
+pub fn aes128_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128 as CASAES128Encryption>::decrypt_ciphertext(aes_key, nonce, ciphertext))
 }
 
 #[napi]
-pub fn aes256_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> Vec<u8> {
-    <CASAES256 as CASAES256Encryption>::encrypt_plaintext(aes_key, nonce, plaintext)
+pub fn aes256_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256 as CASAES256Encryption>::encrypt_plaintext(aes_key, nonce, plaintext))
 }
 
 #[napi]
-pub fn aes256_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> Vec<u8> {
-    <CASAES256 as CASAES256Encryption>::decrypt_ciphertext(aes_key, nonce, ciphertext)
+pub fn aes256_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256 as CASAES256Encryption>::decrypt_ciphertext(aes_key, nonce, ciphertext))
 }
 
 #[napi]
 pub fn aes_256_key_from_x25519_shared_secret(
     shared_secret: Vec<u8>,
-) -> Vec<u8> {
-    return <CASAES256 as CASAES256Encryption>::key_from_x25519_shared_secret(shared_secret).into();
+) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256 as CASAES256Encryption>::key_from_x25519_shared_secret(shared_secret))
 }
 
 #[napi]
 pub fn aes_128_key_from_x25519_shared_secret(
     shared_secret: Vec<u8>,
-) -> Vec<u8> {
-    return <CASAES128 as CASAES128Encryption>::key_from_x25519_shared_secret(shared_secret).into();
+) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128 as CASAES128Encryption>::key_from_x25519_shared_secret(shared_secret))
 }
 
 #[test]
@@ -55,8 +55,8 @@ fn aes128_encrypt_decrypt_test() {
     let aes_key = aes128_key();
     let nonce = aes_nonce();
     let plaintext = b"WelcomeHome".to_vec();
-    let ciphertext = aes128_encrypt(aes_key.clone(), nonce.clone(), plaintext.clone());
-    let decrypted_plaintext = aes128_decrypt(aes_key, nonce, ciphertext);
+    let ciphertext = aes128_encrypt(aes_key.clone(), nonce.clone(), plaintext.clone()).unwrap();
+    let decrypted_plaintext = aes128_decrypt(aes_key, nonce, ciphertext).unwrap();
     assert_eq!(decrypted_plaintext, plaintext)
 }
 
@@ -65,7 +65,7 @@ fn aes256_encrypt_decrypt_test() {
     let aes_key = aes256_key();
     let nonce = aes_nonce();
     let plaintext = b"WelcomeHome".to_vec();
-    let ciphertext = aes256_encrypt(aes_key.clone(), nonce.clone(), plaintext.clone());
-    let decrypted_plaintext = aes256_decrypt(aes_key, nonce, ciphertext);
+    let ciphertext = aes256_encrypt(aes_key.clone(), nonce.clone(), plaintext.clone()).unwrap();
+    let decrypted_plaintext = aes256_decrypt(aes_key, nonce, ciphertext).unwrap();
     assert_eq!(decrypted_plaintext, plaintext)
 }
