@@ -24,12 +24,12 @@ pub fn generate_ed25519_keys() -> CASED25519KeyPairResult {
 }
 
 #[napi]
-pub fn sign_ed25519(private_key: Vec<u8>, message: Vec<u8>) -> Vec<u8> {
-    let signature = ed25519_sign_with_key_pair(private_key, message);
-    signature.signature // assuming Ed25519ByteSignature has a field named `signature: Vec<u8>`
+pub fn sign_ed25519(private_key: Vec<u8>, message: Vec<u8>) -> napi::Result<Vec<u8>> {
+    let signature = crate::map_cas_err(ed25519_sign_with_key_pair(private_key, message))?;
+    Ok(signature.signature) // Ed25519ByteSignature has a field named `signature: Vec<u8>`
 }
 
 #[napi]
-pub fn verify_ed25519(public_key: Vec<u8>, message: Vec<u8>, signature: Vec<u8>) -> bool {
-    return ed25519_verify_with_public_key(public_key, signature, message);
+pub fn verify_ed25519(public_key: Vec<u8>, message: Vec<u8>, signature: Vec<u8>) -> napi::Result<bool> {
+    crate::map_cas_err(ed25519_verify_with_public_key(public_key, signature, message))
 }

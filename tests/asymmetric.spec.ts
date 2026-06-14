@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { RSAWrapper, CASRSAKeyPairResult } from '../src-ts/asymmetric/index';
 
-test('RSA Verify', async ({ page }) => {
+test('RSA Verify', async () => {
       const rsaWrapper = new RSAWrapper();
       const keys: CASRSAKeyPairResult = rsaWrapper.getKeyPair(2048);
       const tohashed: string = "This is my encrypt";

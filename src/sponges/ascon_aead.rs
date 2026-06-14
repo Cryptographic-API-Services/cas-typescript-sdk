@@ -25,8 +25,8 @@ pub fn test_ascon128_nonce_generate() {
 }
 
 #[napi]
-pub fn ascon128_encrypt(key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> Vec<u8> {
-    return <AsconAead as CASAsconAead>::encrypt(key, nonce, plaintext);
+pub fn ascon128_encrypt(key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<AsconAead as CASAsconAead>::encrypt(key, nonce, plaintext))
 }
 
 #[test]
@@ -38,13 +38,13 @@ pub fn test_ascon128_encrypt() {
         key.clone().to_vec(),
         nonce.clone().to_vec(),
         plaintext.to_vec(),
-    );
+    ).unwrap();
     assert_ne!(ciphertext, plaintext.to_vec());
 }
 
 #[napi]
-pub fn ascon128_decrypt(key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> Vec<u8> {
-    return <AsconAead as CASAsconAead>::decrypt(key, nonce, ciphertext);
+pub fn ascon128_decrypt(key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<AsconAead as CASAsconAead>::decrypt(key, nonce, ciphertext))
 }
 
 #[test]
@@ -56,11 +56,11 @@ pub fn test_ascon128_decrypt() {
         key.clone().to_vec(),
         nonce.clone().to_vec(),
         plaintext.to_vec(),
-    );
+    ).unwrap();
     let decrypted = ascon128_decrypt(
         key.clone().to_vec(),
         nonce.clone().to_vec(),
         ciphertext.clone(),
-    );
+    ).unwrap();
     assert_eq!(decrypted, plaintext.to_vec());
 }

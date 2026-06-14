@@ -17,16 +17,16 @@ impl From<RSAKeyPairResult> for CASRSAKeyPairResult {
 }
 
 #[napi]
-pub fn generate_rsa_keys(key_size: u32) -> CASRSAKeyPairResult {
-    return CASRSA::generate_rsa_keys(key_size as usize).into();
+pub fn generate_rsa_keys(key_size: u32) -> napi::Result<CASRSAKeyPairResult> {
+    Ok(crate::map_cas_err(CASRSA::generate_rsa_keys(key_size as usize))?.into())
 }
 
 #[napi]
-pub fn sign_rsa(private_key: String, hash: Vec<u8>) -> Vec<u8> {
-    return CASRSA::sign(private_key, hash);
+pub fn sign_rsa(private_key: String, hash: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(CASRSA::sign(private_key, hash))
 }
 
 #[napi]
-pub fn verify_rsa(public_key: String, hash: Vec<u8>, signature: Vec<u8>) -> bool {
-    return CASRSA::verify(public_key, hash, signature);
+pub fn verify_rsa(public_key: String, hash: Vec<u8>, signature: Vec<u8>) -> napi::Result<bool> {
+    crate::map_cas_err(CASRSA::verify(public_key, hash, signature))
 }
