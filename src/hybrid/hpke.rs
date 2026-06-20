@@ -61,3 +61,9 @@ pub fn hpke_encrypt_decrypt_test() {
     ).unwrap();
     assert_eq!(plaintext, decrypted_plaintext);
 }
+
+#[test]
+pub fn generate_info_str_test() {
+    let info_str = generate_info_str();
+    assert_eq!(false, info_str.is_empty());
+}

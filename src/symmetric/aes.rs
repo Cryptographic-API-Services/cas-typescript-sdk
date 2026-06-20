@@ -69,3 +69,33 @@ fn aes256_encrypt_decrypt_test() {
     let decrypted_plaintext = aes256_decrypt(aes_key, nonce, ciphertext).unwrap();
     assert_eq!(decrypted_plaintext, plaintext)
 }
+
+#[test]
+fn aes_256_key_from_x25519_shared_secret_test() {
+    use crate::key_exchange::x25519::{x25519_diffie_hellman, x25519_generate_secret_and_public_key};
+    let alice = x25519_generate_secret_and_public_key();
+    let bob = x25519_generate_secret_and_public_key();
+    let alice_shared_secret = x25519_diffie_hellman(alice.secret_key, bob.public_key).unwrap();
+    let bob_shared_secret = x25519_diffie_hellman(bob.secret_key, alice.public_key).unwrap();
+
+    let alice_key = aes_256_key_from_x25519_shared_secret(alice_shared_secret).unwrap();
+    let bob_key = aes_256_key_from_x25519_shared_secret(bob_shared_secret).unwrap();
+    // Both parties must derive the same 32-byte AES-256 key from their shared secret.
+    assert_eq!(alice_key.len(), 32);
+    assert_eq!(alice_key, bob_key);
+}
+
+#[test]
+fn aes_128_key_from_x25519_shared_secret_test() {
+    use crate::key_exchange::x25519::{x25519_diffie_hellman, x25519_generate_secret_and_public_key};
+    let alice = x25519_generate_secret_and_public_key();
+    let bob = x25519_generate_secret_and_public_key();
+    let alice_shared_secret = x25519_diffie_hellman(alice.secret_key, bob.public_key).unwrap();
+    let bob_shared_secret = x25519_diffie_hellman(bob.secret_key, alice.public_key).unwrap();
+
+    let alice_key = aes_128_key_from_x25519_shared_secret(alice_shared_secret).unwrap();
+    let bob_key = aes_128_key_from_x25519_shared_secret(bob_shared_secret).unwrap();
+    // Both parties must derive the same 16-byte AES-128 key from their shared secret.
+    assert_eq!(alice_key.len(), 16);
+    assert_eq!(alice_key, bob_key);
+}

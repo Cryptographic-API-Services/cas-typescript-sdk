@@ -33,3 +33,22 @@ pub fn sign_ed25519(private_key: Vec<u8>, message: Vec<u8>) -> napi::Result<Vec<
 pub fn verify_ed25519(public_key: Vec<u8>, message: Vec<u8>, signature: Vec<u8>) -> napi::Result<bool> {
     crate::map_cas_err(ed25519_verify_with_public_key(public_key, signature, message))
 }
+
+#[test]
+fn ed25519_sign_verify_test() {
+    let key_pair = generate_ed25519_keys();
+    let message = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_ed25519(key_pair.private_key, message.clone()).unwrap();
+    let verified = verify_ed25519(key_pair.public_key, message, signature).unwrap();
+    assert_eq!(true, verified);
+}
+
+#[test]
+fn ed25519_verify_fail_test() {
+    let key_pair = generate_ed25519_keys();
+    let message = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_ed25519(key_pair.private_key, message).unwrap();
+    let tampered_message = "NotMyDataToHash2".as_bytes().to_vec();
+    let verified = verify_ed25519(key_pair.public_key, tampered_message, signature).unwrap();
+    assert_eq!(false, verified);
+}

@@ -30,3 +30,22 @@ pub fn sign_rsa(private_key: String, hash: Vec<u8>) -> napi::Result<Vec<u8>> {
 pub fn verify_rsa(public_key: String, hash: Vec<u8>, signature: Vec<u8>) -> napi::Result<bool> {
     crate::map_cas_err(CASRSA::verify(public_key, hash, signature))
 }
+
+#[test]
+fn rsa_sign_verify_test() {
+    let key_pair = generate_rsa_keys(2048).unwrap();
+    let hash = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_rsa(key_pair.private_key, hash.clone()).unwrap();
+    let verified = verify_rsa(key_pair.public_key, hash, signature).unwrap();
+    assert_eq!(true, verified);
+}
+
+#[test]
+fn rsa_verify_fail_test() {
+    let key_pair = generate_rsa_keys(2048).unwrap();
+    let hash = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_rsa(key_pair.private_key, hash).unwrap();
+    let tampered_hash = "NotMyDataToHash2".as_bytes().to_vec();
+    let verified = verify_rsa(key_pair.public_key, tampered_hash, signature).unwrap();
+    assert_eq!(false, verified);
+}
