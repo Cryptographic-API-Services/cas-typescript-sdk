@@ -61,8 +61,13 @@ jobs:
               # The napi-rs lts-alpine image ships Node 18, too old for the
               # current toolchain (@napi-rs/cli/@inquirer need Node 20+).
               # nodejs.org has no official musl build, so use the unofficial one.
-              curl -fsSLO https://unofficial-builds.nodejs.org/download/release/v24.18.0/node-v24.18.0-linux-x64-musl.tar.xz
-              tar -xJf node-v24.18.0-linux-x64-musl.tar.xz -C /usr/local --strip-components=1
+              # Install into a clean prefix and prepend it to PATH instead of
+              # overlaying /usr/local (overlaying mixes npm versions and breaks npm).
+              curl -fsSL -o /tmp/node.tar.xz https://unofficial-builds.nodejs.org/download/release/v24.18.0/node-v24.18.0-linux-x64-musl.tar.xz
+              mkdir -p /opt/node
+              tar -xJf /tmp/node.tar.xz -C /opt/node --strip-components=1
+              export PATH=/opt/node/bin:$PATH
+              node -v && npm -v
             elif command -v apt-get >/dev/null 2>&1; then
               apt-get update
               apt-get install -y pkg-config libssl-dev ca-certificates curl
