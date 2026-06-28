@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 napi = "3"
 napi-derive = "3"
-cas-lib = { version = "=0.2.84" }
+cas-lib = { version = "=0.2.85" }
 zeroize = "1.8.1"
 zeroizing-alloc = "0.1.0"
 

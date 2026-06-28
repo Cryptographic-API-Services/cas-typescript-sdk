@@ -12,6 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
+    "rootDir": "./src-ts",
     "outDir": "lib",
     "declaration": true,
     "declarationMap": true,        // optional but handy for consumers
