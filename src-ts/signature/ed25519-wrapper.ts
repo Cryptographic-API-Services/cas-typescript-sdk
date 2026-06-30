@@ -22,7 +22,7 @@ export class Ed25519Wrapper {
    * @returns The signature
    */
   
-  public signBytes(privateKey: number[], message: number[]): number[] {
+  public signBytes(privateKey: Uint8Array, message: Uint8Array): Uint8Array {
     return signEd25519(privateKey, message);
   }
 
@@ -34,7 +34,7 @@ export class Ed25519Wrapper {
    * @returns True if the signature is valid, false otherwise
    */
   
-  public verifyBytes(publicKey: number[], message: number[], signature: number[]): boolean {
+  public verifyBytes(publicKey: Uint8Array, message: Uint8Array, signature: Uint8Array): boolean {
     return verifyEd25519(publicKey, message, signature);
   }
 }

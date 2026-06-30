@@ -1,6 +1,6 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.0.67",
+  "version": "1.1.000",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -14,6 +14,9 @@
   "scripts": {
     "test": "npm run rust:test && npm run build && npm run node:test",
     "node:test": "npx playwright test",
+    "bench": "npm run bench:password-hashers && npm run bench:symmetric",
+    "bench:password-hashers": "tsx benchmarks/password-hashers.bench.ts",
+    "bench:symmetric": "tsx benchmarks/symmetric.bench.ts",
     "rust:test": "cargo test --release",
     "build:ts": "rimraf lib && tsc",
     "build:rust": "napi build --release --platform",
@@ -48,6 +51,8 @@
   },
   "devDependencies": {
     "@playwright/test": "1.61.1",
-    "@types/node": "26.0.1"
+    "@types/node": "26.0.1",
+    "mitata": "1.0.34",
+    "tsx": "4.20.6"
   }
 }

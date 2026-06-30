@@ -9,19 +9,19 @@ import {
 export class AsconWrapper {
   /**
    * Generates an Ascon 128 key
-   * @returns Array<number>
+   * @returns Uint8Array
    */
   
-  ascon128Key(): Array<number> {
+  ascon128Key(): Uint8Array {
     return ascon128KeyGenerate();
   }
 
   /**
    * Generates and Ascon 128 nonce.
-   * @returns Array<number>
+   * @returns Uint8Array
    */
   
-  ascon128Nonce(): Array<number> {
+  ascon128Nonce(): Uint8Array {
     return ascon128NonceGenerate();
   }
 
@@ -34,10 +34,10 @@ export class AsconWrapper {
    */
   
   ascon128Encrypt(
-    key: Array<number>,
-    nonce: Array<number>,
-    plaintext: Array<number>,
-  ): Array<number> {
+    key: Uint8Array,
+    nonce: Uint8Array,
+    plaintext: Uint8Array,
+  ): Uint8Array {
     if (!key || key.length === 0) {
       throw new Error("Key is required");
     }
@@ -55,14 +55,14 @@ export class AsconWrapper {
    * @param key 
    * @param nonce 
    * @param ciphertext 
-   * @returns Array<number>
+   * @returns Uint8Array
    */
   
   ascon128Decrypt(
-    key: Array<number>,
-    nonce: Array<number>,
-    ciphertext: Array<number>,
-  ): Array<number> {
+    key: Uint8Array,
+    nonce: Uint8Array,
+    ciphertext: Uint8Array,
+  ): Uint8Array {
     if (!key || key.length === 0) {
       throw new Error("Key is required");
     }

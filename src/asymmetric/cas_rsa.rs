@@ -1,4 +1,5 @@
 use cas_lib::asymmetric::{cas_rsa::CASRSA, types::{CASRSAEncryption, RSAKeyPairResult}};
+use napi::bindgen_prelude::Uint8Array;
 use napi_derive::napi;
 
 #[napi(constructor)]
@@ -22,21 +23,21 @@ pub fn generate_rsa_keys(key_size: u32) -> napi::Result<CASRSAKeyPairResult> {
 }
 
 #[napi]
-pub fn sign_rsa(private_key: String, hash: Vec<u8>) -> napi::Result<Vec<u8>> {
-    crate::map_cas_err(CASRSA::sign(private_key, hash))
+pub fn sign_rsa(private_key: String, hash: Uint8Array) -> napi::Result<Uint8Array> {
+    crate::map_cas_err(CASRSA::sign(private_key, hash.to_vec())).map(Uint8Array::from)
 }
 
 #[napi]
-pub fn verify_rsa(public_key: String, hash: Vec<u8>, signature: Vec<u8>) -> napi::Result<bool> {
-    crate::map_cas_err(CASRSA::verify(public_key, hash, signature))
+pub fn verify_rsa(public_key: String, hash: Uint8Array, signature: Uint8Array) -> napi::Result<bool> {
+    crate::map_cas_err(CASRSA::verify(public_key, hash.to_vec(), signature.to_vec()))
 }
 
 #[test]
 fn rsa_sign_verify_test() {
     let key_pair = generate_rsa_keys(2048).unwrap();
     let hash = "NotMyDataToHash".as_bytes().to_vec();
-    let signature = sign_rsa(key_pair.private_key, hash.clone()).unwrap();
-    let verified = verify_rsa(key_pair.public_key, hash, signature).unwrap();
+    let signature = sign_rsa(key_pair.private_key, hash.clone().into()).unwrap();
+    let verified = verify_rsa(key_pair.public_key, hash.into(), signature).unwrap();
     assert_eq!(true, verified);
 }
 
@@ -44,8 +45,8 @@ fn rsa_sign_verify_test() {
 fn rsa_verify_fail_test() {
     let key_pair = generate_rsa_keys(2048).unwrap();
     let hash = "NotMyDataToHash".as_bytes().to_vec();
-    let signature = sign_rsa(key_pair.private_key, hash).unwrap();
+    let signature = sign_rsa(key_pair.private_key, hash.into()).unwrap();
     let tampered_hash = "NotMyDataToHash2".as_bytes().to_vec();
-    let verified = verify_rsa(key_pair.public_key, tampered_hash, signature).unwrap();
+    let verified = verify_rsa(key_pair.public_key, tampered_hash.into(), signature).unwrap();
     assert_eq!(false, verified);
 }

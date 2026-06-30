@@ -6,10 +6,10 @@ export class SHAWrapper implements IHasherBase {
     /**
      * Hashes a byte array with SHA3-512.
      * @param dataToHash 
-     * @returns number[]
+     * @returns Uint8Array
      */
     
-    hash512(dataToHash: number[]): number[] {
+    hash512(dataToHash: Uint8Array): Uint8Array {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
         }
@@ -23,7 +23,7 @@ export class SHAWrapper implements IHasherBase {
      * @returns boolean
      */
     
-    verify512(dataToHash: number[], dataToVerify: number[]): boolean {
+    verify512(dataToHash: Uint8Array, dataToVerify: Uint8Array): boolean {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
         }
@@ -36,10 +36,10 @@ export class SHAWrapper implements IHasherBase {
     /**
      * Hashes a byte array with SHA3-256.
      * @param dataToHash 
-     * @returns number[]
+     * @returns Uint8Array
      */
     
-    hash256(dataToHash: number[]): number[] {
+    hash256(dataToHash: Uint8Array): Uint8Array {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
         }
@@ -53,7 +53,7 @@ export class SHAWrapper implements IHasherBase {
      * @returns boolean
      */
     
-    verify256(dataToHash: number[], dataToVerify: number[]): boolean {
+    verify256(dataToHash: Uint8Array, dataToVerify: Uint8Array): boolean {
         if (!dataToHash || dataToHash.length === 0) {
             throw new Error("You must provide an allocated array of data");
         }

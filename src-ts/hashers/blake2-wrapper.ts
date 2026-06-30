@@ -14,7 +14,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @returns The hashed output
    */
   
-  hash512(dataToHash: number[]): number[] {
+  hash512(dataToHash: Uint8Array): Uint8Array {
     return blake2Sha512(dataToHash);
   }
 
@@ -25,7 +25,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @returns True if the verification is successful, false otherwise
    */
   
-  verify512(dataToHash: number[], dataToVerify: number[]): boolean {
+  verify512(dataToHash: Uint8Array, dataToVerify: Uint8Array): boolean {
     return blake2Sha512Verify(dataToHash, dataToVerify);
   }
   /**
@@ -34,7 +34,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @returns The hashed output
    */
   
-  hash256(dataToHash: number[]): number[] {
+  hash256(dataToHash: Uint8Array): Uint8Array {
     return blake2Sha256(dataToHash);
   }
 
@@ -45,7 +45,7 @@ export class Blake2Wrapper implements IHasherBase {
    * @returns True if the verification is successful, false otherwise
    */
   
-  verify256(dataToHash: number[], dataToVerify: number[]): boolean {
+  verify256(dataToHash: Uint8Array, dataToVerify: Uint8Array): boolean {
     return blake2Sha256Verify(dataToHash, dataToVerify);
   }
 }

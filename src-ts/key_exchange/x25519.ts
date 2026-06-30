@@ -17,10 +17,10 @@ export class X25519Wrapper {
      * Can be used to derive an AES key over insecure channel.
      * @param secretKey 
      * @param publicKey 
-     * @returns Array<number>
+     * @returns Uint8Array
      */
     
-    public generateSharedSecret(secretKey: Array<number>, publicKey: Array<number>): Array<number> {
+    public generateSharedSecret(secretKey: Uint8Array, publicKey: Uint8Array): Uint8Array {
         return x25519DiffieHellman(secretKey, publicKey);
     }
 }

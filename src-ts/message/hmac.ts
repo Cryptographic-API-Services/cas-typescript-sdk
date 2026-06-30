@@ -4,7 +4,7 @@ import { hmacSign, hmacVerify } from "../../index";
 export class HmacWrapper {
     
     
-    public hmacSignBytes(key: Array<number>, message: Array<number>): Array<number> {
+    public hmacSignBytes(key: Uint8Array, message: Uint8Array): Uint8Array {
         if (key?.length === 0) {
             throw new Error("Must provide an allocated key");
         }
@@ -15,7 +15,7 @@ export class HmacWrapper {
     }
 
     
-    public hmacVerifyBytes(key: Array<number>, message: Array<number>, signature: Array<number>): boolean {
+    public hmacVerifyBytes(key: Uint8Array, message: Uint8Array, signature: Uint8Array): boolean {
         if (key?.length === 0) {
             throw new Error("Must provide an allocated key");
         }

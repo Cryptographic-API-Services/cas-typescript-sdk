@@ -6,8 +6,8 @@ test('RSA Verify', async () => {
       const keys: CASRSAKeyPairResult = rsaWrapper.getKeyPair(2048);
       const tohashed: string = "This is my encrypt";
       const encoder = new TextEncoder();
-      const toSignBytes: Array<number> = Array.from(encoder.encode(tohashed));
-      const signature: Array<number> = rsaWrapper.sign(keys.privateKey, toSignBytes);
+      const toSignBytes: Uint8Array = encoder.encode(tohashed);
+      const signature: Uint8Array = rsaWrapper.sign(keys.privateKey, toSignBytes);
       const verified = rsaWrapper.verify(keys.publicKey, toSignBytes, signature);
       expect(verified).toBe(true);
 });

@@ -19,7 +19,7 @@ test.describe("Insecure Channel Tests", () => {
 
       const tohashed: string = "This is my encrypt text";
       const encoder = new TextEncoder();
-      const toEncrypt: Array<number> = Array.from(encoder.encode(tohashed));
+      const toEncrypt: Uint8Array = encoder.encode(tohashed);
 
       const nonce = aesWrapper.generateAESNonce();
 
@@ -43,7 +43,7 @@ test.describe("Insecure Channel Tests", () => {
 
       const tohashed: string = "This is my encrypt text";
       const encoder = new TextEncoder();
-      const toEncrypt: Array<number> = Array.from(encoder.encode(tohashed));
+      const toEncrypt: Uint8Array = encoder.encode(tohashed);
 
       const nonce = aesWrapper.generateAESNonce();
 

@@ -20,17 +20,17 @@ export class RSAWrapper {
    * Encrypts a plaintext byte array with a RSA public key
    * @param publicKey 
    * @param plaintext 
-   * @returns Array<number>
+   * @returns Uint8Array
    */
 
   /**
    * Signs a byte array with an RSA private key for verification.
    * @param privateKey 
    * @param hash 
-   * @returns Array<number>
+   * @returns Uint8Array
    */
   
-  public sign(privateKey: string, dataToSign: Array<number>): Array<number> {
+  public sign(privateKey: string, dataToSign: Uint8Array): Uint8Array {
     if (!privateKey) {
       throw new Error("You must provide a private key to sign with RSA");
     }
@@ -48,7 +48,7 @@ export class RSAWrapper {
    * @returns boolean
    */
   
-  public verify(publicKey: string, hash: Array<number>, signature: Array<number>): boolean {
+  public verify(publicKey: string, hash: Uint8Array, signature: Uint8Array): boolean {
     if (!publicKey) {
       throw new Error("You must provide a public key to verify with RSA");
     }

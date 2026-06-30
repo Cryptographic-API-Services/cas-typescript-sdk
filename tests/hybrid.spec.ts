@@ -7,7 +7,7 @@ test.describe("Hybrid Encryption", () => {
         const keyPair = hpkeWrapper.generateKeyPair();
         const encoder = new TextEncoder();
         const message = "This is a secret message";
-        const messageBytes: Array<number> = Array.from(encoder.encode(message));
+        const messageBytes: Uint8Array = encoder.encode(message);
         const encrypted = hpkeWrapper.encrypt(messageBytes, keyPair.publicKey, keyPair.infoStr);
         const decrypted = hpkeWrapper.decrypt(
             encrypted.ciphertext,

@@ -1,65 +1,70 @@
 use crate::hybrid::types::{HpkeEncryptResult, HpkeKeyResult};
 use cas_lib::hybrid::{cas_hybrid::CASHybrid, hpke::CASHPKE};
+use napi::bindgen_prelude::Uint8Array;
 use napi_derive::napi;
 
 #[napi]
 pub fn hpke_generate_keypair() -> HpkeKeyResult {
     let (secret_key, public_key, info_str) = <CASHPKE as CASHybrid>::generate_key_pair();
     HpkeKeyResult {
-        public_key: public_key,
-        secret_key: secret_key,
-        info_str: info_str
+        public_key: public_key.into(),
+        secret_key: secret_key.into(),
+        info_str: info_str.into()
     }
 }
 
 #[napi]
-pub fn generate_info_str() -> Vec<u8> {
-    return <CASHPKE as CASHybrid>::generate_info_str();
+pub fn generate_info_str() -> Uint8Array {
+    return <CASHPKE as CASHybrid>::generate_info_str().into();
 }
 
 #[napi]
 pub fn hpke_encrypt(
-    plaintext: Vec<u8>,
-    public_key: Vec<u8>,
-    info_str: Vec<u8>,
+    plaintext: Uint8Array,
+    public_key: Uint8Array,
+    info_str: Uint8Array,
 ) -> napi::Result<HpkeEncryptResult> {
     let encrypt_result: (Vec<u8>, Vec<u8>, Vec<u8>) =
-        crate::map_cas_err(<CASHPKE as CASHybrid>::encrypt(plaintext, public_key, info_str))?;
+        crate::map_cas_err(<CASHPKE as CASHybrid>::encrypt(plaintext.to_vec(), public_key.to_vec(), info_str.to_vec()))?;
     Ok(HpkeEncryptResult {
-        tag: encrypt_result.2,
-        ciphertext: encrypt_result.1,
-        encapsulated_key: encrypt_result.0,
+        tag: encrypt_result.2.into(),
+        ciphertext: encrypt_result.1.into(),
+        encapsulated_key: encrypt_result.0.into(),
     })
 }
 
 #[napi]
 pub fn hpke_decrypt(
-    ciphertext: Vec<u8>,
-    private_key: Vec<u8>,
-    encapped_key: Vec<u8>,
-    tag: Vec<u8>,
-    info_str: Vec<u8>,
-) -> napi::Result<Vec<u8>> {
-    crate::map_cas_err(<CASHPKE as CASHybrid>::decrypt(ciphertext, private_key, encapped_key, tag, info_str))
+    ciphertext: Uint8Array,
+    private_key: Uint8Array,
+    encapped_key: Uint8Array,
+    tag: Uint8Array,
+    info_str: Uint8Array,
+) -> napi::Result<Uint8Array> {
+    crate::map_cas_err(<CASHPKE as CASHybrid>::decrypt(ciphertext.to_vec(), private_key.to_vec(), encapped_key.to_vec(), tag.to_vec(), info_str.to_vec()))
+        .map(Uint8Array::from)
 }
 
 #[test]
 pub fn hpke_encrypt_decrypt_test() {
     let hpke_keypair = hpke_generate_keypair();
     let plaintext = "This is a secret message".as_bytes().to_vec();
+    // info_str is needed for both encrypt and decrypt; Uint8Array isn't Clone,
+    // so hold it as Vec<u8> and build a fresh view for each call.
+    let info_str = hpke_keypair.info_str.to_vec();
     let encrypt_result = hpke_encrypt(
-        plaintext.clone(),
+        plaintext.clone().into(),
         hpke_keypair.public_key,
-        hpke_keypair.info_str.clone(),
+        info_str.clone().into(),
     ).unwrap();
     let decrypted_plaintext = hpke_decrypt(
         encrypt_result.ciphertext,
         hpke_keypair.secret_key,
         encrypt_result.encapsulated_key,
         encrypt_result.tag,
-        hpke_keypair.info_str,
+        info_str.into(),
     ).unwrap();
-    assert_eq!(plaintext, decrypted_plaintext);
+    assert_eq!(plaintext, decrypted_plaintext.to_vec());
 }
 
 #[test]

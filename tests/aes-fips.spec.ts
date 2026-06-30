@@ -18,7 +18,7 @@ function hexToBytes(hex: string): number[] {
   return Array.from(Buffer.from(hex, "hex"));
 }
 
-function bytesToHex(bytes: number[]): string {
+function bytesToHex(bytes: number[] | Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
 }
 
@@ -132,9 +132,9 @@ test.describe("AES FIPS vectors", () => {
 
     for (const vector of vectors) {
       const actualCiphertext = aes.aes128Encrypt(
-        vector.key,
-        vector.iv,
-        vector.plaintext,
+        new Uint8Array(vector.key),
+        new Uint8Array(vector.iv),
+        new Uint8Array(vector.plaintext),
       );
       const actualCiphertextHex = bytesToHex(
         actualCiphertext.slice(0, vector.expectedCiphertext.length),
@@ -155,9 +155,9 @@ test.describe("AES FIPS vectors", () => {
 
     for (const vector of vectors) {
       const actualCiphertext = aes.aes256Encrypt(
-        vector.key,
-        vector.iv,
-        vector.plaintext,
+        new Uint8Array(vector.key),
+        new Uint8Array(vector.iv),
+        new Uint8Array(vector.plaintext),
       );
       const actualCiphertextHex = bytesToHex(
         actualCiphertext.slice(0, vector.expectedCiphertext.length),

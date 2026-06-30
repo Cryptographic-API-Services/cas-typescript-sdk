@@ -10,7 +10,7 @@ test.describe("Symmetric Tests", () => {
     const aesNonce = aesWrapper.generateAESNonce();
     const tohashed: string = "This is my array to encrypt";
     const encoder = new TextEncoder();
-    const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
+    const tohashBytes: Uint8Array = encoder.encode(tohashed);
     const ciphertext = aesWrapper.aes128Encrypt(aesKey, aesNonce, tohashBytes);
     const plaintxt = aesWrapper.aes128Decrypt(aesKey, aesNonce, ciphertext);
     var result = areEqual(plaintxt, tohashBytes);
@@ -23,7 +23,7 @@ test.describe("Symmetric Tests", () => {
     const aesNonce = aesWrapper.generateAESNonce();
     const tohashed: string = "This is my array to encrypt";
     const encoder = new TextEncoder();
-    const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
+    const tohashBytes: Uint8Array = encoder.encode(tohashed);
     const ciphertext = aesWrapper.aes256Encrypt(aesKey, aesNonce, tohashBytes);
     const plaintxt = aesWrapper.aes256Decrypt(aesKey, aesNonce, ciphertext);
     var result = areEqual(plaintxt, tohashBytes);
@@ -46,7 +46,7 @@ test.describe("Symmetric Tests", () => {
 
     const tohashed: string = "This is my array to encrypt";
     const encoder = new TextEncoder();
-    const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
+    const tohashBytes: Uint8Array = encoder.encode(tohashed);
 
     const aliceCiphertext = aesWrapper.aes256Encrypt(aliceAesKey, nonce, tohashBytes);
     const bobPlaintext = aesWrapper.aes256Decrypt(bobAesKey, nonce, aliceCiphertext);
@@ -69,7 +69,7 @@ test.describe("Symmetric Tests", () => {
 
     const tohashed: string = "This is my array to encrypt";
     const encoder = new TextEncoder();
-    const tohashBytes: Array<number> = Array.from(encoder.encode(tohashed));
+    const tohashBytes: Uint8Array = encoder.encode(tohashed);
 
     const nonce = aesWrapper.generateAESNonce();
 

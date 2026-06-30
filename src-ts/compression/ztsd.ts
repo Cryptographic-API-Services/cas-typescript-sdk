@@ -13,7 +13,7 @@ export class ZTSDWrapper {
      * @param level 
      * @returns 
      */
-    public compress(data: Array<number>, level: number): Array<number> {
+    public compress(data: Uint8Array, level: number): Uint8Array {
         if (data == null || data?.length === 0) {
             throw new Error("Data to compress cannot be null or empty.");
         }
@@ -29,7 +29,7 @@ export class ZTSDWrapper {
      * @param data 
      * @returns 
      */
-    public decompress(data: Array<number>): Array<number> {
+    public decompress(data: Uint8Array): Uint8Array {
         if (data == null || data?.length === 0) {
             throw new Error("Data to decompress cannot be null or empty.");
         }

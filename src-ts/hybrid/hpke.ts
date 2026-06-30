@@ -17,7 +17,7 @@ export class HpkeWrapper {
      * @returns A byte array representing the info string
      */
     
-    public generateInfoString(): number[] {
+    public generateInfoString(): Uint8Array {
         return generateInfoStr();
     }
 
@@ -29,7 +29,7 @@ export class HpkeWrapper {
      * @returns HpkeEncryptResult
      */
     
-    public encrypt(plaintext: number[], publicKey: number[], infoStr: number[]): HpkeEncryptResult {
+    public encrypt(plaintext: Uint8Array, publicKey: Uint8Array, infoStr: Uint8Array): HpkeEncryptResult {
         return hpkeEncrypt(plaintext, publicKey, infoStr);
     }
 
@@ -43,7 +43,7 @@ export class HpkeWrapper {
      * @returns The decrypted message
      */
     
-    public decrypt(ciphertext: number[], privateKey: number[], encapsulatedKey: number[], tag: number[], infoStr: number[]): number[] {
+    public decrypt(ciphertext: Uint8Array, privateKey: Uint8Array, encapsulatedKey: Uint8Array, tag: Uint8Array, infoStr: Uint8Array): Uint8Array {
         return hpkeDecrypt(ciphertext, privateKey, encapsulatedKey, tag, infoStr);
     }
 }

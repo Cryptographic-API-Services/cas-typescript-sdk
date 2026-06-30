@@ -1,6 +1,6 @@
 export interface IHasherBase {
-    hash512(dataToHash: number[]): number[];
-    verify512(dataToHash: number[], dataToVerify: number[]): boolean;
-    hash256(dataToHash: number[]): number[];
-    verify256(dataToHash: number[], dataToVerify: number[]): boolean;
+    hash512(dataToHash: Uint8Array): Uint8Array;
+    verify512(dataToHash: Uint8Array, dataToVerify: Uint8Array): boolean;
+    hash256(dataToHash: Uint8Array): Uint8Array;
+    verify256(dataToHash: Uint8Array, dataToVerify: Uint8Array): boolean;
 }
