@@ -2,10 +2,12 @@ import {
   aes128Decrypt,
   aes128Encrypt,
   aes128Key,
+  aes128KeyFromVec,
   aes128KeyFromX25519SharedSecret,
   aes256Decrypt,
   aes256Encrypt,
   aes256Key,
+  aes256KeyFromVec,
   aes256KeyFromX25519SharedSecret,
   aesNonce,
 } from "../../index";
@@ -108,4 +110,24 @@ export class AESWrapper {
     public aes128KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
         return aes128KeyFromX25519SharedSecret(shared_secret);
    }
+
+    /**
+     * Validates a caller-supplied 16 byte AES-128 key. Throws if the length is wrong.
+     * @param key
+     * @returns Array<number>
+     */
+
+    public aes128KeyFromBytes(key: Array<number>): Array<number> {
+        return aes128KeyFromVec(key);
+    }
+
+    /**
+     * Validates a caller-supplied 32 byte AES-256 key. Throws if the length is wrong.
+     * @param key
+     * @returns Array<number>
+     */
+
+    public aes256KeyFromBytes(key: Array<number>): Array<number> {
+        return aes256KeyFromVec(key);
+    }
 }

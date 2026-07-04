@@ -15,6 +15,7 @@ pub(crate) fn map_cas_err<T>(result: cas_lib::error::CasResult<T>) -> napi::Resu
 mod password_hashers {
     pub mod argon2;
     pub mod bcrypt;
+    pub mod pbkdf2;
     pub mod scrypt;
 }
 
@@ -30,7 +31,13 @@ mod key_exchange {
 
 mod symmetric {
     pub mod aes;
+    pub mod aes_gcm_siv;
     pub mod chacha20poly1305;
+}
+
+mod pqc {
+    pub mod ml_kem;
+    pub mod slh_dsa;
 }
 
 mod asymmetric {

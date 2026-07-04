@@ -30,6 +30,14 @@ test.describe("Symmetric Tests", () => {
     expect(result).toBe(true);
   });
 
+  test("aes key from bytes validates length", () => {
+    const aesWrapper: AESWrapper = new AESWrapper();
+    expect(() => aesWrapper.aes128KeyFromBytes([1, 2, 3])).toThrow();
+    expect(() => aesWrapper.aes256KeyFromBytes([1, 2, 3])).toThrow();
+    expect(aesWrapper.aes128KeyFromBytes(new Array(16).fill(0)).length).toBe(16);
+    expect(aesWrapper.aes256KeyFromBytes(new Array(32).fill(0)).length).toBe(32);
+  });
+
   test("ase 256 X25519 Diffie-Hellman encrypt and decrypt", () => {
     const x25519 = new X25519Wrapper();
     const alice= x25519.generateSecretAndPublicKey();
