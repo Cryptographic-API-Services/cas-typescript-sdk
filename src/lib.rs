@@ -30,6 +30,7 @@ mod key_exchange {
 
 mod symmetric {
     pub mod aes;
+    pub mod chacha20poly1305;
 }
 
 mod asymmetric {

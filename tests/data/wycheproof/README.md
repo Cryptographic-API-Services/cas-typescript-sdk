@@ -14,6 +14,7 @@ Wycheproof is licensed under the Apache License 2.0; see
 | `ed25519_test.json` | `tests/wycheproof-ed25519.spec.ts` |
 | `x25519_test.json` | `tests/wycheproof-x25519.spec.ts` |
 | `hmac_sha256_test.json` | `tests/wycheproof-hmac.spec.ts` |
+| `chacha20_poly1305_test.json` | `tests/wycheproof-chacha20-poly1305.spec.ts` |
 
 Not covered, and why:
 
@@ -22,8 +23,8 @@ Not covered, and why:
   Ascon v1.2 family (`ascon128`, `ascon128a`, `ascon80pq`).
 - **RSA signatures** — `cas-lib` signs with unprefixed PKCS#1 v1.5 over raw
   caller data (no DigestInfo), so the `rsa_signature_*` vectors cannot match.
-- **AES-GCM vectors with AAD, non-96-bit IVs, or 192-bit keys** — the SDK's
-  API surface does not accept AAD, only takes 96-bit nonces, and does not
-  expose AES-192.
+- **AES-GCM / ChaCha20-Poly1305 vectors with AAD, non-96-bit IVs, or AES-192
+  keys** — the SDK's API surface does not accept AAD, only takes 96-bit
+  nonces, and does not expose AES-192.
 - **HPKE, SHA/BLAKE2 hashing, password hashers, zstd** — no applicable
   Wycheproof vector sets.
