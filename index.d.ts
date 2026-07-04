@@ -7,12 +7,40 @@ export declare class Cased25519KeyPairResult {
 }
 export type CASED25519KeyPairResult = Cased25519KeyPairResult
 
+export declare class CasMlKemEncapResult {
+  ciphertext: Array<number>
+  sharedSecret: Array<number>
+  constructor(ciphertext: Array<number>, sharedSecret: Array<number>)
+}
+export type CASMlKemEncapResult = CasMlKemEncapResult
+
+export declare class CasMlKemKeyPairResult {
+  secretKey: Array<number>
+  publicKey: Array<number>
+  constructor(secretKey: Array<number>, publicKey: Array<number>)
+}
+export type CASMlKemKeyPairResult = CasMlKemKeyPairResult
+
+export declare class CasPbkdf2Result {
+  derivedKey: Array<number>
+  salt: Array<number>
+  constructor(derivedKey: Array<number>, salt: Array<number>)
+}
+export type CASPbkdf2Result = CasPbkdf2Result
+
 export declare class CasrsaKeyPairResult {
   privateKey: string
   publicKey: string
   constructor(privateKey: string, publicKey: string)
 }
 export type CASRSAKeyPairResult = CasrsaKeyPairResult
+
+export declare class CasSlhDsaKeyPairResult {
+  signingKey: Array<number>
+  verificationKey: Array<number>
+  constructor(signingKey: Array<number>, verificationKey: Array<number>)
+}
+export type CASSlhDsaKeyPairResult = CasSlhDsaKeyPairResult
 
 export declare class CaSx25519SecretPublicKeyResult {
   publicKey: Array<number>
@@ -39,7 +67,19 @@ export declare function aes128Decrypt(aesKey: Array<number>, nonce: Array<number
 
 export declare function aes128Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
 
+export declare function aes128GcmSivDecrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
+
+export declare function aes128GcmSivEncrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes128GcmSivKey(): Array<number>
+
+export declare function aes128GcmSivKeyFromVec(keySlice: Array<number>): Array<number>
+
+export declare function aes128GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+
 export declare function aes128Key(): Array<number>
+
+export declare function aes128KeyFromVec(keySlice: Array<number>): Array<number>
 
 export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
 
@@ -47,9 +87,23 @@ export declare function aes256Decrypt(aesKey: Array<number>, nonce: Array<number
 
 export declare function aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
 
+export declare function aes256GcmSivDecrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
+
+export declare function aes256GcmSivEncrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes256GcmSivKey(): Array<number>
+
+export declare function aes256GcmSivKeyFromVec(keySlice: Array<number>): Array<number>
+
+export declare function aes256GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+
 export declare function aes256Key(): Array<number>
 
+export declare function aes256KeyFromVec(keySlice: Array<number>): Array<number>
+
 export declare function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+
+export declare function aesGcmSivNonce(): Array<number>
 
 export declare function aesNonce(): Array<number>
 
@@ -105,6 +159,16 @@ export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<n
 
 export declare function hpkeGenerateKeypair(): HpkeKeyResult
 
+export declare function mlKem1024Decapsulate(secretKey: Array<number>, ciphertext: Array<number>): Array<number>
+
+export declare function mlKem1024Encapsulate(publicKey: Array<number>): CasMlKemEncapResult
+
+export declare function mlKem1024GenerateKeyPair(): CasMlKemKeyPairResult
+
+export declare function pbkdf2Derive(password: Array<number>, numberOfIterations: number): CasPbkdf2Result
+
+export declare function pbkdf2DeriveWithSalt(password: Array<number>, numberOfIterations: number, salt: Array<number>): Array<number>
+
 export declare function scryptHash(passwordToHash: string): string
 
 export declare function scryptHashParams(password: string, cpuMemoryCost: number, blockSize: number, parallelism: number): string
@@ -123,7 +187,15 @@ export declare function signEd25519(privateKey: Array<number>, message: Array<nu
 
 export declare function signRsa(privateKey: string, hash: Array<number>): Array<number>
 
+export declare function slhDsaGenerateKeyPair(): CasSlhDsaKeyPairResult
+
+export declare function slhDsaSign(message: Array<number>, signingKey: Array<number>): Array<number>
+
+export declare function slhDsaVerify(message: Array<number>, signature: Array<number>, verificationKey: Array<number>): boolean
+
 export declare function verifyEd25519(publicKey: Array<number>, message: Array<number>, signature: Array<number>): boolean
+
+export declare function verifyEd25519WithKeyPair(keyPair: Array<number>, message: Array<number>, signature: Array<number>): boolean
 
 export declare function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
 

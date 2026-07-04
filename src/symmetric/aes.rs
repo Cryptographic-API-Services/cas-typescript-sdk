@@ -50,6 +50,24 @@ pub fn aes_128_key_from_x25519_shared_secret(
     crate::map_cas_err(<CASAES128 as CASAES128Encryption>::key_from_x25519_shared_secret(shared_secret))
 }
 
+#[napi]
+pub fn aes128_key_from_vec(key_slice: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128 as CASAES128Encryption>::key_from_vec(key_slice))
+}
+
+#[napi]
+pub fn aes256_key_from_vec(key_slice: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256 as CASAES256Encryption>::key_from_vec(key_slice))
+}
+
+#[test]
+fn aes_key_from_vec_rejects_bad_length_test() {
+    assert!(aes128_key_from_vec(vec![0u8; 15]).is_err());
+    assert!(aes256_key_from_vec(vec![0u8; 31]).is_err());
+    assert!(aes128_key_from_vec(vec![0u8; 16]).is_ok());
+    assert!(aes256_key_from_vec(vec![0u8; 32]).is_ok());
+}
+
 #[test]
 fn aes128_encrypt_decrypt_test() {
     let aes_key = aes128_key();

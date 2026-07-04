@@ -15,6 +15,8 @@ Wycheproof is licensed under the Apache License 2.0; see
 | `x25519_test.json` | `tests/wycheproof-x25519.spec.ts` |
 | `hmac_sha256_test.json` | `tests/wycheproof-hmac.spec.ts` |
 | `chacha20_poly1305_test.json` | `tests/wycheproof-chacha20-poly1305.spec.ts` |
+| `aes_gcm_siv_test.json` | `tests/wycheproof-aes-gcm-siv.spec.ts` |
+| `mlkem_1024_semi_expanded_decaps_test.json` | `tests/wycheproof-ml-kem.spec.ts` |
 
 Not covered, and why:
 
@@ -23,8 +25,15 @@ Not covered, and why:
   Ascon v1.2 family (`ascon128`, `ascon128a`, `ascon80pq`).
 - **RSA signatures** — `cas-lib` signs with unprefixed PKCS#1 v1.5 over raw
   caller data (no DigestInfo), so the `rsa_signature_*` vectors cannot match.
-- **AES-GCM / ChaCha20-Poly1305 vectors with AAD, non-96-bit IVs, or AES-192
-  keys** — the SDK's API surface does not accept AAD, only takes 96-bit
-  nonces, and does not expose AES-192.
+- **AES-GCM / AES-GCM-SIV / ChaCha20-Poly1305 vectors with AAD, non-96-bit
+  IVs, or AES-192 keys** — the SDK's API surface does not accept AAD, only
+  takes 96-bit nonces, and does not expose AES-192.
+- **ML-KEM seed-form vectors** (`mlkem_1024_test.json`, encaps/keygen files) —
+  the SDK's decapsulation takes the expanded 3168-byte key, so only the
+  semi-expanded decaps file applies; encapsulation is randomized and cannot be
+  vector-tested.
+- **PBKDF2** — the SDK's PBKDF2 uses HMAC-SHA3-256; Wycheproof only ships
+  vectors for HMAC-SHA1/224/256/384/512.
+- **SLH-DSA** — no Wycheproof vectors exist for it yet.
 - **HPKE, SHA/BLAKE2 hashing, password hashers, zstd** — no applicable
   Wycheproof vector sets.

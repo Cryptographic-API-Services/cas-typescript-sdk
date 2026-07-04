@@ -1,6 +1,6 @@
 
 use cas_lib::signatures::cas_ed25519::Ed25519ByteKeyPair;
-use cas_lib::signatures::ed25519::{get_ed25519_key_pair, ed25519_sign_with_key_pair, ed25519_verify_with_public_key};
+use cas_lib::signatures::ed25519::{get_ed25519_key_pair, ed25519_sign_with_key_pair, ed25519_verify_with_key_pair, ed25519_verify_with_public_key};
 use napi_derive::napi;
 
 #[napi(constructor)]
@@ -34,12 +34,26 @@ pub fn verify_ed25519(public_key: Vec<u8>, message: Vec<u8>, signature: Vec<u8>)
     crate::map_cas_err(ed25519_verify_with_public_key(public_key, signature, message))
 }
 
+#[napi]
+pub fn verify_ed25519_with_key_pair(key_pair: Vec<u8>, message: Vec<u8>, signature: Vec<u8>) -> napi::Result<bool> {
+    crate::map_cas_err(ed25519_verify_with_key_pair(key_pair, signature, message))
+}
+
 #[test]
 fn ed25519_sign_verify_test() {
     let key_pair = generate_ed25519_keys();
     let message = "NotMyDataToHash".as_bytes().to_vec();
     let signature = sign_ed25519(key_pair.private_key, message.clone()).unwrap();
     let verified = verify_ed25519(key_pair.public_key, message, signature).unwrap();
+    assert_eq!(true, verified);
+}
+
+#[test]
+fn ed25519_verify_with_key_pair_test() {
+    let key_pair = generate_ed25519_keys();
+    let message = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_ed25519(key_pair.private_key.clone(), message.clone()).unwrap();
+    let verified = verify_ed25519_with_key_pair(key_pair.private_key, message, signature).unwrap();
     assert_eq!(true, verified);
 }
 

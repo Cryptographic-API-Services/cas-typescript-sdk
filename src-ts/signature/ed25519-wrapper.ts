@@ -3,6 +3,7 @@ import {
   generateEd25519Keys,
   signEd25519,
   verifyEd25519,
+  verifyEd25519WithKeyPair,
 } from "../../index";
 
 
@@ -36,5 +37,19 @@ export class Ed25519Wrapper {
   
   public verifyBytes(publicKey: number[], message: number[], signature: number[]): boolean {
     return verifyEd25519(publicKey, message, signature);
+  }
+
+  /**
+   * Verifies a signature for a message with the given Ed25519 key pair (the 32 byte private key).
+   * Note: this uses non-strict verification, unlike verifyBytes which uses strict
+   * verification and rejects some edge-case signatures this method accepts.
+   * @param keyPair The 32 byte private key to verify the signature with
+   * @param message The signed message
+   * @param signature The signature to verify
+   * @returns True if the signature is valid, false otherwise
+   */
+
+  public verifyWithKeyPairBytes(keyPair: number[], message: number[], signature: number[]): boolean {
+    return verifyEd25519WithKeyPair(keyPair, message, signature);
   }
 }
