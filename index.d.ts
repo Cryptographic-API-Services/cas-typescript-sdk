@@ -81,6 +81,14 @@ export declare function blake2Sha512(dataToHash: Array<number>): Array<number>
 
 export declare function blake2Sha512Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
 
+export declare function chacha20Poly1305Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
+
+export declare function chacha20Poly1305Encrypt(key: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function chacha20Poly1305Key(): Array<number>
+
+export declare function chacha20Poly1305Nonce(): Array<number>
+
 export declare function generateEd25519Keys(): Cased25519KeyPairResult
 
 export declare function generateInfoStr(): Array<number>
