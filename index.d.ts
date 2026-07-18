@@ -107,6 +107,10 @@ export declare function aesGcmSivNonce(): Array<number>
 
 export declare function aesNonce(): Array<number>
 
+export declare function argon2DeriveAes128Key(password: Array<number>): Array<number>
+
+export declare function argon2DeriveAes256Key(password: Array<number>): Array<number>
+
 export declare function argon2Hash(password: string): string
 
 export declare function argon2HashParams(memoryCost: number, iterations: number, parallelism: number, password: string): string
