@@ -58,6 +58,25 @@ fn ed25519_verify_with_key_pair_test() {
 }
 
 #[test]
+fn ed25519_verify_with_key_pair_fail_test() {
+    let key_pair = generate_ed25519_keys();
+    let message = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_ed25519(key_pair.private_key.clone(), message).unwrap();
+    let tampered_message = "NotMyDataToHash2".as_bytes().to_vec();
+    let verified = verify_ed25519_with_key_pair(key_pair.private_key, tampered_message, signature).unwrap();
+    assert_eq!(false, verified);
+}
+
+#[test]
+fn ed25519_verify_with_key_pair_rejects_bad_lengths_test() {
+    let key_pair = generate_ed25519_keys();
+    let message = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_ed25519(key_pair.private_key.clone(), message.clone()).unwrap();
+    assert!(verify_ed25519_with_key_pair(vec![0u8; 10], message.clone(), signature).is_err());
+    assert!(verify_ed25519_with_key_pair(key_pair.private_key, message, vec![0u8; 10]).is_err());
+}
+
+#[test]
 fn ed25519_verify_fail_test() {
     let key_pair = generate_ed25519_keys();
     let message = "NotMyDataToHash".as_bytes().to_vec();
