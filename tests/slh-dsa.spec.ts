@@ -26,6 +26,32 @@ test.describe("SLH-DSA Tests", () => {
     expect(verified).toBe(false);
   });
 
+  test("verify fails with a different key pair's verification key", () => {
+    const slhDsa = new SlhDsaWrapper();
+    const signer = slhDsa.generateKeyPair();
+    const other = slhDsa.generateKeyPair();
+    const message = Array.from(new TextEncoder().encode("ThisIsMyMessageToSign"));
+    const signature = slhDsa.sign(message, signer.signingKey);
+    expect(slhDsa.verify(message, signature, other.verificationKey)).toBe(false);
+  });
+
+  test("verify fails for a tampered signature", () => {
+    const slhDsa = new SlhDsaWrapper();
+    const keyPair = slhDsa.generateKeyPair();
+    const message = Array.from(new TextEncoder().encode("ThisIsMyMessageToSign"));
+    const signature = slhDsa.sign(message, keyPair.signingKey);
+    const tampered = [...signature];
+    tampered[tampered.length - 1] ^= 0xff;
+    expect(slhDsa.verify(message, tampered, keyPair.verificationKey)).toBe(false);
+  });
+
+  test("wrong-length signature throws", () => {
+    const slhDsa = new SlhDsaWrapper();
+    const keyPair = slhDsa.generateKeyPair();
+    const message = Array.from(new TextEncoder().encode("ThisIsMyMessageToSign"));
+    expect(() => slhDsa.verify(message, [1, 2, 3], keyPair.verificationKey)).toThrow();
+  });
+
   test("wrong-length keys throw", () => {
     const slhDsa = new SlhDsaWrapper();
     const keyPair = slhDsa.generateKeyPair();

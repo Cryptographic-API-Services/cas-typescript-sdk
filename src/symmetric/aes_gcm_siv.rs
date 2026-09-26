@@ -87,6 +87,31 @@ fn aes256_gcm_siv_decrypt_tampered_ciphertext_fails_test() {
 }
 
 #[test]
+fn aes_gcm_siv_key_from_x25519_shared_secret_test() {
+    use crate::key_exchange::x25519::{x25519_diffie_hellman, x25519_generate_secret_and_public_key};
+    let alice = x25519_generate_secret_and_public_key();
+    let bob = x25519_generate_secret_and_public_key();
+    let alice_shared_secret = x25519_diffie_hellman(alice.secret_key, bob.public_key).unwrap();
+    let bob_shared_secret = x25519_diffie_hellman(bob.secret_key, alice.public_key).unwrap();
+
+    let alice_key_128 = aes128_gcm_siv_key_from_x25519_shared_secret(alice_shared_secret.clone()).unwrap();
+    let bob_key_128 = aes128_gcm_siv_key_from_x25519_shared_secret(bob_shared_secret.clone()).unwrap();
+    assert_eq!(alice_key_128.len(), 16);
+    assert_eq!(alice_key_128, bob_key_128);
+
+    let alice_key_256 = aes256_gcm_siv_key_from_x25519_shared_secret(alice_shared_secret).unwrap();
+    let bob_key_256 = aes256_gcm_siv_key_from_x25519_shared_secret(bob_shared_secret).unwrap();
+    assert_eq!(alice_key_256.len(), 32);
+    assert_eq!(alice_key_256, bob_key_256);
+
+    let nonce = aes_gcm_siv_nonce();
+    let plaintext = b"WelcomeHome".to_vec();
+    let ciphertext = aes256_gcm_siv_encrypt(alice_key_256, nonce.clone(), plaintext.clone()).unwrap();
+    let decrypted = aes256_gcm_siv_decrypt(bob_key_256, nonce, ciphertext).unwrap();
+    assert_eq!(decrypted, plaintext);
+}
+
+#[test]
 fn aes_gcm_siv_key_from_vec_rejects_bad_length_test() {
     assert!(aes128_gcm_siv_key_from_vec(vec![0u8; 15]).is_err());
     assert!(aes256_gcm_siv_key_from_vec(vec![0u8; 31]).is_err());
