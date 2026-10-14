@@ -7,6 +7,13 @@ export declare class Cased25519KeyPairResult {
 }
 export type CASED25519KeyPairResult = Cased25519KeyPairResult
 
+export declare class CasMlDsaKeyPairResult {
+  signingKey: Array<number>
+  verificationKey: Array<number>
+  constructor(signingKey: Array<number>, verificationKey: Array<number>)
+}
+export type CASMlDsaKeyPairResult = CasMlDsaKeyPairResult
+
 export declare class CasMlKemEncapResult {
   ciphertext: Array<number>
   sharedSecret: Array<number>
@@ -166,6 +173,12 @@ export declare function hpkeDecrypt(ciphertext: Array<number>, privateKey: Array
 export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<number>, infoStr: Array<number>): HpkeEncryptResult
 
 export declare function hpkeGenerateKeypair(): HpkeKeyResult
+
+export declare function mlDsa65GenerateKeyPair(): CasMlDsaKeyPairResult
+
+export declare function mlDsa65Sign(message: Array<number>, signingKey: Array<number>): Array<number>
+
+export declare function mlDsa65Verify(message: Array<number>, signature: Array<number>, verificationKey: Array<number>): boolean
 
 export declare function mlKem1024Decapsulate(secretKey: Array<number>, ciphertext: Array<number>): Array<number>
 

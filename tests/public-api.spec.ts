@@ -7,6 +7,7 @@ test.describe("Public API exports", () => {
   test("cas-lib 0.2.85 wrappers are exported from the package root", () => {
     expect(typeof sdk.AESGCMSIVWrapper).toBe("function");
     expect(typeof sdk.MlKem1024Wrapper).toBe("function");
+    expect(typeof sdk.MlDsa65Wrapper).toBe("function");
     expect(typeof sdk.SlhDsaWrapper).toBe("function");
     expect(typeof sdk.Pbkdf2Wrapper).toBe("function");
   });

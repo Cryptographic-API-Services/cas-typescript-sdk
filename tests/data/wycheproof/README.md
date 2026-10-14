@@ -18,6 +18,8 @@ Wycheproof is licensed under the Apache License 2.0; see
 | `chacha20_poly1305_test.json` | `tests/wycheproof-chacha20-poly1305.spec.ts` |
 | `aes_gcm_siv_test.json` | `tests/wycheproof-aes-gcm-siv.spec.ts` |
 | `mlkem_1024_semi_expanded_decaps_test.json` | `tests/wycheproof-ml-kem.spec.ts` |
+| `mldsa_65_sign_seed_test.json` | `tests/wycheproof-ml-dsa.spec.ts` |
+| `mldsa_65_verify_test.json` | `tests/wycheproof-ml-dsa.spec.ts` |
 
 Not covered, and why:
 
@@ -35,6 +37,11 @@ Not covered, and why:
   vector-tested.
 - **PBKDF2** — the SDK's PBKDF2 uses HMAC-SHA3-256; Wycheproof only ships
   vectors for HMAC-SHA1/224/256/384/512.
+- **ML-DSA vectors with a context string, hedged `rnd`, or precomputed μ**
+  (and `mldsa_65_sign_noseed_test.json`, ML-DSA-44/87) — the SDK exposes only
+  ML-DSA-65, signs deterministically with an empty context, and takes the
+  32-byte seed as the signing key, so those cases are skipped (the skip counts
+  are pinned in the spec).
 - **SLH-DSA** — no Wycheproof vectors exist for it yet.
 - **SHA-2 / SHA-3 / BLAKE2 hashing** — Wycheproof ships no plain digest
   vectors. SHA2-256/512 are covered by the NIST CAVS `.rsp` vectors in
