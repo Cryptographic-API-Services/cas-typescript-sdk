@@ -153,6 +153,10 @@ export declare function generateInfoStr(): Array<number>
 
 export declare function generateRsaKeys(keySize: number): CasrsaKeyPairResult
 
+export declare function hmacSha512Sign(key: Array<number>, message: Array<number>): Array<number>
+
+export declare function hmacSha512Verify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
+
 export declare function hmacSign(key: Array<number>, message: Array<number>): Array<number>
 
 export declare function hmacVerify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
@@ -182,6 +186,14 @@ export declare function scryptVerify(hashedPassword: string, passwordToVerify: s
 export declare function sha256(dataToHash: Array<number>): Array<number>
 
 export declare function sha256Verify(dataToHash: Array<number>, dataToVerify: Array<number>): boolean
+
+export declare function sha2Hash256(dataToHash: Array<number>): Array<number>
+
+export declare function sha2Hash256Verify(hashToVerify: Array<number>, dataToVerify: Array<number>): boolean
+
+export declare function sha2Hash512(dataToHash: Array<number>): Array<number>
+
+export declare function sha2Hash512Verify(hashToVerify: Array<number>, dataToVerify: Array<number>): boolean
 
 export declare function sha512(dataToHash: Array<number>): Array<number>
 

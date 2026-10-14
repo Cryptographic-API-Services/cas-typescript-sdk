@@ -14,6 +14,7 @@ Wycheproof is licensed under the Apache License 2.0; see
 | `ed25519_test.json` | `tests/wycheproof-ed25519.spec.ts` |
 | `x25519_test.json` | `tests/wycheproof-x25519.spec.ts` |
 | `hmac_sha256_test.json` | `tests/wycheproof-hmac.spec.ts` |
+| `hmac_sha512_test.json` | `tests/wycheproof-hmac.spec.ts` |
 | `chacha20_poly1305_test.json` | `tests/wycheproof-chacha20-poly1305.spec.ts` |
 | `aes_gcm_siv_test.json` | `tests/wycheproof-aes-gcm-siv.spec.ts` |
 | `mlkem_1024_semi_expanded_decaps_test.json` | `tests/wycheproof-ml-kem.spec.ts` |
@@ -35,5 +36,8 @@ Not covered, and why:
 - **PBKDF2** — the SDK's PBKDF2 uses HMAC-SHA3-256; Wycheproof only ships
   vectors for HMAC-SHA1/224/256/384/512.
 - **SLH-DSA** — no Wycheproof vectors exist for it yet.
-- **HPKE, SHA/BLAKE2 hashing, password hashers, zstd** — no applicable
-  Wycheproof vector sets.
+- **SHA-2 / SHA-3 / BLAKE2 hashing** — Wycheproof ships no plain digest
+  vectors. SHA2-256/512 are covered by the NIST CAVS `.rsp` vectors in
+  `tests/data/hashers/` (`tests/hasher.spec.ts`), and exercised through
+  Wycheproof indirectly via `hmac_sha256_test.json` / `hmac_sha512_test.json`.
+- **HPKE, password hashers, zstd** — no applicable Wycheproof vector sets.

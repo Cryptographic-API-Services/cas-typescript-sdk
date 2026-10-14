@@ -21,6 +21,7 @@ mod password_hashers {
 
 mod hashers {
     pub mod sha;
+    pub mod sha2;
     pub mod blake2;
 }
 

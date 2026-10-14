@@ -1,6 +1,6 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.1.001",
+  "version": "1.1.002",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

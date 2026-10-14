@@ -18,4 +18,11 @@ test.describe("Public API exports", () => {
     expect(typeof new sdk.Argon2Wrapper().deriveAes128Key).toBe("function");
     expect(typeof new sdk.Argon2Wrapper().deriveAes256Key).toBe("function");
   });
+
+  test("cas-lib 0.2.91 SHA-2 / HMAC-SHA512 wrappers are exported", () => {
+    expect(typeof sdk.SHA2Wrapper).toBe("function");
+    expect(sdk.HasherType.SHA2).toBe(3);
+    expect(typeof new sdk.HmacWrapper().hmacSha512SignBytes).toBe("function");
+    expect(typeof new sdk.HmacWrapper().hmacSha512VerifyBytes).toBe("function");
+  });
 });
