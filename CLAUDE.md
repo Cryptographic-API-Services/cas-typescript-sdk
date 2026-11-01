@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`cas-typescript-sdk` is a Node.js cryptography library that wraps the Rust [`cas-lib`](https://github.com/Cryptographic-API-Services/cas-lib) crate (pinned at `=0.2.77` in `Cargo.toml`). The actual cryptographic implementations live in `cas-lib` (which itself builds on RustCrypto and Dalek-Cryptography). This repo contributes two thin layers on top of it:
+`cas-typescript-sdk` is a Node.js cryptography library that wraps the Rust [`cas-lib`](https://github.com/Cryptographic-API-Services/cas-lib) crate (pinned with an exact `=` version in `Cargo.toml`). The actual cryptographic implementations live in `cas-lib` (which itself builds on RustCrypto and Dalek-Cryptography). This repo contributes two thin layers on top of it:
 
 1. A **Rust napi-rs FFI layer** (`src/`) that exposes `cas-lib` functions to Node as a native addon.
 2. A **TypeScript wrapper layer** (`src-ts/`) that provides ergonomic, class-based, documented APIs over the raw FFI functions.
@@ -45,12 +45,22 @@ npm test             # rust:test → build → node:test (the full CI pipeline)
 | sponges (Ascon AEAD) | `sponges/` | `sponges/` |
 | hybrid (HPKE) | `hybrid/` | `hybrid/` |
 | compression (zstd) | `compression/` | `compression/` |
+| post-quantum (ML-KEM, ML-DSA, SLH-DSA) | `pqc/` | `pqc/` |
 
 - `src/lib.rs` declares every Rust module — a new module must be registered there.
 - `src-ts/index.ts` is a barrel that `export *`s every domain's `index.ts` — a new wrapper must be re-exported up the chain to be part of the public API.
 - Wrappers are plain classes that delegate 1:1 to the FFI function and carry the JSDoc (the FFI layer has none). Some domains add a factory + base-interface + enum to select an implementation at runtime — see `src-ts/hashers/` (`HasherFactory` / `IHasherBase` / `HasherType`) and `src-ts/password-hashers/` for the pattern to follow.
 
-**Adding a new algorithm** typically means: (1) write the `#[napi]` function in the right `src/<domain>/*.rs` module (and register the module in `src/lib.rs` if new); (2) run `npm run build:rust` to regenerate `index.d.ts`/`index.js`; (3) add a TS wrapper class in `src-ts/<domain>/` delegating to the new camelCase function; (4) export it through the domain `index.ts` and `src-ts/index.ts`.
+**Adding a new algorithm** typically means: (1) write the `#[napi]` function in the right `src/<domain>/*.rs` module (and register the module in `src/lib.rs` if new); (2) run `npm run build:rust` to regenerate `index.d.ts`/`index.js`; (3) add a TS wrapper class in `src-ts/<domain>/` delegating to the new camelCase function; (4) export it through the domain `index.ts` and `src-ts/index.ts`; (5) add a usage example to `docs/EXAMPLES.md`.
+
+## Keeping `docs/EXAMPLES.md` in sync
+
+`docs/EXAMPLES.md` (linked from the README) is the public usage reference and must cover **every public method of every exported wrapper class**. Whenever you add, rename, remove, or change the signature of a public wrapper method in `src-ts/`, update `docs/EXAMPLES.md` in the same change — don't wait to be asked:
+
+- Add new methods to the existing section for their domain, or add a new `##` section for a new domain, plus the class to the import block at the top.
+- Examples import from `"cas-typescript-sdk"`, use the `toBytes`/`toText` helpers defined at the top of the file, and only use types that are actually exported from `src-ts/index.ts` (otherwise rely on inference).
+- Mirror real argument order and semantics from the wrapper (e.g. hasher `verify*` takes the hash first, then the data).
+- Check coverage with: `python -c "import re,glob;d=open('docs/EXAMPLES.md').read();print([(f,m) for f in glob.glob('src-ts/**/*.ts',recursive=True) if 'class ' in open(f).read() for m in re.findall(r'^\s*(?:public\s+|static\s+)*(\w+)\s*\(',open(f).read(),re.M) if m not in ('constructor','if','return','switch') and '.'+m+'(' not in d] or 'ALL COVERED')"`
 
 **Memory zeroization is enabled globally.** `src/lib.rs` installs `zeroizing_alloc::ZeroAlloc` as the global allocator so freed heap memory is zeroed — relevant when handling key material.
 
