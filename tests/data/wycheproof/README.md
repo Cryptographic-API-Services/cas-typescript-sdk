@@ -1,9 +1,23 @@
 # Wycheproof test vectors
 
-The JSON files in this directory are vendored, unmodified, from the
-[C2SP/wycheproof](https://github.com/C2SP/wycheproof) project
-(`testvectors_v1/`), pinned at commit
-[`d0db6205a1570feb1e5918a735f7e57f6ad7b3f6`](https://github.com/C2SP/wycheproof/tree/d0db6205a1570feb1e5918a735f7e57f6ad7b3f6/testvectors_v1).
+The JSON files in this directory are **not checked in**. They are downloaded,
+unmodified, from the [C2SP/wycheproof](https://github.com/C2SP/wycheproof)
+project (`testvectors_v1/`) by `scripts/fetch-wycheproof.mjs`, which
+`npm run node:test` runs automatically. To fetch them by hand:
+
+```bash
+npm run wycheproof:fetch                          # latest upstream main
+WYCHEPROOF_REF=<sha-or-tag> npm run wycheproof:fetch   # a specific upstream ref
+```
+
+- **Always latest:** every run, local or CI, resolves upstream `main` to its
+  current commit SHA (logged as `Fetching ... from C2SP/wycheproof@<sha>`) and
+  tests against it. Files are only re-downloaded when that SHA changes. To
+  reproduce an old CI run, set `WYCHEPROOF_REF` to the SHA from its log.
+- **New failures:** a Wycheproof spec that fails without any SDK change means
+  upstream added a case the SDK (or a spec) doesn't handle yet.
+- **Adding a file:** add its name to `FILES` in the fetch script and a row to
+  the table below.
 
 Wycheproof is licensed under the Apache License 2.0; see
 <https://github.com/C2SP/wycheproof/blob/main/LICENSE>.

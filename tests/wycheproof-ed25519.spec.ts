@@ -31,9 +31,11 @@ test.describe("Wycheproof Ed25519 vectors", () => {
           verified = false;
         }
 
+        // "acceptable" vectors (e.g. small- or mixed-order public keys) may
+        // be accepted or rejected, so only valid/invalid are asserted.
         if (vector.result === "valid") {
           expect(verified, `${label}: valid signature was rejected`).toBe(true);
-        } else {
+        } else if (vector.result === "invalid") {
           expect(verified, `${label}: invalid signature was accepted`).toBe(
             false,
           );

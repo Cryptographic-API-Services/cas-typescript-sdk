@@ -13,7 +13,8 @@
   },
   "scripts": {
     "test": "npm run rust:test && npm run build && npm run node:test",
-    "node:test": "npx playwright test",
+    "node:test": "npm run wycheproof:fetch && npx playwright test",
+    "wycheproof:fetch": "node scripts/fetch-wycheproof.mjs",
     "rust:test": "cargo test --release",
     "build:ts": "rimraf lib && tsc",
     "build:rust": "napi build --release --platform",
