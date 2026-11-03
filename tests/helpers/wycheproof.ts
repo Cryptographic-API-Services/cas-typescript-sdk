@@ -80,6 +80,11 @@ export type WycheproofFile<TGroup> = {
 
 export function loadWycheproof<TGroup>(fileName: string): WycheproofFile<TGroup> {
   const filePath = path.join(__dirname, "..", "data", "wycheproof", fileName);
+  if (!fs.existsSync(filePath)) {
+    throw new Error(
+      `Missing Wycheproof vector file ${fileName}; run \`npm run wycheproof:fetch\` first.`,
+    );
+  }
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 

@@ -68,6 +68,8 @@ npm test             # rust:test → build → node:test (the full CI pipeline)
 
 Rust modules keep their `#[test]` functions inline in the same `.rs` file (e.g. round-trip encrypt/decrypt checks). Some TS tests validate against official NIST/FIPS known-answer vectors stored under `tests/data/` (AES GCM `.rsp`, SHA-3 `.rsp`); see `tests/aes-fips.spec.ts` and `tests/hasher.spec.ts` for how those `.rsp` files are parsed.
 
+The `tests/wycheproof-*.spec.ts` files use [Wycheproof](https://github.com/C2SP/wycheproof) vectors that are **downloaded, not committed**: `scripts/fetch-wycheproof.mjs` (run by `npm run node:test`, or `npm run wycheproof:fetch`) pulls the files listed in its `FILES` array at the pinned `PINNED_REF` commit into `tests/data/wycheproof/` (git-ignored). Set `WYCHEPROOF_REF` to test another upstream ref. Load them with `loadWycheproof()` from `tests/helpers/wycheproof.ts`. Wycheproof `result` is three-way: assert `valid` and `invalid`, but let `acceptable` go either way.
+
 ## CI
 
 `.github/workflows/main-pr-linux.yml` and `main-pr-windows.yml` run `npm ci`, `npx playwright install --with-deps`, then `npm test` on Node 24 for PRs to `main`. `main-publish.yml` publishes to npm; `owasp-dc.yml` runs OWASP dependency-check.

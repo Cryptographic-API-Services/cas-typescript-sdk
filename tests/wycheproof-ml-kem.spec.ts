@@ -1,8 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
 import { expect, test } from "@playwright/test";
 import { MlKem1024Wrapper } from "../src-ts/pqc/ml-kem-wrapper";
-import { bytesToHex, hexToBytes } from "./helpers/wycheproof";
+import { bytesToHex, hexToBytes, loadWycheproof } from "./helpers/wycheproof";
 
 type MlKemDecapsTest = {
   tcId: number;
@@ -23,17 +21,13 @@ type MlKemDecapsTestGroup = {
 test.describe("Wycheproof ML-KEM-1024 vectors", () => {
   test("decapsulation matches Wycheproof expectations", () => {
     const mlKem = new MlKem1024Wrapper();
-    const filePath = path.join(
-      __dirname,
-      "data",
-      "wycheproof",
+    const file = loadWycheproof<MlKemDecapsTestGroup>(
       "mlkem_1024_semi_expanded_decaps_test.json",
     );
-    const file = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
     let vectorsRun = 0;
 
-    for (const group of file.testGroups as MlKemDecapsTestGroup[]) {
+    for (const group of file.testGroups) {
       for (const vector of group.tests) {
         const label = `tcId ${vector.tcId} (${vector.comment})`;
         const secretKey = hexToBytes(vector.dk);
