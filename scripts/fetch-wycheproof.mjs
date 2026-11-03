@@ -1,17 +1,17 @@
 // Downloads the Wycheproof test vectors used by tests/wycheproof-*.spec.ts from
 // C2SP/wycheproof into tests/data/wycheproof/ (git-ignored).
 //
-// The upstream commit is pinned below so PR runs are reproducible. Override it
-// with WYCHEPROOF_REF (a commit SHA, tag, or branch such as "main") to test
-// against newer vectors; the scheduled wycheproof-latest workflow does this.
+// Every run tests against the latest upstream vectors: the ref (default
+// "main", override with WYCHEPROOF_REF) is resolved to a commit SHA, which is
+// logged for reproducibility and used to skip re-downloading unchanged files.
 //
 // Usage: node scripts/fetch-wycheproof.mjs [--force]
 
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const PINNED_REF = "d17cc89fa5c8f4f4d378b5385ebf75da5d0926c9";
 const REPO = "C2SP/wycheproof";
 const VECTOR_DIR = "testvectors_v1";
 
@@ -28,8 +28,30 @@ const FILES = [
   "x25519_test.json",
 ];
 
-const ref = process.env.WYCHEPROOF_REF || PINNED_REF;
+const requestedRef = process.env.WYCHEPROOF_REF || "main";
 const force = process.argv.includes("--force");
+
+function resolveRef(name) {
+  if (/^[0-9a-f]{40}$/i.test(name)) {
+    return name;
+  }
+  try {
+    const output = execFileSync(
+      "git",
+      ["ls-remote", `https://github.com/${REPO}`, name],
+      { encoding: "utf8" },
+    );
+    const sha = output.split(/\s/)[0];
+    if (/^[0-9a-f]{40}$/i.test(sha)) {
+      return sha;
+    }
+  } catch {
+    // Fall through and fetch by name; the files just won't be cached.
+  }
+  return name;
+}
+
+const ref = resolveRef(requestedRef);
 const isCommitSha = /^[0-9a-f]{40}$/i.test(ref);
 
 const outDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "tests", "data", "wycheproof");
@@ -77,7 +99,7 @@ if (upToDate()) {
   console.log(`Wycheproof vectors already at ${ref}`);
 } else {
   fs.mkdirSync(outDir, { recursive: true });
-  console.log(`Fetching ${FILES.length} Wycheproof vector files from ${REPO}@${ref}`);
+  console.log(`Fetching ${FILES.length} Wycheproof vector files from ${REPO}@${ref} (${requestedRef})`);
   const counts = await Promise.all(FILES.map((file) => download(file)));
   FILES.forEach((file, i) => console.log(`  ${file} (${counts[i]} tests)`));
   fs.writeFileSync(markerPath, `${ref}\n`);

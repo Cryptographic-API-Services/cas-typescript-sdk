@@ -33,9 +33,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - name: Cache Wycheproof vectors
-      uses: actions/cache@v4
-      with:
-        path: tests/data/wycheproof
-        key: wycheproof-${{ hashFiles('scripts/fetch-wycheproof.mjs') }}
     - run: npm test
