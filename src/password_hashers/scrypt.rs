@@ -18,21 +18,21 @@ pub fn scrypt_hash_params(password: String, cpu_memory_cost: u8, block_size: u32
 
 #[test]
 pub fn scrypt_hash_params_test() {
-    let password = "BadPassword".to_string();
+    let password = crate::test_util::random_password();
     let hashed = scrypt_hash_params(password.clone(), 15, 8, 1).unwrap();
     assert_ne!(password, hashed);
 }
 
 #[test]
 pub fn scrypt_hash_test() {
-    let password = "BadPassword".to_string();
+    let password = crate::test_util::random_password();
     let hashed_password = scrypt_hash(password.clone()).unwrap();
     assert_ne!(password, hashed_password);
 }
 
 #[test]
 pub fn scrypt_verify_test() {
-    let password = "BadPassword".to_string();
+    let password = crate::test_util::random_password();
     let hashed_password = scrypt_hash(password.clone()).unwrap();
     let verified = scrypt_verify(hashed_password, password).unwrap();
     assert_eq!(true, verified);
@@ -40,9 +40,9 @@ pub fn scrypt_verify_test() {
 
 #[test]
 pub fn scrypt_verify_fail_test() {
-    let password = "BadPassword".to_string();
+    let password = crate::test_util::random_password();
     let hashed_password = scrypt_hash(password.clone()).unwrap();
-    let verified = "Nope".to_string();
+    let verified = crate::test_util::random_password();
     let verified = scrypt_verify(hashed_password, verified).unwrap();
     assert_eq!(false, verified);
 }

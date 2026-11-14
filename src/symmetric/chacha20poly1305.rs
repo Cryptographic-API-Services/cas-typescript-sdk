@@ -46,6 +46,9 @@ fn chacha20_poly1305_rejects_bad_key_and_nonce_lengths_test() {
     let key = chacha20_poly1305_key();
     let nonce = chacha20_poly1305_nonce();
     let plaintext = b"WelcomeHome".to_vec();
-    assert!(chacha20_poly1305_encrypt(vec![0u8; 16], nonce, plaintext.clone()).is_err());
-    assert!(chacha20_poly1305_encrypt(key, vec![0u8; 8], plaintext).is_err());
+    // Truncate freshly generated values rather than hard-coding wrong-length ones.
+    let short_key = key[..16].to_vec();
+    let short_nonce = nonce[..8].to_vec();
+    assert!(chacha20_poly1305_encrypt(short_key, nonce, plaintext.clone()).is_err());
+    assert!(chacha20_poly1305_encrypt(key, short_nonce, plaintext).is_err());
 }

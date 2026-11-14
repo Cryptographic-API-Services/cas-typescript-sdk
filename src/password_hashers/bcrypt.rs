@@ -18,21 +18,21 @@ pub fn bcrypt_hash_params(cost: u32, password: String) -> napi::Result<String> {
 
 #[test]
 pub fn bcrypt_hash_params_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = bcrypt_hash_params(12, password.clone()).unwrap();
     assert_ne!(password, hashed);
 }
 
 #[test]
 pub fn bcrypt_hash_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = bcrypt_hash(password.clone()).unwrap();
     assert_ne!(password, hashed);
 }
 
 #[test]
 pub fn bcrypt_verify_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = bcrypt_hash(password.clone()).unwrap();
     let verified = bcrypt_verify(hashed, password).unwrap();
     assert_eq!(true, verified);
@@ -40,9 +40,9 @@ pub fn bcrypt_verify_test() {
 
 #[test]
 pub fn bcrypt_verify_fail_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = bcrypt_hash(password.clone()).unwrap();
-    let verified = "nope".to_string();
+    let verified = crate::test_util::random_password();
     let verified = bcrypt_verify(hashed, verified).unwrap();
     assert_eq!(false, verified);
 }

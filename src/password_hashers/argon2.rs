@@ -29,21 +29,21 @@ pub fn argon2_derive_aes_256_key(password: Vec<u8>) -> napi::Result<Vec<u8>> {
 
 #[test]
 pub fn argon2_hash_params_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = argon2_hash_params(1024, 2, 1, password.clone()).unwrap();
     assert_ne!(password, hashed);
 }
 
 #[test]
 pub fn argon2_hash_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = argon2_hash(password.clone()).unwrap();
     assert_ne!(password, hashed);
 }
 
 #[test]
 pub fn argon2_verify_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = argon2_hash(password.clone()).unwrap();
     let verified = argon2_verify(hashed, password).unwrap();
     assert_eq!(true, verified);
@@ -51,7 +51,7 @@ pub fn argon2_verify_test() {
 
 #[test]
 pub fn argon2_derive_aes_128_key_test() {
-    let password = b"ThisIsNotMyPasswolrd".to_vec();
+    let password = crate::test_util::random_password().into_bytes();
     let key = argon2_derive_aes_128_key(password.clone()).unwrap();
     assert_eq!(key.len(), 16);
     // A random salt is generated per call, so the same password must not repeat a key.
@@ -61,7 +61,7 @@ pub fn argon2_derive_aes_128_key_test() {
 
 #[test]
 pub fn argon2_derive_aes_256_key_test() {
-    let password = b"ThisIsNotMyPasswolrd".to_vec();
+    let password = crate::test_util::random_password().into_bytes();
     let key = argon2_derive_aes_256_key(password.clone()).unwrap();
     assert_eq!(key.len(), 32);
     let second_key = argon2_derive_aes_256_key(password).unwrap();
@@ -71,7 +71,7 @@ pub fn argon2_derive_aes_256_key_test() {
 #[test]
 pub fn argon2_derive_aes_256_key_encrypt_decrypt_test() {
     use crate::symmetric::aes::{aes256_decrypt, aes256_encrypt, aes_nonce};
-    let key = argon2_derive_aes_256_key(b"ThisIsNotMyPasswolrd".to_vec()).unwrap();
+    let key = argon2_derive_aes_256_key(crate::test_util::random_password().into_bytes()).unwrap();
     let nonce = aes_nonce();
     let plaintext = b"WelcomeHome".to_vec();
     let ciphertext = aes256_encrypt(key.clone(), nonce.clone(), plaintext.clone()).unwrap();
@@ -81,9 +81,9 @@ pub fn argon2_derive_aes_256_key_encrypt_decrypt_test() {
 
 #[test]
 pub fn argon2_verify_fail_test() {
-    let password = "ThisIsNotMyPasswolrd".to_string();
+    let password = crate::test_util::random_password();
     let hashed = argon2_hash(password.clone()).unwrap();
-    let verified = "Nope".to_string();
+    let verified = crate::test_util::random_password();
     let verified = argon2_verify(hashed, verified).unwrap();
     assert_eq!(false, verified);
 }
