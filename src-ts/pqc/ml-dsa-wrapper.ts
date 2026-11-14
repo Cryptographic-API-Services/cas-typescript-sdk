@@ -1,5 +1,5 @@
 import {
-  CasMlDsaKeyPairResult,
+  CASMlDsaKeyPairResult,
   mlDsa65GenerateKeyPair,
   mlDsa65Sign,
   mlDsa65Verify,
@@ -12,10 +12,10 @@ export class MlDsa65Wrapper {
     /**
      * Generates an ML-DSA-65 (FIPS 204) key pair.
      * The signing key is the 32 byte private seed and the verification key is 1952 bytes.
-     * @returns CasMlDsaKeyPairResult
+     * @returns CASMlDsaKeyPairResult
      */
 
-    public generateKeyPair(): CasMlDsaKeyPairResult {
+    public generateKeyPair(): CASMlDsaKeyPairResult {
         return mlDsa65GenerateKeyPair();
     }
 

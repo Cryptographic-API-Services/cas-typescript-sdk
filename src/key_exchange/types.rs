@@ -1,7 +1,7 @@
 use cas_lib::key_exchange::x25519::X25519SecretPublicKeyResult;
 use napi_derive::napi;
 
-#[napi(constructor)]
+#[napi(object, js_name = "CASx25519SecretPublicKeyResult")]
 pub struct CASx25519SecretPublicKeyResult {
     pub public_key: Vec<u8>,
     pub secret_key: Vec<u8>,

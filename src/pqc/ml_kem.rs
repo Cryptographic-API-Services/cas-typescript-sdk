@@ -2,7 +2,7 @@ use cas_lib::pqc::cas_pqc::{MlKemEncapResult, MlKemKeyPair};
 use cas_lib::pqc::ml_kem::{ml_kem_1024_decapsulate, ml_kem_1024_encapsulate, ml_kem_1024_generate};
 use napi_derive::napi;
 
-#[napi(constructor)]
+#[napi(object, js_name = "CASMlKemKeyPairResult")]
 pub struct CASMlKemKeyPairResult {
     pub secret_key: Vec<u8>,
     pub public_key: Vec<u8>,
@@ -17,7 +17,7 @@ impl From<MlKemKeyPair> for CASMlKemKeyPairResult {
     }
 }
 
-#[napi(constructor)]
+#[napi(object, js_name = "CASMlKemEncapResult")]
 pub struct CASMlKemEncapResult {
     pub ciphertext: Vec<u8>,
     pub shared_secret: Vec<u8>,

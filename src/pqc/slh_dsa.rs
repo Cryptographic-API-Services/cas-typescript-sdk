@@ -2,7 +2,7 @@ use cas_lib::pqc::cas_pqc::SlhDsaKeyPair;
 use cas_lib::pqc::slh_dsa::{generate_signing_and_verification_key, sign_message, verify_signature};
 use napi_derive::napi;
 
-#[napi(constructor)]
+#[napi(object, js_name = "CASSlhDsaKeyPairResult")]
 pub struct CASSlhDsaKeyPairResult {
     pub signing_key: Vec<u8>,
     pub verification_key: Vec<u8>,
