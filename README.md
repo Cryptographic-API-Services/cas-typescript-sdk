@@ -15,6 +15,17 @@ CAS TypeScript SDK is a comprehensive cryptographic toolkit for Node.js, designe
 - Unified interface: no need to manage multiple cryptography packages or surf disparate documentation
 - Built on trusted, open-source cryptography libraries
 
+## Supported Node.js Versions
+The SDK is built and tested against the Node.js LTS release lines:
+
+| Node.js | Tested in CI |
+| --- | --- |
+| 22.x | Linux, macOS, Windows |
+| 24.x | Linux, macOS, Windows |
+| 26.x | Linux, macOS, Windows |
+
+The published native addon is compiled once, on Node.js 26, against Node-API (N-API). Node-API is ABI-stable across Node.js versions, so the same prebuilt binary loads on every supported release line. Prebuilt binaries ship for Linux x64 (glibc and musl), Windows x64 and macOS x64.
+
 ## Documentation & References
 We build on the work of leading cryptography projects. For in-depth algorithm details and implementation notes, please refer to:
 - [Spin Research](https://github.com/SpinResearch)

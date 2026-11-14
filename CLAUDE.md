@@ -47,6 +47,7 @@ npm test             # rust:test → build → node:test (the full CI pipeline)
 | compression (zstd) | `compression/` | `compression/` |
 | post-quantum (ML-KEM, ML-DSA, SLH-DSA) | `pqc/` | `pqc/` |
 
+- Structs returned across the boundary (key pairs, encrypt/encapsulate results) are declared `#[napi(object, js_name = "<RustStructName>")]`, so they surface as plain JS objects / TS interfaces under their Rust name. Don't use `#[napi(constructor)]` for them: it generates a wrapped native class whose raw-pointer derefs CodeQL flags (`rust/access-invalid-pointer`).
 - `src/lib.rs` declares every Rust module — a new module must be registered there.
 - `src-ts/index.ts` is a barrel that `export *`s every domain's `index.ts` — a new wrapper must be re-exported up the chain to be part of the public API.
 - Wrappers are plain classes that delegate 1:1 to the FFI function and carry the JSDoc (the FFI layer has none). Some domains add a factory + base-interface + enum to select an implementation at runtime — see `src-ts/hashers/` (`HasherFactory` / `IHasherBase` / `HasherType`) and `src-ts/password-hashers/` for the pattern to follow.
@@ -72,4 +73,4 @@ The `tests/wycheproof-*.spec.ts` files use [Wycheproof](https://github.com/C2SP/
 
 ## CI
 
-`.github/workflows/main-pr-linux.yml` and `main-pr-windows.yml` run `npm ci`, `npx playwright install --with-deps`, then `npm test` on Node 24 for PRs to `main`. `main-publish.yml` publishes to npm; `owasp-dc.yml` runs OWASP dependency-check.
+`.github/workflows/main-pr-linux.yml`, `main-pr-macos.yml` and `main-pr-windows.yml` run `npm ci` then `npm test` for PRs to `main`, each across a Node.js LTS matrix (22.x, 24.x, 26.x) with `fail-fast: false`. `main-publish.yml` builds the native addon once on Node 26 (N-API binaries are not tied to a Node version) and publishes to npm. When the supported Node.js lines change, update the three PR matrices, the Node version in `main-publish.yml` (both `setup-node` steps, the NodeSource `setup_NN.x` script and the pinned musl tarball URL) and the "Supported Node.js Versions" table in `README.md` together.
