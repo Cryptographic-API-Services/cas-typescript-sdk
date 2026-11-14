@@ -1,5 +1,5 @@
 import {
-  CasSlhDsaKeyPairResult,
+  CASSlhDsaKeyPairResult,
   slhDsaGenerateKeyPair,
   slhDsaSign,
   slhDsaVerify,
@@ -12,10 +12,10 @@ export class SlhDsaWrapper {
     /**
      * Generates an SLH-DSA (FIPS 205, SHAKE-128f parameter set) key pair.
      * The signing key is 64 bytes and the verification key is 32 bytes.
-     * @returns CasSlhDsaKeyPairResult
+     * @returns CASSlhDsaKeyPairResult
      */
 
-    public generateKeyPair(): CasSlhDsaKeyPairResult {
+    public generateKeyPair(): CASSlhDsaKeyPairResult {
         return slhDsaGenerateKeyPair();
     }
 

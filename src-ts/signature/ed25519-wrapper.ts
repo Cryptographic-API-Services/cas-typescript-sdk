@@ -1,5 +1,5 @@
 import {
-  Cased25519KeyPairResult,
+  CASED25519KeyPairResult,
   generateEd25519Keys,
   signEd25519,
   verifyEd25519,
@@ -12,7 +12,7 @@ export class Ed25519Wrapper {
    * Generates a new Ed25519 key pair
    */
   
-  public getKeyPair(): Cased25519KeyPairResult {
+  public getKeyPair(): CASED25519KeyPairResult {
     return generateEd25519Keys();
   }
 

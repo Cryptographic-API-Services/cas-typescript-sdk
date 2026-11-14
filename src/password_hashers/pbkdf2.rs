@@ -2,7 +2,7 @@ use cas_lib::password_hashers::cas_password_hasher::Pbkdf2Result;
 use cas_lib::password_hashers::pbkdf2::{derivation, derivation_with_salt};
 use napi_derive::napi;
 
-#[napi(constructor)]
+#[napi(object, js_name = "CASPbkdf2Result")]
 pub struct CASPbkdf2Result {
     pub derived_key: Vec<u8>,
     pub salt: Vec<u8>,

@@ -1,5 +1,5 @@
 import {
-  CasPbkdf2Result,
+  CASPbkdf2Result,
   pbkdf2Derive,
   pbkdf2DeriveWithSalt,
 } from "../../index";
@@ -14,10 +14,10 @@ export class Pbkdf2Wrapper {
      * key can be re-derived later with deriveWithSalt.
      * @param password
      * @param numberOfIterations
-     * @returns CasPbkdf2Result
+     * @returns CASPbkdf2Result
      */
 
-    public derive(password: Array<number>, numberOfIterations: number): CasPbkdf2Result {
+    public derive(password: Array<number>, numberOfIterations: number): CASPbkdf2Result {
         return pbkdf2Derive(password, numberOfIterations);
     }
 

@@ -1,7 +1,7 @@
 use cas_lib::asymmetric::{cas_rsa::CASRSA, types::{CASRSAEncryption, RSAKeyPairResult}};
 use napi_derive::napi;
 
-#[napi(constructor)]
+#[napi(object, js_name = "CASRSAKeyPairResult")]
 pub struct CASRSAKeyPairResult {
     pub private_key: String,
     pub public_key: String,
