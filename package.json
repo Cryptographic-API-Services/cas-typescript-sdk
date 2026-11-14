@@ -1,6 +1,6 @@
 {
   "name": "cas-typescript-sdk",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -43,10 +43,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@napi-rs/cli": "3.7.2",
-    "@playwright/test": "1.61.1",
-    "@types/node": "26.0.1",
+    "@napi-rs/cli": "3.10.12",
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.6",
     "rimraf": "6.1.4",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   }
 }
