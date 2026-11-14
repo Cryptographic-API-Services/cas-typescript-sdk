@@ -12,6 +12,20 @@ pub(crate) fn map_cas_err<T>(result: cas_lib::error::CasResult<T>) -> napi::Resu
     result.map_err(|e| napi::Error::from_reason(e.to_string()))
 }
 
+/// Test-only inputs generated at runtime, so the inline `#[test]` functions never
+/// feed a hard-coded literal into a password or nonce parameter (which CodeQL's
+/// `rust/hard-coded-cryptographic-value` query reports, even in test code).
+#[cfg(test)]
+pub(crate) mod test_util {
+    /// A fresh random 32-character password (hex of 16 CSPRNG bytes).
+    pub fn random_password() -> String {
+        crate::symmetric::aes::aes128_key()
+            .iter()
+            .map(|byte| format!("{:02x}", byte))
+            .collect()
+    }
+}
+
 mod password_hashers {
     pub mod argon2;
     pub mod bcrypt;
