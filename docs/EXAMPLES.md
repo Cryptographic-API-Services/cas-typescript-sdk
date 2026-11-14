@@ -117,6 +117,13 @@ const isValidWithKeyPair: boolean = ed25519.verifyWithKeyPairBytes(keyPair.priva
 
 `SHAWrapper` (SHA3), `SHA2Wrapper` and `Blake2Wrapper` share the same interface. `verify512` / `verify256` take the existing hash first, then the data to check.
 
+Empty input is valid: `[]`, `null` and `undefined` all hash as the empty message, which has a well-defined digest.
+
+```typescript
+const emptyDigest = new SHA2Wrapper().hash256(null); // e3b0c442...b855, same as hash256([])
+const emptyMatches: boolean = new SHA2Wrapper().verify256(emptyDigest, []);
+```
+
 ### SHA3
 ```typescript
 const sha3 = new SHAWrapper();
@@ -243,6 +250,9 @@ const message = toBytes("This is my message to authenticate");
 // HMAC-SHA256
 const tag = hmac.hmacSignBytes(key, message);
 const isValid: boolean = hmac.hmacVerifyBytes(key, message, tag);
+
+// An empty (or null) message is valid and authenticates the empty message
+const emptyTag = hmac.hmacSignBytes(key, null);
 
 // HMAC-SHA512
 const tag512 = hmac.hmacSha512SignBytes(key, message);

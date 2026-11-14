@@ -1,7 +1,7 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { test, expect } from "@playwright/test";
-import { sha256, sha2Hash256, sha2Hash512, sha512 } from "../index";
 import {
   Blake2Wrapper,
   HasherFactory,
@@ -145,40 +145,42 @@ test.describe("SHA256 Tests", () => {
 });
 
 test.describe("SHA3 NIST vectors", () => {
-  const sha3_256_files = [
-    "SHA3_256ShortMsg.rsp",
-    "SHA3_256LongMsg.rsp",
-  ];
-  const sha3_512_files = [
-    "SHA3_512ShortMsg.rsp",
-    "SHA3_512LongMsg.rsp",
-  ];
+  const suites = [
+    { name: "SHA3-256", files: ["SHA3_256ShortMsg.rsp", "SHA3_256LongMsg.rsp"], digestBytes: 32, hash: "hash256", verify: "verify256" },
+    { name: "SHA3-512", files: ["SHA3_512ShortMsg.rsp", "SHA3_512LongMsg.rsp"], digestBytes: 64, hash: "hash512", verify: "verify512" },
+  ] as const;
 
-  for (const fileName of sha3_256_files) {
-    test(`SHA3-256 matches ${fileName}`, () => {
-      const vectors = parseShaVectors(fileName);
-      expect(vectors.length).toBeGreaterThan(0);
+  for (const suite of suites) {
+    for (const fileName of suite.files) {
+      test(`${suite.name} matches ${fileName}`, () => {
+        const wrapper = new SHAWrapper();
+        const vectors = parseShaVectors(fileName);
+        expect(vectors.length).toBeGreaterThan(0);
 
-      for (const vector of vectors) {
-        expect(
-          bytesToHex(sha256(vector.message)),
-          `SHA3-256 mismatch in ${fileName} at Len=${vector.lengthBits}`,
-        ).toBe(bytesToHex(vector.digest));
-      }
-    });
-  }
+        for (const vector of vectors) {
+          const label = `${suite.name} mismatch in ${fileName} at Len=${vector.lengthBits}`;
+          expect(vector.digest.length, label).toBe(suite.digestBytes);
+          // The Len = 0 vector runs through the wrapper like every other one.
+          expect(bytesToHex(wrapper[suite.hash](vector.message)), label).toBe(
+            bytesToHex(vector.digest),
+          );
+          expect(
+            wrapper[suite.verify](vector.digest, vector.message),
+            `${label}: verify rejected the NIST digest`,
+          ).toBe(true);
+        }
+      });
+    }
 
-  for (const fileName of sha3_512_files) {
-    test(`SHA3-512 matches ${fileName}`, () => {
-      const vectors = parseShaVectors(fileName);
-      expect(vectors.length).toBeGreaterThan(0);
-
-      for (const vector of vectors) {
-        expect(
-          bytesToHex(sha512(vector.message)),
-          `SHA3-512 mismatch in ${fileName} at Len=${vector.lengthBits}`,
-        ).toBe(bytesToHex(vector.digest));
-      }
+    test(`${suite.name} ShortMsg includes the empty-message (Len = 0) vector`, () => {
+      const empty = parseShaVectors(suite.files[0]).filter((v) => v.lengthBits === 0);
+      expect(empty.length).toBe(1);
+      const wrapper = new SHAWrapper();
+      const expected = bytesToHex(empty[0].digest);
+      expect(bytesToHex(wrapper[suite.hash]([]))).toBe(expected);
+      expect(bytesToHex(wrapper[suite.hash](null))).toBe(expected);
+      expect(bytesToHex(wrapper[suite.hash](undefined))).toBe(expected);
+      expect(wrapper[suite.verify](empty[0].digest, null)).toBe(true);
     });
   }
 });
@@ -253,12 +255,32 @@ test.describe("SHA2 Tests", () => {
     ).toBe(false);
   });
 
-  test("rejects empty input", () => {
+  test("hashes empty and null input as the empty message", () => {
     const wrapper = new SHA2Wrapper();
-    expect(() => wrapper.hash512([])).toThrow();
-    expect(() => wrapper.hash256([])).toThrow();
-    expect(() => wrapper.verify512([], tohashBytes)).toThrow();
-    expect(() => wrapper.verify256(wrapper.hash256(tohashBytes), [])).toThrow();
+    const empty256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    const empty512 =
+      "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce" +
+      "47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
+    for (const input of [[], null, undefined]) {
+      expect(bytesToHex(wrapper.hash256(input))).toBe(empty256);
+      expect(bytesToHex(wrapper.hash512(input))).toBe(empty512);
+      expect(wrapper.verify256(hexToBytes(empty256), input)).toBe(true);
+      expect(wrapper.verify512(hexToBytes(empty512), input)).toBe(true);
+    }
+  });
+
+  test("empty input does not verify against a non-empty digest, or vice versa", () => {
+    const wrapper = new SHA2Wrapper();
+    expect(wrapper.verify256(wrapper.hash256(tohashBytes), [])).toBe(false);
+    expect(wrapper.verify512(wrapper.hash512(tohashBytes), null)).toBe(false);
+    expect(wrapper.verify256(wrapper.hash256([]), tohashBytes)).toBe(false);
+    expect(wrapper.verify512(wrapper.hash512(null), tohashBytes)).toBe(false);
+  });
+
+  test("an empty or null digest never verifies", () => {
+    const wrapper = new SHA2Wrapper();
+    expect(wrapper.verify256([], [])).toBe(false);
+    expect(wrapper.verify512(null, null)).toBe(false);
   });
 
   test("HasherFactory returns a SHA2Wrapper for HasherType.SHA2", () => {
@@ -275,8 +297,8 @@ test.describe("SHA2 NIST vectors", () => {
   const sha2_512_files = ["SHA512ShortMsg.rsp", "SHA512LongMsg.rsp"];
 
   const suites = [
-    { name: "SHA2-256", files: sha2_256_files, digestBytes: 32, wrapperHash: "hash256", wrapperVerify: "verify256", ffiHash: sha2Hash256 },
-    { name: "SHA2-512", files: sha2_512_files, digestBytes: 64, wrapperHash: "hash512", wrapperVerify: "verify512", ffiHash: sha2Hash512 },
+    { name: "SHA2-256", files: sha2_256_files, digestBytes: 32, wrapperHash: "hash256", wrapperVerify: "verify256" },
+    { name: "SHA2-512", files: sha2_512_files, digestBytes: 64, wrapperHash: "hash512", wrapperVerify: "verify512" },
   ] as const;
 
   for (const suite of suites) {
@@ -290,15 +312,7 @@ test.describe("SHA2 NIST vectors", () => {
           const label = `${suite.name} mismatch in ${fileName} at Len=${vector.lengthBits}`;
           expect(vector.digest.length, label).toBe(suite.digestBytes);
 
-          // The wrapper rejects empty input up front, so the Len = 0 vector
-          // goes through the FFI function the wrapper delegates to.
-          if (vector.message.length === 0) {
-            expect(bytesToHex(suite.ffiHash(vector.message)), label).toBe(
-              bytesToHex(vector.digest),
-            );
-            continue;
-          }
-
+          // The Len = 0 vector runs through the wrapper like every other one.
           expect(bytesToHex(wrapper[suite.wrapperHash](vector.message)), label).toBe(
             bytesToHex(vector.digest),
           );
@@ -378,4 +392,32 @@ test.describe("Blake2 512", () => {
       expect(verified).toBe(false);
     });
   });
+});
+
+test.describe("Blake2 empty input", () => {
+  // cas-lib uses BLAKE2b-512 for hash512 and BLAKE2s-256 for hash256.
+  const empty512 = crypto.createHash("blake2b512").update(Buffer.alloc(0)).digest("hex");
+  const empty256 = crypto.createHash("blake2s256").update(Buffer.alloc(0)).digest("hex");
+
+  test("hashes empty and null input as the empty message", () => {
+    const wrapper = new Blake2Wrapper();
+    for (const input of [[], null, undefined]) {
+      expect(bytesToHex(wrapper.hash512(input))).toBe(empty512);
+      expect(bytesToHex(wrapper.hash256(input))).toBe(empty256);
+      expect(wrapper.verify512(hexToBytes(empty512), input)).toBe(true);
+      expect(wrapper.verify256(hexToBytes(empty256), input)).toBe(true);
+    }
+    expect(wrapper.verify512(hexToBytes(empty512), [0x61])).toBe(false);
+  });
+});
+
+test.describe("HasherFactory empty input", () => {
+  for (const type of [HasherType.SHA, HasherType.SHA2, HasherType.Blake2]) {
+    test(`HasherType ${HasherType[type]} hashes null like []`, () => {
+      const hasher = new HasherFactory().getHasher(type);
+      expect(hasher.hash256(null)).toEqual(hasher.hash256([]));
+      expect(hasher.hash512(null)).toEqual(hasher.hash512([]));
+      expect(hasher.verify512(hasher.hash512([]), null)).toBe(true);
+    });
+  }
 });

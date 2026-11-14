@@ -4,28 +4,22 @@ import { hmacSha512Sign, hmacSha512Verify, hmacSign, hmacVerify } from "../../in
 export class HmacWrapper {
     
     
-    public hmacSignBytes(key: Array<number>, message: Array<number>): Array<number> {
+    public hmacSignBytes(key: Array<number>, message: Array<number> | null | undefined): Array<number> {
         if (key?.length === 0) {
             throw new Error("Must provide an allocated key");
         }
-        if (message?.length === 0) {
-            throw new Error("Must provide an allocated message");
-        }
-        return hmacSign(key, message);
+        return hmacSign(key, message ?? []);
     }
 
     
-    public hmacVerifyBytes(key: Array<number>, message: Array<number>, signature: Array<number>): boolean {
+    public hmacVerifyBytes(key: Array<number>, message: Array<number> | null | undefined, signature: Array<number>): boolean {
         if (key?.length === 0) {
             throw new Error("Must provide an allocated key");
-        }
-        if (message?.length === 0) {
-            throw new Error("Must provide an allocated message");
         }
         if(signature?.length===0) {
             throw new Error("Must provide an allocated signature");
         }
-        return hmacVerify(key, message, signature);
+        return hmacVerify(key, message ?? [], signature);
     }
 
     /**
@@ -34,14 +28,11 @@ export class HmacWrapper {
      * @param message The message to authenticate
      * @returns The 64-byte HMAC-SHA512 tag
      */
-    public hmacSha512SignBytes(key: Array<number>, message: Array<number>): Array<number> {
+    public hmacSha512SignBytes(key: Array<number>, message: Array<number> | null | undefined): Array<number> {
         if (key?.length === 0) {
             throw new Error("Must provide an allocated key");
         }
-        if (message?.length === 0) {
-            throw new Error("Must provide an allocated message");
-        }
-        return hmacSha512Sign(key, message);
+        return hmacSha512Sign(key, message ?? []);
     }
 
     /**
@@ -51,16 +42,13 @@ export class HmacWrapper {
      * @param signature The 64-byte tag to verify
      * @returns True if the tag is valid for the key and message
      */
-    public hmacSha512VerifyBytes(key: Array<number>, message: Array<number>, signature: Array<number>): boolean {
+    public hmacSha512VerifyBytes(key: Array<number>, message: Array<number> | null | undefined, signature: Array<number>): boolean {
         if (key?.length === 0) {
             throw new Error("Must provide an allocated key");
-        }
-        if (message?.length === 0) {
-            throw new Error("Must provide an allocated message");
         }
         if (signature?.length === 0) {
             throw new Error("Must provide an allocated signature");
         }
-        return hmacSha512Verify(key, message, signature);
+        return hmacSha512Verify(key, message ?? [], signature);
     }
 }
