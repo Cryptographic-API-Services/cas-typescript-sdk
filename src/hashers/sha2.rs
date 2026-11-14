@@ -64,3 +64,23 @@ pub fn sha2_hash_256_verify_fail_test() {
     let hash = sha2_hash_256(b"NotMyDataToHash".to_vec());
     assert_eq!(false, sha2_hash_256_verify(hash, b"NotMyDataToHash2".to_vec()));
 }
+
+// FIPS 180-4 known answers for the empty message: hashing "" is valid and has
+// a well-defined digest (see cas-core-lib#81).
+#[test]
+pub fn sha2_hash_512_empty_input_test() {
+    let expected = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
+    let hash = sha2_hash_512(Vec::new());
+    assert_eq!(expected, hash.iter().map(|b| format!("{:02x}", b)).collect::<String>());
+    assert_eq!(true, sha2_hash_512_verify(hash.clone(), Vec::new()));
+    assert_eq!(false, sha2_hash_512_verify(hash, b"abc".to_vec()));
+}
+
+#[test]
+pub fn sha2_hash_256_empty_input_test() {
+    let expected = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    let hash = sha2_hash_256(Vec::new());
+    assert_eq!(expected, hash.iter().map(|b| format!("{:02x}", b)).collect::<String>());
+    assert_eq!(true, sha2_hash_256_verify(hash.clone(), Vec::new()));
+    assert_eq!(false, sha2_hash_256_verify(hash, b"abc".to_vec()));
+}
