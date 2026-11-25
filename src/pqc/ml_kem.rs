@@ -38,12 +38,12 @@ pub fn ml_kem1024_generate_key_pair() -> CASMlKemKeyPairResult {
 }
 
 #[napi]
-pub fn ml_kem1024_encapsulate(public_key: Vec<u8>) -> napi::Result<CASMlKemEncapResult> {
+pub fn ml_kem1024_encapsulate(public_key: Vec<u8>) -> crate::Result<CASMlKemEncapResult> {
     Ok(crate::map_cas_err(ml_kem_1024_encapsulate(public_key))?.into())
 }
 
 #[napi]
-pub fn ml_kem1024_decapsulate(secret_key: Vec<u8>, ciphertext: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn ml_kem1024_decapsulate(secret_key: Vec<u8>, ciphertext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(ml_kem_1024_decapsulate(secret_key, ciphertext))
 }
 

@@ -18,12 +18,12 @@ impl From<Pbkdf2Result> for CASPbkdf2Result {
 }
 
 #[napi]
-pub fn pbkdf2_derive(password: Vec<u8>, number_of_iterations: u32) -> napi::Result<CASPbkdf2Result> {
+pub fn pbkdf2_derive(password: Vec<u8>, number_of_iterations: u32) -> crate::Result<CASPbkdf2Result> {
     crate::map_cas_err(derivation(password, number_of_iterations)).map(Into::into)
 }
 
 #[napi]
-pub fn pbkdf2_derive_with_salt(password: Vec<u8>, number_of_iterations: u32, salt: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn pbkdf2_derive_with_salt(password: Vec<u8>, number_of_iterations: u32, salt: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(derivation_with_salt(password, number_of_iterations, salt))
 }
 

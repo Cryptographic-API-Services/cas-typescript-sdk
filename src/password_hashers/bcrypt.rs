@@ -2,17 +2,17 @@ use cas_lib::password_hashers::bcrypt::CASBCrypt;
 use napi_derive::napi;
 
 #[napi]
-pub fn bcrypt_hash(password_to_hash: String) -> napi::Result<String> {
+pub fn bcrypt_hash(password_to_hash: String) -> crate::Result<String> {
     crate::map_cas_err(CASBCrypt::hash_password(password_to_hash))
 }
 
 #[napi]
-pub fn bcrypt_verify(hashed_password: String, password_to_verify: String) -> napi::Result<bool> {
+pub fn bcrypt_verify(hashed_password: String, password_to_verify: String) -> crate::Result<bool> {
     crate::map_cas_err(CASBCrypt::verify_password(hashed_password, password_to_verify))
 }
 
 #[napi]
-pub fn bcrypt_hash_params(cost: u32, password: String) -> napi::Result<String> {
+pub fn bcrypt_hash_params(cost: u32, password: String) -> crate::Result<String> {
     crate::map_cas_err(CASBCrypt::hash_password_customized(password, cost))
 }
 

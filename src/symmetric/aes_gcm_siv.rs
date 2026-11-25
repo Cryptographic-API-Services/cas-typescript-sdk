@@ -17,42 +17,42 @@ pub fn aes_gcm_siv_nonce() -> Vec<u8> {
 }
 
 #[napi]
-pub fn aes128_gcm_siv_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes128_gcm_siv_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES128SIV as CASAES128SIVEncryption>::encrypt_plaintext(aes_key, nonce, plaintext))
 }
 
 #[napi]
-pub fn aes128_gcm_siv_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes128_gcm_siv_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES128SIV as CASAES128SIVEncryption>::decrypt_ciphertext(aes_key, nonce, ciphertext))
 }
 
 #[napi]
-pub fn aes256_gcm_siv_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes256_gcm_siv_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES256SIV as CASAES256SIVEncryption>::encrypt_plaintext(aes_key, nonce, plaintext))
 }
 
 #[napi]
-pub fn aes256_gcm_siv_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes256_gcm_siv_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES256SIV as CASAES256SIVEncryption>::decrypt_ciphertext(aes_key, nonce, ciphertext))
 }
 
 #[napi]
-pub fn aes128_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes128_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES128SIV as CASAES128SIVEncryption>::key_from_x25519_shared_secret(shared_secret))
 }
 
 #[napi]
-pub fn aes256_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes256_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES256SIV as CASAES256SIVEncryption>::key_from_x25519_shared_secret(shared_secret))
 }
 
 #[napi]
-pub fn aes128_gcm_siv_key_from_vec(key_slice: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes128_gcm_siv_key_from_vec(key_slice: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES128SIV as CASAES128SIVEncryption>::key_from_vec(key_slice))
 }
 
 #[napi]
-pub fn aes256_gcm_siv_key_from_vec(key_slice: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn aes256_gcm_siv_key_from_vec(key_slice: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES256SIV as CASAES256SIVEncryption>::key_from_vec(key_slice))
 }
 

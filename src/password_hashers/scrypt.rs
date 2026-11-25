@@ -2,17 +2,17 @@ use cas_lib::password_hashers::{scrypt::CASScrypt};
 use napi_derive::napi;
 
 #[napi]
-pub fn scrypt_hash(password_to_hash: String) -> napi::Result<String> {
+pub fn scrypt_hash(password_to_hash: String) -> crate::Result<String> {
     crate::map_cas_err(CASScrypt::hash_password(password_to_hash))
 }
 
 #[napi]
-pub fn scrypt_verify(hashed_password: String, password_to_verify: String) -> napi::Result<bool> {
+pub fn scrypt_verify(hashed_password: String, password_to_verify: String) -> crate::Result<bool> {
     crate::map_cas_err(CASScrypt::verify_password(hashed_password, password_to_verify))
 }
 
 #[napi]
-pub fn scrypt_hash_params(password: String, cpu_memory_cost: u8, block_size: u32, parallelism: u32) -> napi::Result<String> {
+pub fn scrypt_hash_params(password: String, cpu_memory_cost: u8, block_size: u32, parallelism: u32) -> crate::Result<String> {
     crate::map_cas_err(CASScrypt::hash_password_customized(password, cpu_memory_cost, block_size, parallelism))
 }
 

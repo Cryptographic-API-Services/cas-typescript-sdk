@@ -10,7 +10,7 @@ pub fn x25519_generate_secret_and_public_key() -> CASx25519SecretPublicKeyResult
 }
 
 #[napi]
-pub fn x25519_diffie_hellman(my_secret_key: Vec<u8>, users_public_key: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn x25519_diffie_hellman(my_secret_key: Vec<u8>, users_public_key: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<X25519 as CASKeyExchange>::diffie_hellman(my_secret_key, users_public_key))
 }
 
