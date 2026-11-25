@@ -7,6 +7,10 @@
 CAS TypeScript SDK is a comprehensive cryptographic toolkit for Node.js, designed to provide developers with a unified, high-level interface to industry-standard cryptographic algorithms. This library acts as an abstraction layer over the powerful RustCrypto and Dalek-Cryptography suites, enabling secure and efficient cryptographic operations through a simple TypeScript API.
 
 - **Official NPM Package:** [cas-typescript-sdk](https://www.npmjs.com/package/cas-typescript-sdk)
+- **cas-lib version:** 2.x wraps [cas-lib 0.7.0](https://github.com/Cryptographic-API-Services/cas-lib/releases/tag/v0.7.0), pinned exactly in `Cargo.toml`.
+- **Release notes:** [Changelog](./CHANGELOG.md)
+
+> **Upgrading from 1.x?** 2.0 has breaking changes: RSA signatures, X25519-derived keys, PBKDF2 minimums, password-hasher bounds, zstd limits and more. Read the [2.0 migration guide](./docs/MIGRATING-2.0.md) before you upgrade.
 
 ## Features
 - Modern cryptographic primitives: symmetric encryption, asymmetric encryption, digital signatures, hashing, password hashing, key exchange, and more
@@ -41,7 +45,7 @@ We build on the work of leading cryptography projects. For in-depth algorithm de
 - [Rust Crypto](https://github.com/RustCrypto)
 
 ## Usage Examples
-See practical usage and code samples in our [Examples](./docs/EXAMPLES.md). Release notes are in the [Changelog](./CHANGELOG.md).
+See practical usage and code samples in our [Examples](./docs/EXAMPLES.md). Release notes are in the [Changelog](./CHANGELOG.md), and upgrade steps from 1.x are in the [2.0 migration guide](./docs/MIGRATING-2.0.md).
 
 ## Disclaimer
 This SDK leverages several cryptographic crates via our core FFI [layer](./src). Please note that many of these crates have not undergone formal security audits. Use this library at your own risk and always review the underlying cryptographic implementations for your security requirements.

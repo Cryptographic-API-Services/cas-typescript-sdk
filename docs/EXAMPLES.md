@@ -44,6 +44,8 @@ const toBytes = (text: string): Array<number> => Array.from(encoder.encode(text)
 const toText = (bytes: Array<number>): string => decoder.decode(new Uint8Array(bytes));
 ```
 
+Keys, passwords and shared secrets you pass in or get back live on the V8 heap, where they can't be reliably wiped. See [Secret key material](../README.md#secret-key-material) in the README for how to handle them. Upgrading from 1.x? See the [2.0 migration guide](./MIGRATING-2.0.md).
+
 ## Symmetric
 
 Every AEAD has `seal` / `open` methods, the recommended API. `seal` draws a fresh random nonce for every call and returns `nonce || ciphertext || tag` (a 16 byte tag; a 12 byte nonce, or 16 bytes for Ascon), so there is no nonce to store or reuse by mistake. Optional AAD (additional authenticated data) is bound to the tag but not encrypted or stored: `open` needs the same bytes. `open` throws `CasErrorCode.DecryptionFailed` for a wrong key, AAD or tampered data, and `CasErrorCode.InvalidInput` for a blob shorter than nonce + tag.
