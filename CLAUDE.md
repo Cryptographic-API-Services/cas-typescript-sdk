@@ -85,3 +85,17 @@ The `tests/wycheproof-*.spec.ts` files use [Wycheproof](https://github.com/C2SP/
 Every workflow sets `permissions: {}` and grants each job only what it needs, checks out with `persist-credentials: false`, and pins actions to commit SHAs with a `# vX.Y.Z` comment (Dependabot keeps those current). Dependabot doesn't touch the `docker run` image digests, the Node tarball checksums or the `npm@` version in the publish job, so those are bumped by hand.
 
 PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/) (e.g. `fix(rsa): reject keys under 2048 bits`, or `feat!: ...` for a breaking change), because PRs are squash-merged and the title becomes the commit message and changelog line. `pr-title.yml` enforces this with the same regex as `cas-lib`, so keep the two in sync.
+
+## Releases
+
+Releases are made with [release-please](https://github.com/googleapis/release-please) (`release-type: node`; cas-lib uses release-plz, which only publishes Rust crates), and `CHANGELOG.md` uses cas-lib's format. The `release-please` job in `main-publish.yml` runs on every push to `main`:
+
+1. It opens or updates a `chore: release <version>` PR that bumps `package.json` / `package-lock.json` and `.release-please-manifest.json`, and adds a `CHANGELOG.md` entry built from the Conventional Commit titles since the last release. Edit that PR to polish the entry; don't edit `CHANGELOG.md` entries anywhere else.
+2. Merging it makes the job push the `v<version>` tag and create a GitHub Release whose body is that entry (job outputs `release_created` / `tag_name`).
+3. The `publish` job then ships that version to npm. (Until #151 gates it on `release_created`, `publish` runs on every push to `main`.)
+
+`changelog-sections` in `release-please-config.json` maps commit types to cas-lib's groups: `feat` → Added, `changed` → Changed, `deprecated` → Deprecated, `fix` → Fixed, `security` → Security, `docs` → Documentation, everything else → Other; `!` commits are also listed under Breaking changes. release-please has no catch-all, so a type added to the `pr-title.yml` regex must be added there too or its commits are left out of the changelog. `release-as: "2.0.0"` pins the first release and must be removed once 2.0.0 is out. `Cargo.toml`'s version is not kept in step: the crate is never published, and bumping it would also need `Cargo.lock` updated for `--locked` builds.
+
+The PR that brings an epic branch into `main` must be merged with a **merge commit**, so each sub-PR's squashed Conventional Commit reaches `main` and gets its own changelog line. If it is squashed, put a `BEGIN_COMMIT_OVERRIDE` … `END_COMMIT_OVERRIDE` block listing every sub-PR title in the squash body; otherwise release-please sees one commit. release-please reads that marker from the body of the PR each commit came from and replaces the commit message with whatever follows it, so never write the literal marker in any other PR body (it would replace that PR's changelog line), including the epic PR's when it is merged with a merge commit (it would add duplicate lines).
+
+A release PR opened with the default `GITHUB_TOKEN` doesn't trigger the PR workflows, so the job uses the `RELEASE_PLEASE_TOKEN` secret (GitHub App or fine-grained PAT with Contents and Pull requests read/write) when it is set.

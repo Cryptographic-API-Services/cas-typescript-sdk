@@ -1,5 +1,14 @@
 # Cross-platform build and publish workflow
 #
+# Releases (release-please, configured in release-please-config.json): on every
+# push to `main`, the `release-please` job opens or updates a release PR that
+# bumps package.json and adds a CHANGELOG.md entry built from the commits since
+# the last release. Merging that PR makes the job create the `v<version>` tag and
+# a GitHub Release whose body is that entry.
+#
+# The file keeps its name on purpose: the npm trusted publisher is bound to
+# `main-publish.yml`, and renaming it would break publishing.
+#
 # Hardening:
 # - The workflow grants nothing by default; each job asks for what it needs, and
 #   only `publish` can mint an OIDC token (`id-token: write`).
@@ -16,6 +25,31 @@ on:
 permissions: {}
 
 jobs:
+  release-please:
+    name: Release PR, tag and GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # push the v<version> tag and create the GitHub Release
+      pull-requests: write  # open and update the release PR
+    concurrency:
+      group: release-please-${{ github.ref }}
+      cancel-in-progress: false
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Open the release PR, or tag and release a merged one
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          # A PR opened with the default GITHUB_TOKEN doesn't trigger the PR
+          # workflows. Set the RELEASE_PLEASE_TOKEN secret (GitHub App or
+          # fine-grained PAT with Contents and Pull requests read/write) so CI
+          # runs on release PRs.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
   build-matrix:
     runs-on: ${{ matrix.settings.host }}
     permissions:
