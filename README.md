@@ -26,6 +26,14 @@ The SDK is built and tested against the Node.js LTS release lines:
 
 The published native addon is compiled once, on Node.js 26, against Node-API (N-API). Node-API is ABI-stable across Node.js versions, so the same prebuilt binary loads on every supported release line. Prebuilt binaries ship for Linux x64 (glibc and musl), Windows x64 and macOS x64.
 
+## Secret key material
+The native addon installs [`ZeroAlloc`](https://crates.io/crates/zeroizing-alloc) as its global allocator, so Rust heap memory is zeroed when it is freed. That covers the copies of keys, passwords and shared secrets that the Rust layer and [cas-lib](https://github.com/Cryptographic-API-Services/cas-lib) make while they work.
+
+It does not cover the JavaScript side. Secrets you pass in as `Array<number>` or `string`, and secrets the SDK returns to you (generated keys, private keys, shared secrets, derived keys), live on the V8 heap. They stay there until the garbage collector reclaims them, and neither the SDK nor your code can reliably wipe them: V8 may copy, intern or move strings and arrays. So:
+
+- keep secrets in scope only as long as you need them, and don't cache, log or serialize them;
+- prefer byte arrays over strings for secrets, and overwrite them (e.g. `key.fill(0)`) when you are done, knowing this only clears that one copy.
+
 ## Documentation & References
 We build on the work of leading cryptography projects. For in-depth algorithm details and implementation notes, please refer to:
 - [Spin Research](https://github.com/SpinResearch)
