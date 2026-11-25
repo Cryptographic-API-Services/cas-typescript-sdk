@@ -12,12 +12,12 @@ pub fn chacha20_poly1305_nonce() -> Vec<u8> {
 }
 
 #[napi]
-pub fn chacha20_poly1305_encrypt(key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn chacha20_poly1305_encrypt(key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASChacha20Poly1305 as Chacha20Poly1305Encryption>::encrypt_plaintext(key, nonce, plaintext))
 }
 
 #[napi]
-pub fn chacha20_poly1305_decrypt(key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn chacha20_poly1305_decrypt(key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASChacha20Poly1305 as Chacha20Poly1305Encryption>::decrypt_ciphertext(key, nonce, ciphertext))
 }
 

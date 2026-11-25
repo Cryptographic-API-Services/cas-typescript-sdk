@@ -29,6 +29,8 @@ import {
   MlKem1024Wrapper,
   MlDsa65Wrapper,
   SlhDsaWrapper,
+  CasErrorCode,
+  isCasError,
 } from "cas-typescript-sdk";
 ```
 
@@ -353,4 +355,38 @@ const { signingKey, verificationKey } = slhDsa.generateKeyPair();
 const message = toBytes("This is my message to sign");
 const signature = slhDsa.sign(message, signingKey); // ~17 KB, slower than other signers
 const isValid: boolean = slhDsa.verify(message, signature, verificationKey);
+```
+
+## Error handling
+
+Errors raised by the underlying cas-lib carry a stable `code` from `CasErrorCode` (such as `"CAS_DECRYPTION_FAILED"`). Branch on the code, not the message text. Argument checks done by the wrapper classes, such as passing empty data, throw a plain `Error` with no `code`, and `isCasError` returns `false` for them.
+
+```typescript
+const aes = new AESWrapper();
+const key = aes.aes256Key();
+const nonce = aes.generateAESNonce();
+const ciphertext = aes.aes256Encrypt(key, nonce, toBytes("This is my secret message"));
+ciphertext[0] ^= 0x01; // tampered in transit
+
+try {
+  aes.aes256Decrypt(key, nonce, ciphertext);
+} catch (err) {
+  if (isCasError(err, CasErrorCode.DecryptionFailed)) {
+    // wrong key, nonce or AAD, or tampered data: reject the message
+  } else if (isCasError(err)) {
+    console.error(err.code, err.message); // any other cas-lib error
+  } else {
+    throw err; // wrapper validation error or a bug
+  }
+}
+
+// A decompression bomb is reported with its own code
+const zstd = new ZTSDWrapper();
+try {
+  zstd.decompress(zstd.compress(new Array(1024).fill(0), 3), 512);
+} catch (err) {
+  if (isCasError(err, CasErrorCode.DecompressionLimitExceeded)) {
+    // output would exceed maxOutputSize
+  }
+}
 ```

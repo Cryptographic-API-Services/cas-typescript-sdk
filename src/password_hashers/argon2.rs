@@ -3,27 +3,27 @@ use napi_derive::napi;
 use cas_lib::password_hashers::argon2::CASArgon;
 
 #[napi]
-pub fn argon2_hash(password: String) -> napi::Result<String> {
+pub fn argon2_hash(password: String) -> crate::Result<String> {
     crate::map_cas_err(CASArgon::hash_password(password))
 }
 
 #[napi]
-pub fn argon2_verify(hashed_password: String, password_to_verify: String) -> napi::Result<bool> {
+pub fn argon2_verify(hashed_password: String, password_to_verify: String) -> crate::Result<bool> {
     crate::map_cas_err(CASArgon::verify_password(hashed_password, password_to_verify))
 }
 
 #[napi]
-pub fn argon2_hash_params(memory_cost: u32, iterations: u32, parallelism: u32, password: String, ) -> napi::Result<String> {
+pub fn argon2_hash_params(memory_cost: u32, iterations: u32, parallelism: u32, password: String, ) -> crate::Result<String> {
     crate::map_cas_err(CASArgon::hash_password_parameters(memory_cost, iterations, parallelism, password))
 }
 
 #[napi]
-pub fn argon2_derive_aes_128_key(password: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn argon2_derive_aes_128_key(password: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(CASArgon::derive_aes_128_key(password))
 }
 
 #[napi]
-pub fn argon2_derive_aes_256_key(password: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn argon2_derive_aes_256_key(password: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(CASArgon::derive_aes_256_key(password))
 }
 

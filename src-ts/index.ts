@@ -9,3 +9,4 @@ export * from "./signature/index";
 export * from "./hybrid/index";
 export * from "./compression/index";
 export * from "./pqc/index";
+export * from "./errors";

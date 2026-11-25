@@ -23,7 +23,7 @@ pub fn hpke_encrypt(
     public_key: Vec<u8>,
     info_str: Vec<u8>,
     aad: Vec<u8>,
-) -> napi::Result<HpkeEncryptResult> {
+) -> crate::Result<HpkeEncryptResult> {
     let encrypt_result: (Vec<u8>, Vec<u8>, Vec<u8>) =
         crate::map_cas_err(<CASHPKE as CASHybrid>::encrypt(plaintext, public_key, info_str, aad))?;
     Ok(HpkeEncryptResult {
@@ -41,7 +41,7 @@ pub fn hpke_decrypt(
     tag: Vec<u8>,
     info_str: Vec<u8>,
     aad: Vec<u8>,
-) -> napi::Result<Vec<u8>> {
+) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASHPKE as CASHybrid>::decrypt(ciphertext, private_key, encapped_key, tag, info_str, aad))
 }
 
