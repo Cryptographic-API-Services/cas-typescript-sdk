@@ -15,4 +15,4 @@ zeroize = "1.8.1"
 zeroizing-alloc = "0.1.0"
 
 [build-dependencies]
-napi-build = "1"
+napi-build = "2"
