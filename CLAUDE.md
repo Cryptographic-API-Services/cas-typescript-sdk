@@ -74,3 +74,5 @@ The `tests/wycheproof-*.spec.ts` files use [Wycheproof](https://github.com/C2SP/
 ## CI
 
 `.github/workflows/main-pr-linux.yml`, `main-pr-macos.yml` and `main-pr-windows.yml` run `npm ci` then `npm test` on every PR, whatever its base branch (same as `cas-lib`), each across a Node.js LTS matrix (22.x, 24.x, 26.x) with `fail-fast: false`. `main-publish.yml` builds the native addon once on Node 26 (N-API binaries are not tied to a Node version) and publishes to npm. When the supported Node.js lines change, update the three PR matrices, the Node version in `main-publish.yml` (both `setup-node` steps, the NodeSource `setup_NN.x` script and the pinned musl tarball URL) and the "Supported Node.js Versions" table in `README.md` together.
+
+PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/) (e.g. `fix(rsa): reject keys under 2048 bits`, or `feat!: ...` for a breaking change), because PRs are squash-merged and the title becomes the commit message and changelog line. `pr-title.yml` enforces this with the same regex as `cas-lib`, so keep the two in sync.
