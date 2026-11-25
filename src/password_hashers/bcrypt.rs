@@ -38,6 +38,32 @@ pub fn bcrypt_verify_test() {
     assert_eq!(true, verified);
 }
 
+#[cfg(test)]
+fn random_password_of_length(length: usize) -> String {
+    let mut password = String::new();
+    while password.len() < length {
+        password.push_str(&crate::test_util::random_password());
+    }
+    password.truncate(length);
+    password
+}
+
+#[test]
+pub fn bcrypt_accepts_72_byte_password_test() {
+    let password = random_password_of_length(72);
+    let hashed = bcrypt_hash(password.clone()).unwrap();
+    assert_eq!(true, bcrypt_verify(hashed, password).unwrap());
+}
+
+#[test]
+pub fn bcrypt_rejects_73_byte_password_test() {
+    let password = random_password_of_length(73);
+    assert!(bcrypt_hash(password.clone()).is_err());
+    assert!(bcrypt_hash_params(4, password.clone()).is_err());
+    let hashed = bcrypt_hash(password[..72].to_string()).unwrap();
+    assert!(bcrypt_verify(hashed, password).is_err());
+}
+
 #[test]
 pub fn bcrypt_verify_fail_test() {
     let password = crate::test_util::random_password();

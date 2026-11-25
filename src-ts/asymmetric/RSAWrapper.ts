@@ -4,14 +4,15 @@ import { CASRSAKeyPairResult, generateRsaKeys, signRsa, verifyRsa } from "../../
 export class RSAWrapper {
 
   /**
-   * Generates an RSA key pair based of parameter sent in 1024, 2048, and 4096 are supported.
-   * @param keySize 
+   * Generates an RSA key pair of the given size in bits. 2048, 3072 and 4096 are supported;
+   * smaller keys are insecure and cannot be used to sign or verify.
+   * @param keySize 2048, 3072 or 4096
    * @returns CASRSAKeyPairResult
    */
   
   public getKeyPair(keySize: number): CASRSAKeyPairResult {
-    if (keySize !== 1024 && keySize !== 2048 && keySize !== 4096) {
-        throw new Error("You must provide an appropriate key size to generate RSA keys");
+    if (keySize !== 2048 && keySize !== 3072 && keySize !== 4096) {
+        throw new Error("RSA key size must be 2048, 3072 or 4096 bits");
     }
     return generateRsaKeys(keySize);
   }
@@ -25,6 +26,7 @@ export class RSAWrapper {
 
   /**
    * Signs a byte array with an RSA private key for verification.
+   * Throws for keys under 2048 bits.
    * @param privateKey 
    * @param hash 
    * @returns Array<number>
@@ -42,6 +44,7 @@ export class RSAWrapper {
 
   /**
    * Verifies signed data by the corresponding private key with an RSA public key.
+   * Throws for keys under 2048 bits.
    * @param publicKey 
    * @param hash 
    * @param signature 

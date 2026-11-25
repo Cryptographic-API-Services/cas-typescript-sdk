@@ -18,29 +18,54 @@ impl From<Pbkdf2Result> for CASPbkdf2Result {
 }
 
 #[napi]
-pub fn pbkdf2_derive(password: Vec<u8>, number_of_iterations: u32) -> CASPbkdf2Result {
-    return derivation(password, number_of_iterations).into();
+pub fn pbkdf2_derive(password: Vec<u8>, number_of_iterations: u32) -> napi::Result<CASPbkdf2Result> {
+    crate::map_cas_err(derivation(password, number_of_iterations)).map(Into::into)
 }
 
 #[napi]
-pub fn pbkdf2_derive_with_salt(password: Vec<u8>, number_of_iterations: u32, salt: Vec<u8>) -> Vec<u8> {
-    return derivation_with_salt(password, number_of_iterations, salt);
+pub fn pbkdf2_derive_with_salt(password: Vec<u8>, number_of_iterations: u32, salt: Vec<u8>) -> napi::Result<Vec<u8>> {
+    crate::map_cas_err(derivation_with_salt(password, number_of_iterations, salt))
+}
+
+#[cfg(test)]
+use cas_lib::password_hashers::pbkdf2::{MIN_ITERATIONS, MIN_SALT_LENGTH};
+
+#[cfg(test)]
+fn random_salt(length: usize) -> Vec<u8> {
+    let mut salt = crate::symmetric::aes::aes256_key();
+    salt.truncate(length);
+    salt
 }
 
 #[test]
 fn pbkdf2_derive_with_salt_is_deterministic_test() {
-    let password = b"BadPassword".to_vec();
-    let salt = b"SixteenByteSalt!".to_vec();
-    let key1 = pbkdf2_derive_with_salt(password.clone(), 1000, salt.clone());
-    let key2 = pbkdf2_derive_with_salt(password, 1000, salt);
+    let password = crate::test_util::random_password().into_bytes();
+    let salt = random_salt(MIN_SALT_LENGTH);
+    let key1 = pbkdf2_derive_with_salt(password.clone(), MIN_ITERATIONS, salt.clone()).unwrap();
+    let key2 = pbkdf2_derive_with_salt(password, MIN_ITERATIONS, salt).unwrap();
     assert_eq!(key1.len(), 32);
     assert_eq!(key1, key2);
 }
 
 #[test]
 fn pbkdf2_derive_returned_salt_reproduces_key_test() {
-    let password = b"BadPassword".to_vec();
-    let result = pbkdf2_derive(password.clone(), 1000);
-    let rederived = pbkdf2_derive_with_salt(password, 1000, result.salt);
+    let password = crate::test_util::random_password().into_bytes();
+    let result = pbkdf2_derive(password.clone(), MIN_ITERATIONS).unwrap();
+    let rederived = pbkdf2_derive_with_salt(password, MIN_ITERATIONS, result.salt).unwrap();
     assert_eq!(result.derived_key, rederived);
+}
+
+#[test]
+fn pbkdf2_rejects_too_few_iterations_test() {
+    let password = crate::test_util::random_password().into_bytes();
+    let salt = random_salt(MIN_SALT_LENGTH);
+    assert!(pbkdf2_derive(password.clone(), MIN_ITERATIONS - 1).is_err());
+    assert!(pbkdf2_derive_with_salt(password, MIN_ITERATIONS - 1, salt).is_err());
+}
+
+#[test]
+fn pbkdf2_rejects_short_salt_test() {
+    let password = crate::test_util::random_password().into_bytes();
+    let salt = random_salt(MIN_SALT_LENGTH - 1);
+    assert!(pbkdf2_derive_with_salt(password, MIN_ITERATIONS, salt).is_err());
 }

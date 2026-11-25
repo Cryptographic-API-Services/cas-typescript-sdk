@@ -18,6 +18,9 @@ WYCHEPROOF_REF=<sha-or-tag> npm run wycheproof:fetch   # a specific upstream ref
   upstream added a case the SDK (or a spec) doesn't handle yet.
 - **Adding a file:** add its name to `FILES` in the fetch script and a row to
   the table below.
+- **Pinned files:** files upstream has removed from `main` are listed in
+  `PINNED_FILES` with the last commit that has them, and are always fetched
+  from that commit.
 
 Wycheproof is licensed under the Apache License 2.0; see
 <https://github.com/C2SP/wycheproof/blob/main/LICENSE>.
@@ -26,6 +29,7 @@ Wycheproof is licensed under the Apache License 2.0; see
 | --- | --- |
 | `aes_gcm_test.json` | `tests/wycheproof-aes-gcm.spec.ts` |
 | `ed25519_test.json` | `tests/wycheproof-ed25519.spec.ts` |
+| `eddsa_test.json` (pinned, legacy `testvectors/`: private keys for `ed25519_test.json`'s public keys) | `tests/wycheproof-ed25519.spec.ts` |
 | `x25519_test.json` | `tests/wycheproof-x25519.spec.ts` |
 | `hmac_sha256_test.json` | `tests/wycheproof-hmac.spec.ts` |
 | `hmac_sha512_test.json` | `tests/wycheproof-hmac.spec.ts` |
