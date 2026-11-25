@@ -1,4 +1,4 @@
-import { CASRSAKeyPairResult, generateRsaKeys, signRsa, verifyRsa } from "../../index";
+import { CASRSAKeyPairResult, generateRsaKeys, signRsa, signRsaPss, verifyRsa, verifyRsaPss } from "../../index";
 
 
 export class RSAWrapper {
@@ -61,5 +61,52 @@ export class RSAWrapper {
       throw new Error("You must provide a signature to verify with RSA");
     }
     return verifyRsa(publicKey, message, signature);
+  }
+
+  /**
+   * Signs a message with RSASSA-PSS, SHA-256, MGF1-SHA-256 and a 32-byte random salt (JWS `PS256`).
+   * Recommended for new designs; keep sign / verify (`RS256`) for interop with systems that require PKCS#1 v1.5.
+   * PSS signatures are randomized, so signing the same message twice gives different signatures; both verify.
+   * The message is hashed internally; pass the message itself, not a digest of it. It can be any length.
+   * Verifies with Node's `crypto.verify("sha256", ...)` using `RSA_PKCS1_PSS_PADDING` and `saltLength: 32`.
+   * Throws for keys under 2048 bits and for private keys whose two primes differ greatly in size.
+   * @param privateKey PKCS#8 PEM private key, as returned by getKeyPair.
+   * @param message The message to sign.
+   * @returns Array<number>
+   */
+
+  public signPss(privateKey: string, message: Array<number>): Array<number> {
+    if (!privateKey) {
+      throw new Error("You must provide a private key to sign with RSA");
+    }
+    if (!message || message.length === 0) {
+      throw new Error("You must provide a message to sign with RSA");
+    }
+    return signRsaPss(privateKey, message);
+  }
+
+  /**
+   * Verifies an RSASSA-PSS SHA-256 (`PS256`) signature over a message, as produced by signPss or any
+   * PS256 signer using MGF1-SHA-256 and a 32-byte salt. Returns false for a signature that does not match,
+   * including signatures with any other salt length and RS256 signatures made by sign.
+   * Recommended for new designs; keep verify (`RS256`) for interop.
+   * Accepts public keys from 2048 up to 8192 bits; smaller keys throw.
+   * @param publicKey PKCS#1 PEM public key, as returned by getKeyPair.
+   * @param message The message that was signed.
+   * @param signature
+   * @returns boolean
+   */
+
+  public verifyPss(publicKey: string, message: Array<number>, signature: Array<number>): boolean {
+    if (!publicKey) {
+      throw new Error("You must provide a public key to verify with RSA");
+    }
+    if (!message || message.length === 0) {
+      throw new Error("You must provide a message to verify with RSA");
+    }
+    if (!signature || signature.length === 0) {
+      throw new Error("You must provide a signature to verify with RSA");
+    }
+    return verifyRsaPss(publicKey, message, signature);
   }
 }

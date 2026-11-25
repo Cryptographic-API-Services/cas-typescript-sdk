@@ -38,18 +38,20 @@ Wycheproof is licensed under the Apache License 2.0; see
 | `mlkem_1024_semi_expanded_decaps_test.json` | `tests/wycheproof-ml-kem.spec.ts` |
 | `mldsa_65_sign_seed_test.json` | `tests/wycheproof-ml-dsa.spec.ts` |
 | `mldsa_65_verify_test.json` | `tests/wycheproof-ml-dsa.spec.ts` |
+| `rsa_pss_2048_sha256_mgf1_32_test.json` | `tests/wycheproof-rsa.spec.ts` |
+| `rsa_signature_2048_sha256_test.json` | `tests/wycheproof-rsa.spec.ts` |
 
 Not covered, and why:
 
 - **Ascon** — `cas-lib` implements NIST SP 800-232 Ascon-AEAD128 (`ascon-aead`
   0.5.x); Wycheproof currently only ships vectors for the pre-standard
   Ascon v1.2 family (`ascon128`, `ascon128a`, `ascon80pq`).
-- **RSA signatures** — not wired up yet. Since `cas-lib` 0.5 the SDK signs
-  standard RS256 (PKCS#1 v1.5, SHA-256, DigestInfo), so
-  `rsa_signature_*_sha256_test.json` now applies; the vectors' public keys are
-  SPKI and would need converting to the PKCS#1 PEM `RSAWrapper.verify` takes.
-  Interop with Node's `crypto.sign` / `crypto.verify` is tested in
-  `tests/asymmetric.spec.ts`.
+- **RSA signatures other than 2048-bit RS256 / PS256 with a 32-byte salt** —
+  `RSAWrapper` only signs SHA-256 PKCS#1 v1.5 (`RS256`) and SHA-256 PSS with
+  MGF1-SHA-256 and a 32-byte salt (`PS256`), so the other hash, salt-length
+  and `_params` files don't apply. The larger-key RS256 files would, but
+  aren't wired up yet. Interop with Node's `crypto.sign` / `crypto.verify` is
+  tested in `tests/asymmetric.spec.ts`.
 - **AES-GCM / AES-GCM-SIV / ChaCha20-Poly1305 vectors with AAD, non-96-bit
   IVs, or AES-192 keys** — the SDK's API surface does not accept AAD, only
   takes 96-bit nonces, and does not expose AES-192.

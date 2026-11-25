@@ -30,6 +30,8 @@ const FILES = [
   "mldsa_65_sign_seed_test.json",
   "mldsa_65_verify_test.json",
   "mlkem_1024_semi_expanded_decaps_test.json",
+  "rsa_pss_2048_sha256_mgf1_32_test.json",
+  "rsa_signature_2048_sha256_test.json",
   "x25519_test.json",
 ];
 

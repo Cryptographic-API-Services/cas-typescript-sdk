@@ -79,6 +79,25 @@ export type MacTestGroup = {
   tests: MacTest[];
 };
 
+export type SignatureTest = {
+  tcId: number;
+  comment: string;
+  flags: string[];
+  msg: string;
+  sig: string;
+  result: WycheproofResult;
+};
+
+export type RsaSignatureTestGroup = {
+  type: string;
+  keySize: number;
+  sha: string;
+  mgfSha?: string;
+  sLen?: number;
+  publicKeyPem: string;
+  tests: SignatureTest[];
+};
+
 export type WycheproofFile<TGroup> = {
   algorithm: string;
   numberOfTests: number;

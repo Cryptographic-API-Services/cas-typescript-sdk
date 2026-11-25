@@ -110,6 +110,25 @@ const nodeSignatureIsValid: boolean = rsa.verify(keys.publicKey, message, Array.
 const verifiedByNode: boolean = verify("sha256", Buffer.from(message), keys.publicKey, Buffer.from(signature));
 ```
 
+### RSA PSS signatures
+
+`signPss` / `verifyPss` use RSASSA-PSS with SHA-256, MGF1-SHA-256 and a 32-byte salt (`PS256`), and are recommended for new designs; keep `sign` / `verify` for systems that need `RS256`. PSS signatures are randomized, so signing the same message twice gives different signatures that both verify. Keys and message handling are the same as for `sign` / `verify`.
+
+```typescript
+const rsaPss = new RSAWrapper();
+const pssKeys = rsaPss.getKeyPair(2048);
+const pssMessage = toBytes("This is my message to sign");
+const pssSignature = rsaPss.signPss(pssKeys.privateKey, pssMessage);
+const pssIsValid: boolean = rsaPss.verifyPss(pssKeys.publicKey, pssMessage, pssSignature);
+
+// Interoperates with Node's crypto module using PSS padding and a 32-byte salt
+import { constants, sign as nodeSign, verify as nodeVerify } from "crypto";
+const pssOptions = { padding: constants.RSA_PKCS1_PSS_PADDING, saltLength: 32 };
+const nodePssSignature = nodeSign("sha256", Buffer.from(pssMessage), { key: pssKeys.privateKey, ...pssOptions });
+const nodePssSignatureIsValid: boolean = rsaPss.verifyPss(pssKeys.publicKey, pssMessage, Array.from(nodePssSignature));
+const pssVerifiedByNode: boolean = nodeVerify("sha256", Buffer.from(pssMessage), { key: pssKeys.publicKey, ...pssOptions }, Buffer.from(pssSignature));
+```
+
 ## Digital Signatures
 
 ### Ed25519
