@@ -41,7 +41,7 @@ We build on the work of leading cryptography projects. For in-depth algorithm de
 - [Rust Crypto](https://github.com/RustCrypto)
 
 ## Usage Examples
-See practical usage and code samples in our [Examples](./docs/EXAMPLES.md).
+See practical usage and code samples in our [Examples](./docs/EXAMPLES.md). Release notes are in the [Changelog](./CHANGELOG.md).
 
 ## Disclaimer
 This SDK leverages several cryptographic crates via our core FFI [layer](./src). Please note that many of these crates have not undergone formal security audits. Use this library at your own risk and always review the underlying cryptographic implementations for your security requirements.
