@@ -5,7 +5,10 @@ name: macOS Build / Test
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "epic/**" ]
+  # Integration branches also run on every push, so each merge into one is tested.
+  push:
+    branches: [ "epic/**" ]
   workflow_dispatch:
 
 permissions:
