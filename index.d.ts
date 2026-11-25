@@ -21,13 +21,13 @@ export declare function aes128GcmSivKey(): Array<number>
 
 export declare function aes128GcmSivKeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes128GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes128GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
 
 export declare function aes128Key(): Array<number>
 
 export declare function aes128KeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
 
 export declare function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
@@ -41,13 +41,13 @@ export declare function aes256GcmSivKey(): Array<number>
 
 export declare function aes256GcmSivKeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes256GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes256GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
 
 export declare function aes256Key(): Array<number>
 
 export declare function aes256KeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
 
 export declare function aesGcmSivNonce(): Array<number>
 
@@ -205,7 +205,7 @@ export declare function sha512Verify(dataToHash: Array<number>, dataToVerify: Ar
 
 export declare function signEd25519(privateKey: Array<number>, message: Array<number>): Array<number>
 
-export declare function signRsa(privateKey: string, hash: Array<number>): Array<number>
+export declare function signRsa(privateKey: string, message: Array<number>): Array<number>
 
 export declare function slhDsaGenerateKeyPair(): CASSlhDsaKeyPairResult
 
@@ -217,7 +217,7 @@ export declare function verifyEd25519(publicKey: Array<number>, message: Array<n
 
 export declare function verifyEd25519WithKeyPair(keyPair: Array<number>, message: Array<number>, signature: Array<number>): boolean
 
-export declare function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
+export declare function verifyRsa(publicKey: string, message: Array<number>, signature: Array<number>): boolean
 
 export declare function x25519DiffieHellman(mySecretKey: Array<number>, usersPublicKey: Array<number>): Array<number>
 

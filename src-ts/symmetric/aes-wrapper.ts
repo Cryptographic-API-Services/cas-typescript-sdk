@@ -92,23 +92,37 @@ export class AESWrapper {
     }
 
     /**
-     * Derives an AES-256 key from a X25519 Diffie Hellman shared secret.
-     * @param shared_secret 
-     * @returns 
+     * Derives a 32 byte AES-256-GCM key from a X25519 Diffie Hellman shared secret with HKDF-SHA256.
+     * The key is bound to AES-256-GCM and to both parties' public keys, so the same shared
+     * secret gives unrelated keys for other ciphers, and both peers derive the same key only
+     * if they saw the same public keys. Pass the public keys in either order.
+     * Keys differ from those derived by earlier versions of this SDK: both peers must upgrade together.
+     * Throws if any input is not 32 bytes or the shared secret is all zeros.
+     * @param sharedSecret Output of X25519Wrapper.generateSharedSecret.
+     * @param publicKeyA One party's 32 byte X25519 public key.
+     * @param publicKeyB The other party's 32 byte X25519 public key.
+     * @returns Array<number>
      */
     
-    public aes256KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
-         return aes256KeyFromX25519SharedSecret(shared_secret);
+    public aes256KeyNonceX25519DiffieHellman(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): number[] {
+         return aes256KeyFromX25519SharedSecret(sharedSecret, publicKeyA, publicKeyB);
     }
 
     /**
-     * Derives an AES-128 key from a X25519 Diffie Hellman shared secret.
-     * @param shared_secret 
-     * @returns 
+     * Derives a 16 byte AES-128-GCM key from a X25519 Diffie Hellman shared secret with HKDF-SHA256.
+     * The key is bound to AES-128-GCM and to both parties' public keys, so the same shared
+     * secret gives unrelated keys for other ciphers, and both peers derive the same key only
+     * if they saw the same public keys. Pass the public keys in either order.
+     * Keys differ from those derived by earlier versions of this SDK: both peers must upgrade together.
+     * Throws if any input is not 32 bytes or the shared secret is all zeros.
+     * @param sharedSecret Output of X25519Wrapper.generateSharedSecret.
+     * @param publicKeyA One party's 32 byte X25519 public key.
+     * @param publicKeyB The other party's 32 byte X25519 public key.
+     * @returns Array<number>
      */
     
-    public aes128KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
-        return aes128KeyFromX25519SharedSecret(shared_secret);
+    public aes128KeyNonceX25519DiffieHellman(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): number[] {
+        return aes128KeyFromX25519SharedSecret(sharedSecret, publicKeyA, publicKeyB);
    }
 
     /**

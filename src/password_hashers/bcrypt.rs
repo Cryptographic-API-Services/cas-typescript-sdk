@@ -24,6 +24,31 @@ pub fn bcrypt_hash_params_test() {
 }
 
 #[test]
+pub fn bcrypt_hash_params_bounds_test() {
+    let password = crate::test_util::random_password();
+    assert!(bcrypt_hash_params(9, password.clone()).is_err());
+    assert!(bcrypt_hash_params(17, password.clone()).is_err());
+    let hashed = bcrypt_hash_params(10, password.clone()).unwrap();
+    assert_eq!(true, bcrypt_verify(hashed, password).unwrap());
+}
+
+#[cfg(test)]
+const BCRYPT_COST_4_HASH: &str = "$2b$04$EGdrhbKUv8Oc9vGiXX0HQOxSg445d458Muh7DAHskb6QbtCvdxcie";
+
+#[test]
+pub fn bcrypt_verify_below_minimum_cost_test() {
+    assert_eq!(true, bcrypt_verify(BCRYPT_COST_4_HASH.to_string(), "correctbatteryhorsestapler".to_string()).unwrap());
+}
+
+#[test]
+pub fn bcrypt_verify_refuses_hostile_hash_test() {
+    for cost in ["$17$", "$31$"] {
+        let hostile = BCRYPT_COST_4_HASH.replace("$04$", cost);
+        assert!(bcrypt_verify(hostile, "correctbatteryhorsestapler".to_string()).is_err());
+    }
+}
+
+#[test]
 pub fn bcrypt_hash_test() {
     let password = crate::test_util::random_password();
     let hashed = bcrypt_hash(password.clone()).unwrap();
@@ -59,7 +84,7 @@ pub fn bcrypt_accepts_72_byte_password_test() {
 pub fn bcrypt_rejects_73_byte_password_test() {
     let password = random_password_of_length(73);
     assert!(bcrypt_hash(password.clone()).is_err());
-    assert!(bcrypt_hash_params(4, password.clone()).is_err());
+    assert!(bcrypt_hash_params(10, password.clone()).is_err());
     let hashed = bcrypt_hash(password[..72].to_string()).unwrap();
     assert!(bcrypt_verify(hashed, password).is_err());
 }

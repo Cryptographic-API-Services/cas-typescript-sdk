@@ -30,8 +30,39 @@ pub fn argon2_derive_aes_256_key(password: Vec<u8>) -> crate::Result<Vec<u8>> {
 #[test]
 pub fn argon2_hash_params_test() {
     let password = crate::test_util::random_password();
-    let hashed = argon2_hash_params(1024, 2, 1, password.clone()).unwrap();
-    assert_ne!(password, hashed);
+    let hashed = argon2_hash_params(19, 2, 1, password.clone()).unwrap();
+    assert!(hashed.contains("$m=19456,t=2,p=1$"));
+    assert_eq!(true, argon2_verify(hashed, password).unwrap());
+}
+
+#[test]
+pub fn argon2_hash_params_bounds_test() {
+    let password = crate::test_util::random_password();
+    assert!(argon2_hash_params(18, 2, 1, password.clone()).is_err());
+    assert!(argon2_hash_params(4097, 2, 1, password.clone()).is_err());
+    assert!(argon2_hash_params(4_194_305, 2, 1, password.clone()).is_err());
+    assert!(argon2_hash_params(19, 0, 1, password.clone()).is_err());
+    assert!(argon2_hash_params(19, 11, 1, password.clone()).is_err());
+    assert!(argon2_hash_params(19, 2, 0, password.clone()).is_err());
+    assert!(argon2_hash_params(19, 2, 17, password.clone()).is_err());
+    assert!(argon2_hash_params(19, 10, 1, password.clone()).is_ok());
+    assert!(argon2_hash_params(19, 1, 16, password).is_ok());
+}
+
+#[cfg(test)]
+const ARGON2_256_KIB_HASH: &str = "$argon2id$v=19$m=256,t=2,p=1$c29tZXNhbHQ$nf65EOgLrQMR/uIPnA4rEsF5h7TKyQwu9U1bMCHGi/4";
+
+#[test]
+pub fn argon2_verify_below_minimum_cost_test() {
+    assert_eq!(true, argon2_verify(ARGON2_256_KIB_HASH.to_string(), "password".to_string()).unwrap());
+}
+
+#[test]
+pub fn argon2_verify_refuses_hostile_hash_test() {
+    for params in ["m=4194305,t=2,p=1", "m=256,t=11,p=1", "m=256,t=2,p=17"] {
+        let hostile = ARGON2_256_KIB_HASH.replace("m=256,t=2,p=1", params);
+        assert!(argon2_verify(hostile, "password".to_string()).is_err());
+    }
 }
 
 #[test]

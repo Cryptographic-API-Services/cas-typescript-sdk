@@ -2,6 +2,8 @@ import { IPasswordHasherBase } from "./password-hasher-base";
 import { bcryptHash, bcryptHashParams, bcryptVerify } from "./../../index";
 
 const BCRYPT_MAX_PASSWORD_BYTES = 72;
+const BCRYPT_MIN_COST = 10;
+const BCRYPT_MAX_COST = 16;
 
 export class BCryptWrapper implements IPasswordHasherBase {
 
@@ -26,13 +28,16 @@ export class BCryptWrapper implements IPasswordHasherBase {
    * The password must be at most 72 bytes of UTF-8 (bytes, not characters);
    * a longer password throws instead of being truncated.
    * @param password 
-   * @param cost 
-   * @returns 
+   * @param cost An integer from 10 to 16 (hashPassword uses 12). Each step doubles the work; other values throw.
+   * @returns string
    */
   
   public hashPasswordWithParameters(password: string, cost: number): string {
     if (!password) {
       throw new Error("You must provide a password to hash with BCrypt");
+    }
+    if (!Number.isInteger(cost) || cost < BCRYPT_MIN_COST || cost > BCRYPT_MAX_COST) {
+      throw new Error(`BCrypt cost must be an integer from ${BCRYPT_MIN_COST} to ${BCRYPT_MAX_COST}`);
     }
     this.checkPasswordLength(password);
     return bcryptHashParams(cost, password);
@@ -41,6 +46,8 @@ export class BCryptWrapper implements IPasswordHasherBase {
   /**
    * Verifies that a password is the same as the hashed password with BCrypt.
    * A password longer than 72 bytes of UTF-8 throws, since it can never match.
+   * A stored hash with a cost above 16 (e.g. `$2b$31$...`) throws instead of
+   * running for hours; hashes with a cost below 10 still verify.
    * @param hashedPassword 
    * @param passwordToVerify 
    * @returns boolean
