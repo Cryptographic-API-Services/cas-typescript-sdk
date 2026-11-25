@@ -115,7 +115,7 @@ const isValidWithKeyPair: boolean = ed25519.verifyWithKeyPairBytes(keyPair.priva
 
 ## Hashers
 
-`SHAWrapper` (SHA3), `SHA2Wrapper` and `Blake2Wrapper` share the same interface. `verify512` / `verify256` take the existing hash first, then the data to check.
+`SHAWrapper` (SHA3-512 / SHA3-256), `SHA2Wrapper` (SHA-512 / SHA-256) and `Blake2Wrapper` (BLAKE2b-512 / BLAKE2s-256) share the same interface. `verify512` / `verify256` take the existing hash first, then the data to check.
 
 Empty input is valid: `[]`, `null` and `undefined` all hash as the empty message, which has a well-defined digest.
 
@@ -148,8 +148,8 @@ const matches256: boolean = sha2.verify256(hash256, data);
 ```typescript
 const blake2 = new Blake2Wrapper();
 const data = toBytes("This is my array to hash");
-const hash512 = blake2.hash512(data);
-const hash256 = blake2.hash256(data);
+const hash512 = blake2.hash512(data); // BLAKE2b-512
+const hash256 = blake2.hash256(data); // BLAKE2s-256, not BLAKE2b-256
 const matches512: boolean = blake2.verify512(hash512, data);
 const matches256: boolean = blake2.verify256(hash256, data);
 ```
