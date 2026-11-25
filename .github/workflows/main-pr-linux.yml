@@ -5,7 +5,6 @@ name: Linux Build / Test
 
 on:
   pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
