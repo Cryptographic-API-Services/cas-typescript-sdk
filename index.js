@@ -918,3 +918,4 @@ module.exports.x25519DiffieHellman = nativeBinding.x25519DiffieHellman
 module.exports.x25519GenerateSecretAndPublicKey = nativeBinding.x25519GenerateSecretAndPublicKey
 module.exports.ztsdCompress = nativeBinding.ztsdCompress
 module.exports.ztsdDecompress = nativeBinding.ztsdDecompress
+module.exports.ztsdDecompressWithLimit = nativeBinding.ztsdDecompressWithLimit

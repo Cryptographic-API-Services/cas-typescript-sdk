@@ -226,3 +226,5 @@ export declare function x25519GenerateSecretAndPublicKey(): CASx25519SecretPubli
 export declare function ztsdCompress(data: Array<number>, level: number): Array<number>
 
 export declare function ztsdDecompress(data: Array<number>): Array<number>
+
+export declare function ztsdDecompressWithLimit(data: Array<number>, maxOutputSize: number): Array<number>
