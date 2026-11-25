@@ -192,9 +192,17 @@ const isMatch: boolean = argon2.verify(hashed, "ThisOneBadPassword!@");
 // Custom parameters: memory cost in MiB (19-4096; 64 means 64 MiB), time cost (iterations, 1-10), parallelism (1-16)
 const tuned = argon2.hashPasswordWithParameters("ThisOneBadPassword!@", 64, 3, 1);
 
-// Derive a one-time AES key from a password (the salt is discarded, so it cannot be re-derived)
-const aes256Key = argon2.deriveAes256Key(toBytes("ThisOneBadPassword!@"));
-const aes128Key = argon2.deriveAes128Key(toBytes("ThisOneBadPassword!@"));
+// Derive an AES key from a password and salt (Argon2id, 19 MiB, 2 iterations, parallelism 1).
+// The salt is not secret: store it next to the ciphertext to re-derive the same key later.
+const salt = argon2.generateSalt(); // 16 random bytes
+const aes256Key = argon2.deriveAes256KeyWithSalt(toBytes("ThisOneBadPassword!@"), salt);
+const aes128Key = argon2.deriveAes128KeyWithSalt(toBytes("ThisOneBadPassword!@"), salt);
+const sameAes256Key = argon2.deriveAes256KeyWithSalt(toBytes("ThisOneBadPassword!@"), salt); // equal to aes256Key
+// A salt shorter than 16 bytes throws a CasError with code CasErrorCode.InvalidParameters
+
+// Deprecated: these discard their random salt, so the key can never be derived again
+const oneTimeAes256Key = argon2.deriveAes256Key(toBytes("ThisOneBadPassword!@"));
+const oneTimeAes128Key = argon2.deriveAes128Key(toBytes("ThisOneBadPassword!@"));
 ```
 
 ### BCrypt
@@ -306,31 +314,36 @@ const plaintext = ascon.ascon128Decrypt(key, nonce, ciphertext);
 ### HPKE
 ```typescript
 const hpke = new HpkeWrapper();
-const recipient = hpke.generateKeyPair(); // publicKey, secretKey, infoStr
-const encrypted = hpke.encrypt(toBytes("This is my message to encrypt"), recipient.publicKey, recipient.infoStr);
+const recipient = hpke.generateKeyPair(); // publicKey, secretKey, and a random infoStr (see below)
+
+// info binds the derived keys to a context, and both sides must pass the same bytes.
+// Use a fixed, application-specific value rather than a random one.
+const info = toBytes("my-app/v1/file-encryption");
+const encrypted = hpke.encrypt(toBytes("This is my message to encrypt"), recipient.publicKey, info);
 const plaintext = hpke.decrypt(
   encrypted.ciphertext,
   recipient.secretKey,
   encrypted.encapsulatedKey,
   encrypted.tag,
-  recipient.infoStr,
+  info,
 );
 
 // Optional additional authenticated data: bound to the ciphertext but not encrypted or
 // returned, so the recipient must pass the same bytes or decrypt throws
 const aad = toBytes("message-id: 42");
-const withAad = hpke.encrypt(toBytes("This is my message to encrypt"), recipient.publicKey, recipient.infoStr, aad);
+const withAad = hpke.encrypt(toBytes("This is my message to encrypt"), recipient.publicKey, info, aad);
 const plaintextWithAad = hpke.decrypt(
   withAad.ciphertext,
   recipient.secretKey,
   withAad.encapsulatedKey,
   withAad.tag,
-  recipient.infoStr,
+  info,
   aad,
 );
 
-// A fresh info string can also be generated on its own
-const infoStr = hpke.generateInfoString();
+// A random info string (also returned as recipient.infoStr) is not domain separation:
+// it must be sent or stored alongside the message for the recipient to decrypt.
+const randomInfo = hpke.generateInfoString();
 ```
 
 ## Compression
