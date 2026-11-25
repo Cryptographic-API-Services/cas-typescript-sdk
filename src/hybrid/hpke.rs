@@ -91,6 +91,35 @@ pub fn hpke_encrypt_decrypt_with_aad_test() {
 }
 
 #[test]
+pub fn hpke_info_longer_than_65530_bytes_is_invalid_input_test() {
+    let hpke_keypair = hpke_generate_keypair();
+    let plaintext = "This is a secret message".as_bytes().to_vec();
+    let longest_info = vec![0x61; 65_530];
+    let encrypt_result = hpke_encrypt(
+        plaintext.clone(),
+        hpke_keypair.public_key.clone(),
+        longest_info.clone(),
+        vec![],
+    ).unwrap();
+    let decrypt = |info: Vec<u8>| hpke_decrypt(
+        encrypt_result.ciphertext.clone(),
+        hpke_keypair.secret_key.clone(),
+        encrypt_result.encapsulated_key.clone(),
+        encrypt_result.tag.clone(),
+        info,
+        vec![],
+    );
+    assert_eq!(plaintext, decrypt(longest_info).unwrap());
+
+    let too_long_info = vec![0x61; 65_531];
+    let encrypt_err = hpke_encrypt(plaintext, hpke_keypair.public_key, too_long_info.clone(), vec![])
+        .err()
+        .unwrap();
+    assert_eq!("CAS_INVALID_INPUT", encrypt_err.status.as_ref());
+    assert_eq!("CAS_INVALID_INPUT", decrypt(too_long_info).unwrap_err().status.as_ref());
+}
+
+#[test]
 pub fn generate_info_str_test() {
     let info_str = generate_info_str();
     assert_eq!(false, info_str.is_empty());

@@ -1,4 +1,5 @@
 import { HpkeWrapper } from "../src-ts/hybrid/hpke";
+import { CasErrorCode, isCasError } from "../src-ts/index";
 import {test, expect} from '@playwright/test';
 
 test.describe("Hybrid Encryption", () => {
@@ -72,5 +73,33 @@ test.describe("Hybrid Encryption", () => {
             keyPair.infoStr,
             [1, 2, 3]
         )).toThrow();
+    });
+
+    test("HPKE info longer than 65,530 bytes throws CAS_INVALID_INPUT", () => {
+        const hpkeWrapper = new HpkeWrapper();
+        const keyPair = hpkeWrapper.generateKeyPair();
+        const messageBytes: Array<number> = Array.from(new TextEncoder().encode("This is a secret message"));
+        const longestInfo: Array<number> = new Array(65_530).fill(0x61);
+        const encrypted = hpkeWrapper.encrypt(messageBytes, keyPair.publicKey, longestInfo);
+        const decrypt = (infoToUse: Array<number>) => hpkeWrapper.decrypt(
+            encrypted.ciphertext,
+            keyPair.secretKey,
+            encrypted.encapsulatedKey,
+            encrypted.tag,
+            infoToUse
+        );
+        expect(decrypt(longestInfo)).toEqual(messageBytes);
+
+        const tooLongInfo: Array<number> = new Array(65_531).fill(0x61);
+        const caught = (fn: () => unknown): unknown => {
+            try {
+                fn();
+            } catch (err) {
+                return err;
+            }
+            throw new Error("expected HPKE to throw");
+        };
+        expect(isCasError(caught(() => hpkeWrapper.encrypt(messageBytes, keyPair.publicKey, tooLongInfo)), CasErrorCode.InvalidInput)).toBe(true);
+        expect(isCasError(caught(() => decrypt(tooLongInfo)), CasErrorCode.InvalidInput)).toBe(true);
     });
 });
