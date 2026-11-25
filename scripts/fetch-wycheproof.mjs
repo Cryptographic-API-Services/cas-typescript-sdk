@@ -23,6 +23,8 @@ const MAX_REDIRECTS = 5;
 const FILES = [
   "aes_gcm_test.json",
   "aes_gcm_siv_test.json",
+  "aes_kwp_test.json",
+  "aes_wrap_test.json",
   "chacha20_poly1305_test.json",
   "ed25519_test.json",
   "hmac_sha256_test.json",

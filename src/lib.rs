@@ -155,6 +155,7 @@ mod key_exchange {
 mod symmetric {
     pub mod aes;
     pub mod aes_gcm_siv;
+    pub mod aes_kw;
     pub mod chacha20poly1305;
 }
 
