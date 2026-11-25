@@ -34,3 +34,6 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
+      env:
+        # Read-only token for the GitHub API calls in scripts/fetch-wycheproof.mjs.
+        GITHUB_TOKEN: ${{ github.token }}
