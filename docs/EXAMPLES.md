@@ -314,7 +314,13 @@ const infoStr = hpke.generateInfoString();
 ```typescript
 const zstd = new ZTSDWrapper();
 const compressed = zstd.compress(toBytes("This is my data to compress"), 3); // level -22 to 22
+
+// Output is capped at 64 MiB by default; larger output throws
+// "decompressed output exceeds the size limit" (decompression-bomb protection).
 const decompressed = zstd.decompress(compressed);
+
+// Raise (or lower) the cap with maxOutputSize in bytes. Only raise it for trusted input.
+const large = zstd.decompress(compressed, 256 * 1024 * 1024);
 ```
 
 ## Post-Quantum
