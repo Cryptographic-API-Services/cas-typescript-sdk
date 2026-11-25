@@ -15,9 +15,9 @@
     "test": "npm run rust:test && npm run build && npm run node:test",
     "node:test": "npm run wycheproof:fetch && npx playwright test",
     "wycheproof:fetch": "node scripts/fetch-wycheproof.mjs",
-    "rust:test": "cargo test --release",
+    "rust:test": "cargo test --release --locked",
     "build:ts": "rimraf lib && tsc",
-    "build:rust": "napi build --release --platform",
+    "build:rust": "napi build --release --platform -- --locked",
     "build": "npm run build:rust && npm run build:ts"
   },
   "repository": {
