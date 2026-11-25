@@ -1,13 +1,17 @@
 import {
   aes128GcmSivDecrypt,
+  aes128GcmSivDecryptWithAad,
   aes128GcmSivEncrypt,
+  aes128GcmSivEncryptWithAad,
   aes128GcmSivKey,
   aes128GcmSivKeyFromVec,
   aes128GcmSivKeyFromX25519SharedSecret,
   aes128GcmSivOpen,
   aes128GcmSivSeal,
   aes256GcmSivDecrypt,
+  aes256GcmSivDecryptWithAad,
   aes256GcmSivEncrypt,
+  aes256GcmSivEncryptWithAad,
   aes256GcmSivKey,
   aes256GcmSivKeyFromVec,
   aes256GcmSivKeyFromX25519SharedSecret,
@@ -159,6 +163,76 @@ export class AESGCMSIVWrapper {
 
     public aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number> {
         return aes256GcmSivDecrypt(aesKey, nonce, ciphertext);
+    }
+
+    /**
+     * Encrypts with AES-128-GCM-SIV under a caller-supplied 96 bit nonce and binds `aad`,
+     * returning `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output,
+     * but aes128DecryptWithAad only succeeds with the same bytes. AES-GCM-SIV is nonce-misuse
+     * resistant: reusing a nonce with the same key only reveals whether two messages (and their
+     * AAD) were identical, but it still leaks that, so use a fresh nonce per message. Prefer
+     * aes128Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes128Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 16 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 16 byte key
+     * @param nonce 12 byte nonce
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
+     */
+
+    public aes128EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128GcmSivEncryptWithAad(aesKey, nonce, plaintext, aad);
+    }
+
+    /**
+     * Decrypts `ciphertext || tag` produced by aes128EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 16 byte key
+     * @param nonce the nonce passed to aes128EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes128EncryptWithAad
+     * @returns Array<number>
+     */
+
+    public aes128DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128GcmSivDecryptWithAad(aesKey, nonce, ciphertext, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM-SIV under a caller-supplied 96 bit nonce and binds `aad`,
+     * returning `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output,
+     * but aes256DecryptWithAad only succeeds with the same bytes. AES-GCM-SIV is nonce-misuse
+     * resistant: reusing a nonce with the same key only reveals whether two messages (and their
+     * AAD) were identical, but it still leaks that, so use a fresh nonce per message. Prefer
+     * aes256Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes256Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 32 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 32 byte key
+     * @param nonce 12 byte nonce
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
+     */
+
+    public aes256EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256GcmSivEncryptWithAad(aesKey, nonce, plaintext, aad);
+    }
+
+    /**
+     * Decrypts `ciphertext || tag` produced by aes256EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 32 byte key
+     * @param nonce the nonce passed to aes256EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes256EncryptWithAad
+     * @returns Array<number>
+     */
+
+    public aes256DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256GcmSivDecryptWithAad(aesKey, nonce, ciphertext, aad);
     }
 
     /**

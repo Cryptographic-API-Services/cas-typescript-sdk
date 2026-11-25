@@ -1,6 +1,8 @@
 import {
   ascon128Decrypt,
+  ascon128DecryptWithAad,
   ascon128Encrypt,
+  ascon128EncryptWithAad,
   ascon128KeyGenerate,
   ascon128NonceGenerate,
   ascon128Open,
@@ -107,5 +109,39 @@ export class AsconWrapper {
       throw new Error("Ciphertext is required");
     }
     return ascon128Decrypt(key, nonce, ciphertext);
+  }
+
+  /**
+   * Encrypts with Ascon-AEAD128 under a caller-supplied 128 bit nonce and binds `aad`, returning
+   * `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output, but
+   * ascon128DecryptWithAad only succeeds with the same bytes. Never reuse a nonce with the same
+   * key: that breaks Ascon-AEAD128's confidentiality guarantee. Prefer ascon128Seal, which
+   * generates the nonce for you and also takes AAD.
+   * Empty AAD gives the same output as ascon128Encrypt.
+   * Throws CAS_INVALID_KEY for a key that is not 16 bytes and CAS_INVALID_NONCE for a nonce
+   * that is not 16 bytes.
+   * @param key 16 byte key from ascon128Key()
+   * @param nonce 16 byte nonce, used for this message only
+   * @param plaintext
+   * @param aad additional authenticated data
+   * @returns Array<number>
+   */
+
+  ascon128EncryptWithAad(key: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+    return ascon128EncryptWithAad(key, nonce, plaintext, aad);
+  }
+
+  /**
+   * Decrypts `ciphertext || tag` produced by ascon128EncryptWithAad and checks `aad`.
+   * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+   * @param key the key passed to ascon128EncryptWithAad
+   * @param nonce the nonce passed to ascon128EncryptWithAad
+   * @param ciphertext
+   * @param aad the AAD passed to ascon128EncryptWithAad
+   * @returns Array<number>
+   */
+
+  ascon128DecryptWithAad(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+    return ascon128DecryptWithAad(key, nonce, ciphertext, aad);
   }
 }

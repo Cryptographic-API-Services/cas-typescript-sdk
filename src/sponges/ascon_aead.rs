@@ -1,5 +1,5 @@
 
-use cas_lib::sponges::{ascon_aead::AsconAead, cas_ascon_aead::CASAsconAead};
+use cas_lib::sponges::{ascon_aead::AsconAead, cas_ascon_aead::{CASAsconAead, CASAsconAeadAad}};
 use cas_lib::symmetric::cas_symmetric_encryption::CASAeadSeal;
 use napi_derive::napi;
 
@@ -64,6 +64,31 @@ pub fn test_ascon128_decrypt() {
         ciphertext.clone(),
     ).unwrap();
     assert_eq!(decrypted, plaintext.to_vec());
+}
+
+#[napi]
+pub fn ascon128_encrypt_with_aad(key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>, aad: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<AsconAead as CASAsconAeadAad>::encrypt_plaintext_with_aad(key, nonce, plaintext, aad))
+}
+
+#[napi]
+pub fn ascon128_decrypt_with_aad(key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>, aad: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<AsconAead as CASAsconAeadAad>::decrypt_ciphertext_with_aad(key, nonce, ciphertext, aad))
+}
+
+#[test]
+pub fn test_ascon128_aad_encrypt_decrypt() {
+    let key = ascon128_key_generate();
+    let nonce = ascon128_nonce_generate();
+    let plaintext = b"Hello, World!".to_vec();
+    let aad = b"header".to_vec();
+    let ciphertext = ascon128_encrypt_with_aad(key.clone(), nonce.clone(), plaintext.clone(), aad.clone()).unwrap();
+    assert_eq!(ascon128_decrypt_with_aad(key.clone(), nonce.clone(), ciphertext.clone(), aad).unwrap(), plaintext);
+    assert!(ascon128_decrypt_with_aad(key.clone(), nonce.clone(), ciphertext, b"other".to_vec()).is_err());
+    assert_eq!(
+        ascon128_encrypt_with_aad(key.clone(), nonce.clone(), plaintext.clone(), vec![]).unwrap(),
+        ascon128_encrypt(key, nonce, plaintext).unwrap()
+    );
 }
 
 #[napi]

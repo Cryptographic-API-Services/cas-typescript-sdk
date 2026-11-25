@@ -1,13 +1,17 @@
 import {
   aes128Decrypt,
+  aes128DecryptWithAad,
   aes128Encrypt,
+  aes128EncryptWithAad,
   aes128Key,
   aes128KeyFromVec,
   aes128KeyFromX25519SharedSecret,
   aes128Open,
   aes128Seal,
   aes256Decrypt,
+  aes256DecryptWithAad,
   aes256Encrypt,
+  aes256EncryptWithAad,
   aes256Key,
   aes256KeyFromVec,
   aes256KeyFromX25519SharedSecret,
@@ -163,6 +167,74 @@ export class AESWrapper {
     
     public aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number> {
         return aes256Decrypt(aesKey, nonce, ciphertext);
+    }
+
+    /**
+     * Encrypts with AES-128-GCM under a caller-supplied 96 bit nonce and binds `aad`, returning
+     * `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output, but
+     * aes128DecryptWithAad only succeeds with the same bytes. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker recover the authentication
+     * key and forge messages. Prefer aes128Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes128Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 16 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 16 byte key
+     * @param nonce 12 byte nonce, used for this message only
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
+     */
+
+    public aes128EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128EncryptWithAad(aesKey, nonce, plaintext, aad);
+    }
+
+    /**
+     * Decrypts `ciphertext || tag` produced by aes128EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 16 byte key
+     * @param nonce the nonce passed to aes128EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes128EncryptWithAad
+     * @returns Array<number>
+     */
+
+    public aes128DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128DecryptWithAad(aesKey, nonce, ciphertext, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM under a caller-supplied 96 bit nonce and binds `aad`, returning
+     * `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output, but
+     * aes256DecryptWithAad only succeeds with the same bytes. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker recover the authentication
+     * key and forge messages. Prefer aes256Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes256Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 32 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 32 byte key
+     * @param nonce 12 byte nonce, used for this message only
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
+     */
+
+    public aes256EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256EncryptWithAad(aesKey, nonce, plaintext, aad);
+    }
+
+    /**
+     * Decrypts `ciphertext || tag` produced by aes256EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 32 byte key
+     * @param nonce the nonce passed to aes256EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes256EncryptWithAad
+     * @returns Array<number>
+     */
+
+    public aes256DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256DecryptWithAad(aesKey, nonce, ciphertext, aad);
     }
 
     /**
