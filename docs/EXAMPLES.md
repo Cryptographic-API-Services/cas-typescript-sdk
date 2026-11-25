@@ -6,6 +6,7 @@ Every wrapper is exported from the package root:
 import {
   AESWrapper,
   AESGCMSIVWrapper,
+  AesKeyWrapWrapper,
   ChaCha20Poly1305Wrapper,
   RSAWrapper,
   CASRSAKeyPairResult,
@@ -88,6 +89,28 @@ const key = chacha.generateKey();
 const nonce = chacha.generateNonce();
 const ciphertext = chacha.encrypt(key, nonce, toBytes("This is my message to encrypt"));
 const plaintext = chacha.decrypt(key, nonce, ciphertext);
+```
+
+### AES key wrapping (AES-KW, RFC 3394 / AES-KWP, RFC 5649)
+```typescript
+const keyWrap = new AesKeyWrapWrapper();
+const kek = keyWrap.aes256GenerateKek(); // 32 byte key-encryption key
+const dataKey = new AESWrapper().aes256Key();
+
+// AES-KW: key data must be a multiple of 8 bytes and at least 16 bytes; output is 8 bytes longer
+const wrapped = keyWrap.aes256WrapKey(kek, dataKey);
+const unwrapped = keyWrap.aes256UnwrapKey(kek, wrapped); // throws CAS_DECRYPTION_FAILED if tampered
+
+// AES-KWP: key data of any non-zero length
+const wrappedPadded = keyWrap.aes256WrapKeyWithPadding(kek, toBytes("20 byte secret value"));
+const unwrappedPadded = keyWrap.aes256UnwrapKeyWithPadding(kek, wrappedPadded);
+
+// AES-128 KEKs use the matching methods
+const kek128 = keyWrap.aes128GenerateKek(); // 16 bytes
+const wrapped128 = keyWrap.aes128WrapKey(kek128, dataKey);
+const unwrapped128 = keyWrap.aes128UnwrapKey(kek128, wrapped128);
+const wrappedPadded128 = keyWrap.aes128WrapKeyWithPadding(kek128, toBytes("short"));
+const unwrappedPadded128 = keyWrap.aes128UnwrapKeyWithPadding(kek128, wrappedPadded128);
 ```
 
 ## Asymmetric

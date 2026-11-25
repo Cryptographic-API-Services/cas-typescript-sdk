@@ -98,6 +98,21 @@ export type RsaSignatureTestGroup = {
   tests: SignatureTest[];
 };
 
+export type KeywrapTest = {
+  tcId: number;
+  comment: string;
+  flags: string[];
+  key: string;
+  msg: string;
+  ct: string;
+  result: WycheproofResult;
+};
+
+export type KeywrapTestGroup = {
+  keySize: number;
+  tests: KeywrapTest[];
+};
+
 export type WycheproofFile<TGroup> = {
   algorithm: string;
   numberOfTests: number;

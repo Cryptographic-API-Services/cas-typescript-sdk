@@ -29,6 +29,16 @@ export declare function aes128KeyFromVec(keySlice: Array<number>): Array<number>
 
 export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
 
+export declare function aes128KwGenerateKek(): Array<number>
+
+export declare function aes128KwUnwrapKey(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes128KwUnwrapKeyWithPadding(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes128KwWrapKey(kek: Array<number>, keyToWrap: Array<number>): Array<number>
+
+export declare function aes128KwWrapKeyWithPadding(kek: Array<number>, keyToWrap: Array<number>): Array<number>
+
 export declare function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
 export declare function aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
@@ -48,6 +58,16 @@ export declare function aes256Key(): Array<number>
 export declare function aes256KeyFromVec(keySlice: Array<number>): Array<number>
 
 export declare function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
+
+export declare function aes256KwGenerateKek(): Array<number>
+
+export declare function aes256KwUnwrapKey(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes256KwUnwrapKeyWithPadding(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes256KwWrapKey(kek: Array<number>, keyToWrap: Array<number>): Array<number>
+
+export declare function aes256KwWrapKeyWithPadding(kek: Array<number>, keyToWrap: Array<number>): Array<number>
 
 export declare function aesGcmSivNonce(): Array<number>
 

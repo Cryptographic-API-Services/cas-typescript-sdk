@@ -32,4 +32,8 @@ test.describe("Public API exports", () => {
     expect(typeof new sdk.Argon2Wrapper().deriveAes128KeyWithSalt).toBe("function");
     expect(typeof new sdk.Argon2Wrapper().deriveAes256KeyWithSalt).toBe("function");
   });
+
+  test("AES key wrapping wrapper is exported", () => {
+    expect(typeof sdk.AesKeyWrapWrapper).toBe("function");
+  });
 });
