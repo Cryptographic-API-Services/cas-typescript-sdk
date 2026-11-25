@@ -14,7 +14,10 @@ export class X25519Wrapper {
 
     /**
      * User takes their secret key and the other user's public key to generate a shared secret.
-     * Can be used to derive an AES key over insecure channel.
+     * Don't use the shared secret as a key directly: derive one with the X25519 key-derivation
+     * method of the cipher you'll use, passing both public keys.
+     * Throws if either key is not 32 bytes or if the peer's public key is a low-order point,
+     * which would force an all-zero shared secret an attacker knows.
      * @param secretKey 
      * @param publicKey 
      * @returns Array<number>

@@ -1,4 +1,27 @@
-# Cross-platform build and publish workflow
+# Cross-platform build, test and publish workflow
+#
+# Releases (release-please, configured in release-please-config.json): on every
+# push to `main`, the `release-please` job opens or updates a release PR that
+# bumps package.json and adds a CHANGELOG.md entry built from the commits since
+# the last release. Merging that PR makes the job create the `v<version>` tag and
+# a GitHub Release whose body is that entry, and only then does `publish` run.
+#
+# The file keeps its name on purpose: the npm trusted publisher is bound to
+# `main-publish.yml`, and renaming it would break publishing.
+#
+# Hardening:
+# - The workflow grants nothing by default; each job asks for what it needs, and
+#   only `publish` can mint an OIDC token (`id-token: write`).
+# - Every push to `main` builds all four targets and runs the Rust tests and the
+#   Playwright suite against each freshly built `.node` (inside the container for
+#   the Docker targets). A target's artifact is uploaded only if its tests pass,
+#   and `publish` needs every target, so one failing test blocks the release.
+# - `publish` runs only when release-please created a release, in the `release`
+#   environment (required reviewers approve every publish), and skips a version
+#   npm already has, so a rerun never double-publishes.
+# - Actions are pinned to commit SHAs, the Docker images to digests, and the
+#   Node tarballs the containers install are checked against committed SHA-256s.
+# - The Rust toolchain comes from rust-toolchain.toml and every build uses --locked.
 
 name: Build and Publish
 
@@ -6,74 +29,119 @@ on:
   push:
     branches: [ "main" ]
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
+  release-please:
+    name: Release PR, tag and GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # push the v<version> tag and create the GitHub Release
+      pull-requests: write  # open and update the release PR
+    concurrency:
+      group: release-please-${{ github.ref }}
+      cancel-in-progress: false
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Open the release PR, or tag and release a merged one
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          # A PR opened with the default GITHUB_TOKEN doesn't trigger the PR
+          # workflows. Set the RELEASE_PLEASE_TOKEN secret (GitHub App or
+          # fine-grained PAT with Contents and Pull requests read/write) so CI
+          # runs on release PRs.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
   build-matrix:
     runs-on: ${{ matrix.settings.host }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         settings:
+          # Images are pinned by digest, which Dependabot doesn't update in
+          # `docker run`. Refresh with `docker buildx imagetools inspect <image>:<tag>`
+          # (top-level Digest). Node tarball hashes come from the release's SHASUMS256.txt.
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust@sha256:6f910fc8a723a1eeab2483d2302e8c1fabe36e54c51eb0da27fafd5c3083e08c # lts-debian
+            node-tarball: https://nodejs.org/dist/v26.13.1/node-v26.13.1-linux-x64.tar.xz
+            node-sha256: 5c063e46bab0fbc1c17cc445d7ff129cbdcd0471be6ed83b6ab864f8143bc864
           - host: ubuntu-latest
-            target: x86_64-unknown-linux-musl  
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
+            target: x86_64-unknown-linux-musl
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust@sha256:caac2d1b9194eada0c69e669e72763869701351d8957ab805cc45a43999d8be2 # lts-alpine
+            # nodejs.org has no official musl build, so use the unofficial one.
+            node-tarball: https://unofficial-builds.nodejs.org/download/release/v26.13.1/node-v26.13.1-linux-x64-musl.tar.xz
+            node-sha256: 1b8a8a393c7fa5b2f66eaf0314aaa23c2f3cd3a3be14d5c7bac011bf9de236ea
           # Windows builds (on Windows)
           - host: windows-latest
             target: x86_64-pc-windows-msvc
           # macOS builds (on macOS)
           - host: macos-latest
             target: x86_64-apple-darwin
+            # macos-latest is arm64, and an arm64 Node can't load the x86_64
+            # `.node`. An x86_64 Node runs the whole job under Rosetta 2, so the
+            # tests load the binary that ships.
+            node-arch: x64
 
-    name: Build ${{ matrix.settings.target }}
+    name: Build and test ${{ matrix.settings.target }}
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 26
+          persist-credentials: false
+
+      # Must come before setup-node, which already runs the x86_64 npm.
+      - name: Make sure Rosetta 2 is installed
+        if: ${{ matrix.settings.node-arch == 'x64' && runner.os == 'macOS' }}
+        run: arch -x86_64 /usr/bin/true || sudo softwareupdate --install-rosetta --agree-to-license
+
+      - name: Setup node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26.13.1
+          architecture: ${{ matrix.settings.node-arch }}
           cache: npm
+
+      - name: Check the Node architecture
+        if: ${{ matrix.settings.node-arch }}
+        shell: bash
+        env:
+          NODE_ARCH: ${{ matrix.settings.node-arch }}
+        run: test "$(node -p process.arch)" = "$NODE_ARCH"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup Rust
+      - name: Install toolchain from rust-toolchain.toml
         if: ${{ !matrix.settings.docker }}
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          targets: ${{ matrix.settings.target }}
-          components: rustfmt, clippy
+        run: rustup toolchain install
 
-      - name: Build in Docker
+      - name: Build and test in Docker
         if: ${{ matrix.settings.docker }}
+        env:
+          IMAGE: ${{ matrix.settings.docker }}
+          TARGET: ${{ matrix.settings.target }}
+          NODE_TARBALL: ${{ matrix.settings.node-tarball }}
+          NODE_SHA256: ${{ matrix.settings.node-sha256 }}
+          # Read-only token for the GitHub API calls in scripts/fetch-wycheproof.mjs.
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          docker run --rm -v "$(pwd)":/build -w /build ${{ matrix.settings.docker }} sh -c '
+          docker run --rm -v "$(pwd)":/build -w /build \
+            -e TARGET -e NODE_TARBALL -e NODE_SHA256 -e GITHUB_TOKEN -e CI \
+            "$IMAGE" sh -c '
             set -e
 
             if command -v apk >/dev/null 2>&1; then
               apk add --no-cache openssl-dev pkgconf curl xz
-              # The napi-rs lts-alpine image ships Node 18, too old for the
-              # current toolchain (@napi-rs/cli/@inquirer need Node 20+).
-              # nodejs.org has no official musl build, so use the unofficial one.
-              # Install into a clean prefix and prepend it to PATH instead of
-              # overlaying /usr/local (overlaying mixes npm versions and breaks npm).
-              curl -fsSL -o /tmp/node.tar.xz https://unofficial-builds.nodejs.org/download/release/v26.13.1/node-v26.13.1-linux-x64-musl.tar.xz
-              mkdir -p /opt/node
-              tar -xJf /tmp/node.tar.xz -C /opt/node --strip-components=1
-              export PATH=/opt/node/bin:$PATH
-              node -v && npm -v
             elif command -v apt-get >/dev/null 2>&1; then
               apt-get update
-              apt-get install -y pkg-config libssl-dev ca-certificates curl
-              # The napi-rs lts-debian image ships Node 18; install Node 26 (LTS).
-              curl -fsSL https://deb.nodesource.com/setup_26.x | bash -
-              apt-get install -y nodejs
+              apt-get install -y pkg-config libssl-dev ca-certificates curl xz-utils
               rm -rf /var/lib/apt/lists/*
               export OPENSSL_INCLUDE_DIR=/usr/include
               export OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu
@@ -83,23 +151,63 @@ jobs:
               exit 1
             fi
 
-            rustup toolchain install nightly &&
-            rustup default nightly &&
-            npm ci && 
-            cargo update &&
-            npm run build:ts &&
-            npx napi build --platform --release --target ${{ matrix.settings.target }}
+            # Both images ship Node 18, too old for the current toolchain
+            # (@napi-rs/cli/@inquirer need Node 20+). Install into a clean prefix
+            # and prepend it to PATH instead of overlaying /usr/local (overlaying
+            # mixes npm versions and breaks npm).
+            curl -fsSL -o /tmp/node.tar.xz "$NODE_TARBALL"
+            echo "$NODE_SHA256  /tmp/node.tar.xz" | sha256sum -c -
+            mkdir -p /opt/node
+            tar -xJf /tmp/node.tar.xz -C /opt/node --strip-components=1
+            export PATH=/opt/node/bin:$PATH
+            node -v && npm -v
+
+            # The images predate rustup 1.28, where `rustup toolchain install`
+            # first accepts no argument; this form installs rust-toolchain.toml on both.
+            rustup show active-toolchain || rustup toolchain install
+
+            echo "::group::Build"
+            npm ci
+            npm run build:ts
+            npx napi build --platform --release --target "$TARGET" -- --locked
+            echo "::endgroup::"
+
+            echo "::group::Rust tests"
+            npm run rust:test -- --target "$TARGET"
+            echo "::endgroup::"
+
+            echo "::group::Playwright tests"
+            npm run node:test
+            echo "::endgroup::"
           '
 
+      # bash on every OS: PowerShell's npm/npx shims can swallow the `--` that
+      # forwards the arguments after it to cargo.
       - name: Build native
         if: ${{ !matrix.settings.docker }}
+        shell: bash
+        env:
+          TARGET: ${{ matrix.settings.target }}
         run: |
-          cargo update
           npm run build:ts
-          npx napi build --platform --release --target ${{ matrix.settings.target }}
+          npx napi build --platform --release --target "$TARGET" -- --locked
+
+      - name: Rust tests
+        if: ${{ !matrix.settings.docker }}
+        shell: bash
+        env:
+          TARGET: ${{ matrix.settings.target }}
+        run: npm run rust:test -- --target "$TARGET"
+
+      - name: Playwright tests
+        if: ${{ !matrix.settings.docker }}
+        env:
+          # Read-only token for the GitHub API calls in scripts/fetch-wycheproof.mjs.
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm run node:test
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bindings-${{ matrix.settings.target }}
           path: |
@@ -109,20 +217,24 @@ jobs:
           if-no-files-found: error
 
   publish:
-    name: Publish
+    name: Publish to npm
     runs-on: ubuntu-latest
-    needs: [build-matrix]
+    needs: [release-please, build-matrix]
+    if: needs.release-please.outputs.release_created == 'true'
+    environment: release
     permissions:
       contents: read
-      id-token: write # npm Trusted Publishing (OIDC) - no NPM_TOKEN needed
+      id-token: write # npm Trusted Publishing (OIDC) - no NPM_TOKEN needed; no other job has this
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 26
+          node-version: 26.13.1
           registry-url: 'https://registry.npmjs.org'
           cache: npm
 
@@ -133,7 +245,7 @@ jobs:
         run: npm run build:ts
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           merge-multiple: true
 
@@ -145,13 +257,47 @@ jobs:
           echo "Checking package contents..."
           npm pack --dry-run
           echo "Verifying binary files..."
-          ls -la *.node || echo "No .node files found!"
+          # One per build-matrix target; keep in step with the matrix.
+          expected=$(printf '%s\n' \
+            index.darwin-x64.node \
+            index.linux-x64-gnu.node \
+            index.linux-x64-musl.node \
+            index.win32-x64-msvc.node | LC_ALL=C sort)
+          actual=$(npm pack --dry-run --json 2>/dev/null \
+            | jq -r '.[0].files[].path | select(endswith(".node"))' | LC_ALL=C sort)
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::The tarball must contain exactly the four release binaries"
+            diff <(echo "$expected") <(echo "$actual") || true
+            exit 1
+          fi
 
       # Trusted Publishing needs npm >= 11.5.1
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@12.2.3
+
+      - name: Check whether this version is already on npm
+        id: version
+        env:
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$TAG" != "v${version}" ]; then
+            echo "::error::release tag ${TAG} doesn't match package.json version ${version}"
+            exit 1
+          fi
+          if out=$(npm view "cas-typescript-sdk@${version}" version --json 2>/dev/null); then
+            code=found
+          else
+            code=$(printf '%s' "$out" | jq -r '.error.code // empty' 2>/dev/null || true)
+          fi
+          case "$code" in
+            found) echo "::notice::cas-typescript-sdk ${version} is already published, skipping"; echo "unpublished=false" >> "$GITHUB_OUTPUT" ;;
+            E404) echo "cas-typescript-sdk ${version} is not published yet"; echo "unpublished=true" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::npm view cas-typescript-sdk@${version} failed (${code:-no error code})"; exit 1 ;;
+          esac
 
       # Authenticates via OIDC (trusted publisher configured on npmjs.com);
       # provenance attestations are attached automatically.
       - name: Publish to npm
+        if: steps.version.outputs.unpublished == 'true'
         run: npm publish --access public

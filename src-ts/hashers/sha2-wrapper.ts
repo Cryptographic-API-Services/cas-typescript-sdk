@@ -4,7 +4,7 @@ import { HashInput, IHasherBase } from "./hasher-base";
 
 export class SHA2Wrapper implements IHasherBase {
     /**
-     * Hashes a byte array with SHA2-512.
+     * Hashes a byte array with SHA-512.
      * An empty, `null` or `undefined` input hashes as the empty message.
      * @param dataToHash
      * @returns number[]
@@ -15,9 +15,9 @@ export class SHA2Wrapper implements IHasherBase {
     }
 
     /**
-     * Verifies unsigned data against an SHA2-512 hash.
+     * Verifies unsigned data against an SHA-512 hash.
      * An empty, `null` or `undefined` `dataToVerify` is checked as the empty message.
-     * @param hashToVerify The SHA2-512 hash to compare against
+     * @param hashToVerify The SHA-512 hash to compare against
      * @param dataToVerify The data to hash and compare
      * @returns boolean
      */
@@ -27,7 +27,7 @@ export class SHA2Wrapper implements IHasherBase {
     }
 
     /**
-     * Hashes a byte array with SHA2-256.
+     * Hashes a byte array with SHA-256.
      * An empty, `null` or `undefined` input hashes as the empty message.
      * @param dataToHash
      * @returns number[]
@@ -38,9 +38,9 @@ export class SHA2Wrapper implements IHasherBase {
     }
 
     /**
-     * Verifies unsigned data against an SHA2-256 hash.
+     * Verifies unsigned data against an SHA-256 hash.
      * An empty, `null` or `undefined` `dataToVerify` is checked as the empty message.
-     * @param hashToVerify The SHA2-256 hash to compare against
+     * @param hashToVerify The SHA-256 hash to compare against
      * @param dataToVerify The data to hash and compare
      * @returns boolean
      */

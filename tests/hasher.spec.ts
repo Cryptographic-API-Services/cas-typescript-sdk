@@ -394,6 +394,26 @@ test.describe("Blake2 512", () => {
   });
 });
 
+test.describe("Blake2 RFC 7693 known answers", () => {
+  const abc = Array.from(new TextEncoder().encode("abc"));
+  const blake2b512Abc =
+    "ba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdbffa2d1" +
+    "7d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386edd4009923";
+  const blake2s256Abc = "508c5e8c327c14e2e1a72ba34eeb452f37458b209ed63a294d999b4c86675982";
+
+  test("hash512 is BLAKE2b-512 (Appendix A, \"abc\")", () => {
+    const wrapper = new Blake2Wrapper();
+    expect(bytesToHex(wrapper.hash512(abc))).toBe(blake2b512Abc);
+    expect(wrapper.verify512(hexToBytes(blake2b512Abc), abc)).toBe(true);
+  });
+
+  test("hash256 is BLAKE2s-256 (Appendix B, \"abc\")", () => {
+    const wrapper = new Blake2Wrapper();
+    expect(bytesToHex(wrapper.hash256(abc))).toBe(blake2s256Abc);
+    expect(wrapper.verify256(hexToBytes(blake2s256Abc), abc)).toBe(true);
+  });
+});
+
 test.describe("Blake2 empty input", () => {
   // cas-lib uses BLAKE2b-512 for hash512 and BLAKE2s-256 for hash256.
   const empty512 = crypto.createHash("blake2b512").update(Buffer.alloc(0)).digest("hex");

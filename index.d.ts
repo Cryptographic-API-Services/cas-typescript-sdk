@@ -11,43 +11,95 @@ export declare const __napiBindingTarget: 'native' | 'wasm32-wasi' | 'wasm32-was
 
 export declare function aes128Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes128DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes128Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes128EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes128GcmSivDecrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes128GcmSivDecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes128GcmSivEncrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes128GcmSivEncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes128GcmSivKey(): Array<number>
 
 export declare function aes128GcmSivKeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes128GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes128GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
+
+export declare function aes128GcmSivOpen(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number> | undefined | null): Array<number>
+
+export declare function aes128GcmSivSeal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number> | undefined | null): Array<number>
 
 export declare function aes128Key(): Array<number>
 
 export declare function aes128KeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
+
+export declare function aes128KwGenerateKek(): Array<number>
+
+export declare function aes128KwUnwrapKey(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes128KwUnwrapKeyWithPadding(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes128KwWrapKey(kek: Array<number>, keyToWrap: Array<number>): Array<number>
+
+export declare function aes128KwWrapKeyWithPadding(kek: Array<number>, keyToWrap: Array<number>): Array<number>
+
+export declare function aes128Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number> | undefined | null): Array<number>
+
+export declare function aes128Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number> | undefined | null): Array<number>
 
 export declare function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes256DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes256EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes256GcmSivDecrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes256GcmSivDecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes256GcmSivEncrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes256GcmSivEncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes256GcmSivKey(): Array<number>
 
 export declare function aes256GcmSivKeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes256GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes256GcmSivKeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
+
+export declare function aes256GcmSivOpen(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number> | undefined | null): Array<number>
+
+export declare function aes256GcmSivSeal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number> | undefined | null): Array<number>
 
 export declare function aes256Key(): Array<number>
 
 export declare function aes256KeyFromVec(keySlice: Array<number>): Array<number>
 
-export declare function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number>
+export declare function aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number>
+
+export declare function aes256KwGenerateKek(): Array<number>
+
+export declare function aes256KwUnwrapKey(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes256KwUnwrapKeyWithPadding(kek: Array<number>, wrappedKey: Array<number>): Array<number>
+
+export declare function aes256KwWrapKey(kek: Array<number>, keyToWrap: Array<number>): Array<number>
+
+export declare function aes256KwWrapKeyWithPadding(kek: Array<number>, keyToWrap: Array<number>): Array<number>
+
+export declare function aes256Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number> | undefined | null): Array<number>
+
+export declare function aes256Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number> | undefined | null): Array<number>
 
 export declare function aesGcmSivNonce(): Array<number>
 
@@ -55,7 +107,13 @@ export declare function aesNonce(): Array<number>
 
 export declare function argon2DeriveAes128Key(password: Array<number>): Array<number>
 
+export declare function argon2DeriveAes128KeyWithSalt(password: Array<number>, salt: Array<number>): Array<number>
+
 export declare function argon2DeriveAes256Key(password: Array<number>): Array<number>
+
+export declare function argon2DeriveAes256KeyWithSalt(password: Array<number>, salt: Array<number>): Array<number>
+
+export declare function argon2GenerateSalt(): Array<number>
 
 export declare function argon2Hash(password: string): string
 
@@ -65,11 +123,19 @@ export declare function argon2Verify(hashedPassword: string, passwordToVerify: s
 
 export declare function ascon128Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function ascon128DecryptWithAad(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function ascon128Encrypt(key: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function ascon128EncryptWithAad(key: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function ascon128KeyGenerate(): Array<number>
 
 export declare function ascon128NonceGenerate(): Array<number>
+
+export declare function ascon128Open(key: Array<number>, sealed: Array<number>, aad?: Array<number> | undefined | null): Array<number>
+
+export declare function ascon128Seal(key: Array<number>, plaintext: Array<number>, aad?: Array<number> | undefined | null): Array<number>
 
 export declare function bcryptHash(passwordToHash: string): string
 
@@ -127,11 +193,19 @@ export interface CASx25519SecretPublicKeyResult {
 
 export declare function chacha20Poly1305Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function chacha20Poly1305DecryptWithAad(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function chacha20Poly1305Encrypt(key: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function chacha20Poly1305EncryptWithAad(key: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function chacha20Poly1305Key(): Array<number>
 
 export declare function chacha20Poly1305Nonce(): Array<number>
+
+export declare function chacha20Poly1305Open(key: Array<number>, sealed: Array<number>, aad?: Array<number> | undefined | null): Array<number>
+
+export declare function chacha20Poly1305Seal(key: Array<number>, plaintext: Array<number>, aad?: Array<number> | undefined | null): Array<number>
 
 export declare function generateEd25519Keys(): CASED25519KeyPairResult
 
@@ -147,9 +221,9 @@ export declare function hmacSign(key: Array<number>, message: Array<number>): Ar
 
 export declare function hmacVerify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
 
-export declare function hpkeDecrypt(ciphertext: Array<number>, privateKey: Array<number>, encappedKey: Array<number>, tag: Array<number>, infoStr: Array<number>): Array<number>
+export declare function hpkeDecrypt(ciphertext: Array<number>, privateKey: Array<number>, encappedKey: Array<number>, tag: Array<number>, infoStr: Array<number>, aad: Array<number>): Array<number>
 
-export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<number>, infoStr: Array<number>): HpkeEncryptResult
+export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<number>, infoStr: Array<number>, aad: Array<number>): HpkeEncryptResult
 
 export interface HpkeEncryptResult {
   tag: Array<number>
@@ -205,7 +279,9 @@ export declare function sha512Verify(dataToHash: Array<number>, dataToVerify: Ar
 
 export declare function signEd25519(privateKey: Array<number>, message: Array<number>): Array<number>
 
-export declare function signRsa(privateKey: string, hash: Array<number>): Array<number>
+export declare function signRsa(privateKey: string, message: Array<number>): Array<number>
+
+export declare function signRsaPss(privateKey: string, message: Array<number>): Array<number>
 
 export declare function slhDsaGenerateKeyPair(): CASSlhDsaKeyPairResult
 
@@ -217,7 +293,9 @@ export declare function verifyEd25519(publicKey: Array<number>, message: Array<n
 
 export declare function verifyEd25519WithKeyPair(keyPair: Array<number>, message: Array<number>, signature: Array<number>): boolean
 
-export declare function verifyRsa(publicKey: string, hash: Array<number>, signature: Array<number>): boolean
+export declare function verifyRsa(publicKey: string, message: Array<number>, signature: Array<number>): boolean
+
+export declare function verifyRsaPss(publicKey: string, message: Array<number>, signature: Array<number>): boolean
 
 export declare function x25519DiffieHellman(mySecretKey: Array<number>, usersPublicKey: Array<number>): Array<number>
 
@@ -226,3 +304,5 @@ export declare function x25519GenerateSecretAndPublicKey(): CASx25519SecretPubli
 export declare function ztsdCompress(data: Array<number>, level: number): Array<number>
 
 export declare function ztsdDecompress(data: Array<number>): Array<number>
+
+export declare function ztsdDecompressWithLimit(data: Array<number>, maxOutputSize: number): Array<number>

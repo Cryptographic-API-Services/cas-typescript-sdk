@@ -23,12 +23,12 @@ pub fn slh_dsa_generate_key_pair() -> CASSlhDsaKeyPairResult {
 }
 
 #[napi]
-pub fn slh_dsa_sign(message: Vec<u8>, signing_key: Vec<u8>) -> napi::Result<Vec<u8>> {
+pub fn slh_dsa_sign(message: Vec<u8>, signing_key: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(sign_message(message, signing_key))
 }
 
 #[napi]
-pub fn slh_dsa_verify(message: Vec<u8>, signature: Vec<u8>, verification_key: Vec<u8>) -> napi::Result<bool> {
+pub fn slh_dsa_verify(message: Vec<u8>, signature: Vec<u8>, verification_key: Vec<u8>) -> crate::Result<bool> {
     crate::map_cas_err(verify_signature(message, signature, verification_key))
 }
 

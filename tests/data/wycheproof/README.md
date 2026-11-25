@@ -18,6 +18,9 @@ WYCHEPROOF_REF=<sha-or-tag> npm run wycheproof:fetch   # a specific upstream ref
   upstream added a case the SDK (or a spec) doesn't handle yet.
 - **Adding a file:** add its name to `FILES` in the fetch script and a row to
   the table below.
+- **Pinned files:** files upstream has removed from `main` are listed in
+  `PINNED_FILES` with the last commit that has them, and are always fetched
+  from that commit.
 
 Wycheproof is licensed under the Apache License 2.0; see
 <https://github.com/C2SP/wycheproof/blob/main/LICENSE>.
@@ -26,6 +29,7 @@ Wycheproof is licensed under the Apache License 2.0; see
 | --- | --- |
 | `aes_gcm_test.json` | `tests/wycheproof-aes-gcm.spec.ts` |
 | `ed25519_test.json` | `tests/wycheproof-ed25519.spec.ts` |
+| `eddsa_test.json` (pinned, legacy `testvectors/`: private keys for `ed25519_test.json`'s public keys) | `tests/wycheproof-ed25519.spec.ts` |
 | `x25519_test.json` | `tests/wycheproof-x25519.spec.ts` |
 | `hmac_sha256_test.json` | `tests/wycheproof-hmac.spec.ts` |
 | `hmac_sha512_test.json` | `tests/wycheproof-hmac.spec.ts` |
@@ -34,14 +38,20 @@ Wycheproof is licensed under the Apache License 2.0; see
 | `mlkem_1024_semi_expanded_decaps_test.json` | `tests/wycheproof-ml-kem.spec.ts` |
 | `mldsa_65_sign_seed_test.json` | `tests/wycheproof-ml-dsa.spec.ts` |
 | `mldsa_65_verify_test.json` | `tests/wycheproof-ml-dsa.spec.ts` |
+| `rsa_pss_2048_sha256_mgf1_32_test.json` | `tests/wycheproof-rsa.spec.ts` |
+| `rsa_signature_2048_sha256_test.json` | `tests/wycheproof-rsa.spec.ts` |
 
 Not covered, and why:
 
 - **Ascon** — `cas-lib` implements NIST SP 800-232 Ascon-AEAD128 (`ascon-aead`
   0.5.x); Wycheproof currently only ships vectors for the pre-standard
   Ascon v1.2 family (`ascon128`, `ascon128a`, `ascon80pq`).
-- **RSA signatures** — `cas-lib` signs with unprefixed PKCS#1 v1.5 over raw
-  caller data (no DigestInfo), so the `rsa_signature_*` vectors cannot match.
+- **RSA signatures other than 2048-bit RS256 / PS256 with a 32-byte salt** —
+  `RSAWrapper` only signs SHA-256 PKCS#1 v1.5 (`RS256`) and SHA-256 PSS with
+  MGF1-SHA-256 and a 32-byte salt (`PS256`), so the other hash, salt-length
+  and `_params` files don't apply. The larger-key RS256 files would, but
+  aren't wired up yet. Interop with Node's `crypto.sign` / `crypto.verify` is
+  tested in `tests/asymmetric.spec.ts`.
 - **AES-GCM / AES-GCM-SIV / ChaCha20-Poly1305 vectors with AAD, non-96-bit
   IVs, or AES-192 keys** — the SDK's API surface does not accept AAD, only
   takes 96-bit nonces, and does not expose AES-192.

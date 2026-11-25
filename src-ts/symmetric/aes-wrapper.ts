@@ -1,20 +1,94 @@
 import {
   aes128Decrypt,
+  aes128DecryptWithAad,
   aes128Encrypt,
+  aes128EncryptWithAad,
   aes128Key,
   aes128KeyFromVec,
   aes128KeyFromX25519SharedSecret,
+  aes128Open,
+  aes128Seal,
   aes256Decrypt,
+  aes256DecryptWithAad,
   aes256Encrypt,
+  aes256EncryptWithAad,
   aes256Key,
   aes256KeyFromVec,
   aes256KeyFromX25519SharedSecret,
+  aes256Open,
+  aes256Seal,
   aesNonce,
 } from "../../index";
 
 
 
 export class AESWrapper {
+
+    /**
+     * Encrypts with AES-128-GCM under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * A random 96 bit nonce is only safe for about 2^32 messages per key, so rotate keys
+     * well before that. If you have to manage nonces yourself, use AESGCMSIVWrapper,
+     * which tolerates nonce reuse.
+     * @param aesKey 16 byte key from aes128Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes128Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes128Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128Seal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes128Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes128Seal
+     * @param sealed output of aes128Seal
+     * @param aad the AAD passed to aes128Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes128Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128Open(aesKey, sealed, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * A random 96 bit nonce is only safe for about 2^32 messages per key, so rotate keys
+     * well before that. If you have to manage nonces yourself, use AESGCMSIVWrapper,
+     * which tolerates nonce reuse.
+     * @param aesKey 32 byte key from aes256Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes256Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes256Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256Seal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes256Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes256Seal
+     * @param sealed output of aes256Seal
+     * @param aad the AAD passed to aes256Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes256Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256Open(aesKey, sealed, aad);
+    }
 
     /**
      * @description Generates a 128 bit AES key
@@ -44,7 +118,9 @@ export class AESWrapper {
     }
 
     /**
-     * Encrypts with AES 128.
+     * Encrypts with AES 128 under a caller-supplied nonce. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker forge messages.
+     * Prefer aes128Seal, which generates the nonce for you.
      * @param aesKey 
      * @param nonce 
      * @param plaintext 
@@ -68,7 +144,9 @@ export class AESWrapper {
     }
 
     /**
-     * Encrypts with AES-256
+     * Encrypts with AES-256 under a caller-supplied nonce. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker forge messages.
+     * Prefer aes256Seal, which generates the nonce for you.
      * @param aesKey 
      * @param nonce 
      * @param plaintext 
@@ -92,23 +170,105 @@ export class AESWrapper {
     }
 
     /**
-     * Derives an AES-256 key from a X25519 Diffie Hellman shared secret.
-     * @param shared_secret 
-     * @returns 
+     * Encrypts with AES-128-GCM under a caller-supplied 96 bit nonce and binds `aad`, returning
+     * `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output, but
+     * aes128DecryptWithAad only succeeds with the same bytes. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker recover the authentication
+     * key and forge messages. Prefer aes128Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes128Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 16 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 16 byte key
+     * @param nonce 12 byte nonce, used for this message only
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
      */
-    
-    public aes256KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
-         return aes256KeyFromX25519SharedSecret(shared_secret);
+
+    public aes128EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128EncryptWithAad(aesKey, nonce, plaintext, aad);
     }
 
     /**
-     * Derives an AES-128 key from a X25519 Diffie Hellman shared secret.
-     * @param shared_secret 
-     * @returns 
+     * Decrypts `ciphertext || tag` produced by aes128EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 16 byte key
+     * @param nonce the nonce passed to aes128EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes128EncryptWithAad
+     * @returns Array<number>
+     */
+
+    public aes128DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128DecryptWithAad(aesKey, nonce, ciphertext, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM under a caller-supplied 96 bit nonce and binds `aad`, returning
+     * `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output, but
+     * aes256DecryptWithAad only succeeds with the same bytes. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker recover the authentication
+     * key and forge messages. Prefer aes256Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes256Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 32 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 32 byte key
+     * @param nonce 12 byte nonce, used for this message only
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
+     */
+
+    public aes256EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256EncryptWithAad(aesKey, nonce, plaintext, aad);
+    }
+
+    /**
+     * Decrypts `ciphertext || tag` produced by aes256EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 32 byte key
+     * @param nonce the nonce passed to aes256EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes256EncryptWithAad
+     * @returns Array<number>
+     */
+
+    public aes256DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256DecryptWithAad(aesKey, nonce, ciphertext, aad);
+    }
+
+    /**
+     * Derives a 32 byte AES-256-GCM key from a X25519 Diffie Hellman shared secret with HKDF-SHA256.
+     * The key is bound to AES-256-GCM and to both parties' public keys, so the same shared
+     * secret gives unrelated keys for other ciphers, and both peers derive the same key only
+     * if they saw the same public keys. Pass the public keys in either order.
+     * Keys differ from those derived by earlier versions of this SDK: both peers must upgrade together.
+     * Throws if any input is not 32 bytes or the shared secret is all zeros.
+     * @param sharedSecret Output of X25519Wrapper.generateSharedSecret.
+     * @param publicKeyA One party's 32 byte X25519 public key.
+     * @param publicKeyB The other party's 32 byte X25519 public key.
+     * @returns Array<number>
      */
     
-    public aes128KeyNonceX25519DiffieHellman(shared_secret: Array<number>): number[] {
-        return aes128KeyFromX25519SharedSecret(shared_secret);
+    public aes256KeyNonceX25519DiffieHellman(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): number[] {
+         return aes256KeyFromX25519SharedSecret(sharedSecret, publicKeyA, publicKeyB);
+    }
+
+    /**
+     * Derives a 16 byte AES-128-GCM key from a X25519 Diffie Hellman shared secret with HKDF-SHA256.
+     * The key is bound to AES-128-GCM and to both parties' public keys, so the same shared
+     * secret gives unrelated keys for other ciphers, and both peers derive the same key only
+     * if they saw the same public keys. Pass the public keys in either order.
+     * Keys differ from those derived by earlier versions of this SDK: both peers must upgrade together.
+     * Throws if any input is not 32 bytes or the shared secret is all zeros.
+     * @param sharedSecret Output of X25519Wrapper.generateSharedSecret.
+     * @param publicKeyA One party's 32 byte X25519 public key.
+     * @param publicKeyB The other party's 32 byte X25519 public key.
+     * @returns Array<number>
+     */
+    
+    public aes128KeyNonceX25519DiffieHellman(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): number[] {
+        return aes128KeyFromX25519SharedSecret(sharedSecret, publicKeyA, publicKeyB);
    }
 
     /**

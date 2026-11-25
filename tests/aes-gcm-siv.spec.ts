@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { AESGCMSIVWrapper } from "../src-ts/symmetric/aes-gcm-siv-wrapper";
+import { AESWrapper } from "../src-ts/symmetric/aes-wrapper";
 import { X25519Wrapper } from "../src-ts/key_exchange/x25519";
 import { areEqual } from "./helpers/array";
 
@@ -106,8 +107,8 @@ test.describe("AES-GCM-SIV Tests", () => {
     const bobSharedSecret = x25519.generateSharedSecret(bob.secretKey, alice.publicKey);
 
     const aes = new AESGCMSIVWrapper();
-    const aliceKey = aes.aes128KeyFromX25519SharedSecret(aliceSharedSecret);
-    const bobKey = aes.aes128KeyFromX25519SharedSecret(bobSharedSecret);
+    const aliceKey = aes.aes128KeyFromX25519SharedSecret(aliceSharedSecret, alice.publicKey, bob.publicKey);
+    const bobKey = aes.aes128KeyFromX25519SharedSecret(bobSharedSecret, bob.publicKey, alice.publicKey);
     expect(aliceKey.length).toBe(16);
     expect(areEqual(aliceKey, bobKey)).toBe(true);
 
@@ -125,8 +126,8 @@ test.describe("AES-GCM-SIV Tests", () => {
     const bobSharedSecret = x25519.generateSharedSecret(bob.secretKey, alice.publicKey);
 
     const aes = new AESGCMSIVWrapper();
-    const aliceKey = aes.aes256KeyFromX25519SharedSecret(aliceSharedSecret);
-    const bobKey = aes.aes256KeyFromX25519SharedSecret(bobSharedSecret);
+    const aliceKey = aes.aes256KeyFromX25519SharedSecret(aliceSharedSecret, alice.publicKey, bob.publicKey);
+    const bobKey = aes.aes256KeyFromX25519SharedSecret(bobSharedSecret, bob.publicKey, alice.publicKey);
     expect(aliceKey.length).toBe(32);
     expect(areEqual(aliceKey, bobKey)).toBe(true);
 
@@ -134,5 +135,38 @@ test.describe("AES-GCM-SIV Tests", () => {
     const plaintext = Array.from(new TextEncoder().encode("WelcomeHome"));
     const ciphertext = aes.aes256Encrypt(aliceKey, nonce, plaintext);
     expect(areEqual(aes.aes256Decrypt(bobKey, nonce, ciphertext), plaintext)).toBe(true);
+  });
+
+  test("X25519-derived keys are bound to the cipher and to both public keys", () => {
+    const x25519 = new X25519Wrapper();
+    const alice = x25519.generateSecretAndPublicKey();
+    const bob = x25519.generateSecretAndPublicKey();
+    const mallory = x25519.generateSecretAndPublicKey();
+    const sharedSecret = x25519.generateSharedSecret(alice.secretKey, bob.publicKey);
+
+    const siv = new AESGCMSIVWrapper();
+    const gcm = new AESWrapper();
+    const siv128 = siv.aes128KeyFromX25519SharedSecret(sharedSecret, alice.publicKey, bob.publicKey);
+    const siv256 = siv.aes256KeyFromX25519SharedSecret(sharedSecret, alice.publicKey, bob.publicKey);
+    const gcm128 = gcm.aes128KeyNonceX25519DiffieHellman(sharedSecret, alice.publicKey, bob.publicKey);
+    const gcm256 = gcm.aes256KeyNonceX25519DiffieHellman(sharedSecret, alice.publicKey, bob.publicKey);
+
+    expect(areEqual(siv128, gcm128)).toBe(false);
+    expect(areEqual(siv256, gcm256)).toBe(false);
+    expect(areEqual(siv256.slice(0, 16), siv128)).toBe(false);
+    expect(areEqual(siv256, siv.aes256KeyFromX25519SharedSecret(sharedSecret, bob.publicKey, alice.publicKey))).toBe(true);
+    expect(areEqual(siv256, siv.aes256KeyFromX25519SharedSecret(sharedSecret, alice.publicKey, mallory.publicKey))).toBe(false);
+  });
+
+  test("X25519 key derivation rejects malformed inputs", () => {
+    const x25519 = new X25519Wrapper();
+    const alice = x25519.generateSecretAndPublicKey();
+    const bob = x25519.generateSecretAndPublicKey();
+    const sharedSecret = x25519.generateSharedSecret(alice.secretKey, bob.publicKey);
+    const siv = new AESGCMSIVWrapper();
+
+    expect(() => siv.aes256KeyFromX25519SharedSecret(new Array(32).fill(0), alice.publicKey, bob.publicKey)).toThrow();
+    expect(() => siv.aes128KeyFromX25519SharedSecret(sharedSecret, alice.publicKey, bob.publicKey.slice(0, 31))).toThrow();
+    expect(() => siv.aes128KeyFromX25519SharedSecret(sharedSecret.slice(0, 31), alice.publicKey, bob.publicKey)).toThrow();
   });
 });

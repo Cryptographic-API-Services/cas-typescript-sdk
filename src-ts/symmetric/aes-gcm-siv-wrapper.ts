@@ -1,20 +1,90 @@
 import {
   aes128GcmSivDecrypt,
+  aes128GcmSivDecryptWithAad,
   aes128GcmSivEncrypt,
+  aes128GcmSivEncryptWithAad,
   aes128GcmSivKey,
   aes128GcmSivKeyFromVec,
   aes128GcmSivKeyFromX25519SharedSecret,
+  aes128GcmSivOpen,
+  aes128GcmSivSeal,
   aes256GcmSivDecrypt,
+  aes256GcmSivDecryptWithAad,
   aes256GcmSivEncrypt,
+  aes256GcmSivEncryptWithAad,
   aes256GcmSivKey,
   aes256GcmSivKeyFromVec,
   aes256GcmSivKeyFromX25519SharedSecret,
+  aes256GcmSivOpen,
+  aes256GcmSivSeal,
   aesGcmSivNonce,
 } from "../../index";
 
 
 
 export class AESGCMSIVWrapper {
+
+    /**
+     * Encrypts with AES-128-GCM-SIV under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * Rotate keys well before about 2^32 messages per key.
+     * @param aesKey 16 byte key from aes128Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes128Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes128Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128GcmSivSeal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes128Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes128Seal
+     * @param sealed output of aes128Seal
+     * @param aad the AAD passed to aes128Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes128Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128GcmSivOpen(aesKey, sealed, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM-SIV under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * Rotate keys well before about 2^32 messages per key.
+     * @param aesKey 32 byte key from aes256Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes256Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes256Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256GcmSivSeal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes256Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes256Seal
+     * @param sealed output of aes256Seal
+     * @param aad the AAD passed to aes256Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes256Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256GcmSivOpen(aesKey, sealed, aad);
+    }
 
     /**
      * @description Generates a 128 bit AES-GCM-SIV key
@@ -44,7 +114,9 @@ export class AESGCMSIVWrapper {
     }
 
     /**
-     * Encrypts with AES-128-GCM-SIV (nonce-misuse-resistant AEAD). The 128 bit tag is appended to the ciphertext.
+     * Encrypts with AES-128-GCM-SIV (nonce-misuse-resistant AEAD) under a caller-supplied nonce.
+     * The 128 bit tag is appended to the ciphertext. Use this when you have to manage nonces
+     * yourself: reusing one only reveals whether two messages were identical. Otherwise prefer aes128Seal.
      * @param aesKey
      * @param nonce
      * @param plaintext
@@ -68,7 +140,9 @@ export class AESGCMSIVWrapper {
     }
 
     /**
-     * Encrypts with AES-256-GCM-SIV (nonce-misuse-resistant AEAD). The 128 bit tag is appended to the ciphertext.
+     * Encrypts with AES-256-GCM-SIV (nonce-misuse-resistant AEAD) under a caller-supplied nonce.
+     * The 128 bit tag is appended to the ciphertext. Use this when you have to manage nonces
+     * yourself: reusing one only reveals whether two messages were identical. Otherwise prefer aes256Seal.
      * @param aesKey
      * @param nonce
      * @param plaintext
@@ -92,23 +166,107 @@ export class AESGCMSIVWrapper {
     }
 
     /**
-     * Derives an AES-128-GCM-SIV key from a X25519 Diffie Hellman shared secret.
-     * @param sharedSecret
+     * Encrypts with AES-128-GCM-SIV under a caller-supplied 96 bit nonce and binds `aad`,
+     * returning `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output,
+     * but aes128DecryptWithAad only succeeds with the same bytes. AES-GCM-SIV is nonce-misuse
+     * resistant: reusing a nonce with the same key only reveals whether two messages (and their
+     * AAD) were identical, but it still leaks that, so use a fresh nonce per message. Prefer
+     * aes128Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes128Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 16 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 16 byte key
+     * @param nonce 12 byte nonce
+     * @param plaintext
+     * @param aad additional authenticated data
      * @returns Array<number>
      */
 
-    public aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number> {
-        return aes128GcmSivKeyFromX25519SharedSecret(sharedSecret);
+    public aes128EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128GcmSivEncryptWithAad(aesKey, nonce, plaintext, aad);
     }
 
     /**
-     * Derives an AES-256-GCM-SIV key from a X25519 Diffie Hellman shared secret.
-     * @param sharedSecret
+     * Decrypts `ciphertext || tag` produced by aes128EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 16 byte key
+     * @param nonce the nonce passed to aes128EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes128EncryptWithAad
      * @returns Array<number>
      */
 
-    public aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>): Array<number> {
-        return aes256GcmSivKeyFromX25519SharedSecret(sharedSecret);
+    public aes128DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes128GcmSivDecryptWithAad(aesKey, nonce, ciphertext, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM-SIV under a caller-supplied 96 bit nonce and binds `aad`,
+     * returning `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output,
+     * but aes256DecryptWithAad only succeeds with the same bytes. AES-GCM-SIV is nonce-misuse
+     * resistant: reusing a nonce with the same key only reveals whether two messages (and their
+     * AAD) were identical, but it still leaks that, so use a fresh nonce per message. Prefer
+     * aes256Seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as aes256Encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 32 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param aesKey 32 byte key
+     * @param nonce 12 byte nonce
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
+     */
+
+    public aes256EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256GcmSivEncryptWithAad(aesKey, nonce, plaintext, aad);
+    }
+
+    /**
+     * Decrypts `ciphertext || tag` produced by aes256EncryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param aesKey 32 byte key
+     * @param nonce the nonce passed to aes256EncryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to aes256EncryptWithAad
+     * @returns Array<number>
+     */
+
+    public aes256DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return aes256GcmSivDecryptWithAad(aesKey, nonce, ciphertext, aad);
+    }
+
+    /**
+     * Derives a 16 byte AES-128-GCM-SIV key from a X25519 Diffie Hellman shared secret with HKDF-SHA256.
+     * The key is bound to AES-128-GCM-SIV and to both parties' public keys, so the same shared
+     * secret gives unrelated keys for other ciphers, and both peers derive the same key only
+     * if they saw the same public keys. Pass the public keys in either order.
+     * Keys differ from those derived by earlier versions of this SDK: both peers must upgrade together.
+     * Throws if any input is not 32 bytes or the shared secret is all zeros.
+     * @param sharedSecret Output of X25519Wrapper.generateSharedSecret.
+     * @param publicKeyA One party's 32 byte X25519 public key.
+     * @param publicKeyB The other party's 32 byte X25519 public key.
+     * @returns Array<number>
+     */
+
+    public aes128KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number> {
+        return aes128GcmSivKeyFromX25519SharedSecret(sharedSecret, publicKeyA, publicKeyB);
+    }
+
+    /**
+     * Derives a 32 byte AES-256-GCM-SIV key from a X25519 Diffie Hellman shared secret with HKDF-SHA256.
+     * The key is bound to AES-256-GCM-SIV and to both parties' public keys, so the same shared
+     * secret gives unrelated keys for other ciphers, and both peers derive the same key only
+     * if they saw the same public keys. Pass the public keys in either order.
+     * Keys differ from those derived by earlier versions of this SDK: both peers must upgrade together.
+     * Throws if any input is not 32 bytes or the shared secret is all zeros.
+     * @param sharedSecret Output of X25519Wrapper.generateSharedSecret.
+     * @param publicKeyA One party's 32 byte X25519 public key.
+     * @param publicKeyB The other party's 32 byte X25519 public key.
+     * @returns Array<number>
+     */
+
+    public aes256KeyFromX25519SharedSecret(sharedSecret: Array<number>, publicKeyA: Array<number>, publicKeyB: Array<number>): Array<number> {
+        return aes256GcmSivKeyFromX25519SharedSecret(sharedSecret, publicKeyA, publicKeyB);
     }
 
     /**

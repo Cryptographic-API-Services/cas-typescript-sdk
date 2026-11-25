@@ -26,4 +26,14 @@ test.describe("Public API exports", () => {
     expect(typeof new sdk.HmacWrapper().hmacSha512SignBytes).toBe("function");
     expect(typeof new sdk.HmacWrapper().hmacSha512VerifyBytes).toBe("function");
   });
+
+  test("cas-lib 0.6.0 re-derivable Argon2 AES key methods are present", () => {
+    expect(typeof new sdk.Argon2Wrapper().generateSalt).toBe("function");
+    expect(typeof new sdk.Argon2Wrapper().deriveAes128KeyWithSalt).toBe("function");
+    expect(typeof new sdk.Argon2Wrapper().deriveAes256KeyWithSalt).toBe("function");
+  });
+
+  test("AES key wrapping wrapper is exported", () => {
+    expect(typeof sdk.AesKeyWrapWrapper).toBe("function");
+  });
 });

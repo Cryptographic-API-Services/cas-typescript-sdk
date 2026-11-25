@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "af9c92a54ce9ed6715a8d49568d449935e25f775",
+  "pull-request-title-pattern": "chore: release ${version}",
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "cas-typescript-sdk",
+      "include-component-in-tag": false,
+      "release-as": "2.0.0",
+      "changelog-path": "CHANGELOG.md",
+      "changelog-sections": [
+        { "type": "feat", "section": "Added" },
+        { "type": "changed", "section": "Changed" },
+        { "type": "deprecated", "section": "Deprecated" },
+        { "type": "fix", "section": "Fixed" },
+        { "type": "security", "section": "Security" },
+        { "type": "docs", "section": "Documentation" },
+        { "type": "perf", "section": "Other" },
+        { "type": "refactor", "section": "Other" },
+        { "type": "test", "section": "Other" },
+        { "type": "ci", "section": "Other" },
+        { "type": "build", "section": "Other" },
+        { "type": "chore", "section": "Other" },
+        { "type": "revert", "section": "Other" }
+      ]
+    }
+  }
+}
