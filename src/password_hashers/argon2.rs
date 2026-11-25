@@ -146,9 +146,12 @@ pub fn argon2_derive_aes_256_key_with_salt_test() {
 #[test]
 pub fn argon2_derive_aes_key_with_short_salt_test() {
     let password = crate::test_util::random_password().into_bytes();
-    assert!(argon2_derive_aes_128_key_with_salt(password.clone(), vec![0u8; 15]).is_err());
-    assert!(argon2_derive_aes_256_key_with_salt(password.clone(), vec![0u8; 15]).is_err());
-    assert!(argon2_derive_aes_256_key_with_salt(password, vec![0u8; 16]).is_ok());
+    // A generated salt, shortened by one byte. A zero-filled literal is a hard-coded salt.
+    let mut short = argon2_generate_salt();
+    short.pop();
+    assert!(argon2_derive_aes_128_key_with_salt(password.clone(), short.clone()).is_err());
+    assert!(argon2_derive_aes_256_key_with_salt(password.clone(), short).is_err());
+    assert!(argon2_derive_aes_256_key_with_salt(password, argon2_generate_salt()).is_ok());
 }
 
 #[test]

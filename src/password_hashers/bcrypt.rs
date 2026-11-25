@@ -1,4 +1,4 @@
-use cas_lib::password_hashers::bcrypt::CASBCrypt;
+use cas_lib::password_hashers::bcrypt::{BCRYPT_MAX_PASSWORD_BYTES, CASBCrypt};
 use napi_derive::napi;
 
 #[napi]
@@ -75,17 +75,17 @@ fn random_password_of_length(length: usize) -> String {
 
 #[test]
 pub fn bcrypt_accepts_72_byte_password_test() {
-    let password = random_password_of_length(72);
+    let password = random_password_of_length(BCRYPT_MAX_PASSWORD_BYTES);
     let hashed = bcrypt_hash(password.clone()).unwrap();
     assert_eq!(true, bcrypt_verify(hashed, password).unwrap());
 }
 
 #[test]
 pub fn bcrypt_rejects_73_byte_password_test() {
-    let password = random_password_of_length(73);
+    let password = random_password_of_length(BCRYPT_MAX_PASSWORD_BYTES + 1);
     assert!(bcrypt_hash(password.clone()).is_err());
     assert!(bcrypt_hash_params(10, password.clone()).is_err());
-    let hashed = bcrypt_hash(password[..72].to_string()).unwrap();
+    let hashed = bcrypt_hash(password[..BCRYPT_MAX_PASSWORD_BYTES].to_string()).unwrap();
     assert!(bcrypt_verify(hashed, password).is_err());
 }
 
