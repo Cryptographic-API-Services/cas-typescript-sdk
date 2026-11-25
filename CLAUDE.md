@@ -12,11 +12,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & test commands
 
 ```bash
-npm run build:rust   # napi build --release --platform → produces native *.node + regenerates index.js / index.d.ts
+npm run build:rust   # napi build --release --platform -- --locked → produces native *.node + regenerates index.js / index.d.ts
 npm run build:ts     # rimraf lib && tsc → compiles src-ts/ into lib/ (the published JS)
 npm run build        # build:rust then build:ts
 
-npm run rust:test    # cargo test --release (runs the inline #[test] fns in src/)
+npm run rust:test    # cargo test --release --locked (runs the inline #[test] fns in src/)
 npm run node:test    # npx playwright test (runs the TS tests in tests/)
 npm test             # rust:test → build → node:test (the full CI pipeline)
 ```
@@ -24,7 +24,14 @@ npm test             # rust:test → build → node:test (the full CI pipeline)
 - The TS tests import wrappers from `src-ts/`, but the wrappers `require` the native binding from the repo-root `index.js`. **You must run `npm run build:rust` before `npm run node:test`** or the native `.node` binding won't exist. `npm test` handles ordering for you.
 - Tests use the **Playwright test runner** (`@playwright/test`) purely as a test framework — there is no browser/page usage despite `playwright.config.ts` defining chromium/firefox/webkit projects. Each test therefore runs three times (once per project). Run `npx playwright install` once before the first `node:test`.
 - Run a single TS test file: `npx playwright test tests/symmetric.test.ts`. Filter by title: `npx playwright test -g "aes 128"`. Single project: `npx playwright test --project=chromium`.
-- Run a single Rust test: `cargo test --release aes128_encrypt_decrypt_test`.
+- Run a single Rust test: `cargo test --release --locked aes128_encrypt_decrypt_test`.
+
+## Dependencies & toolchain
+
+- **`Cargo.lock` is committed** (this crate is a `cdylib` that ships binaries), so CI tests and npm releases compile the exact same crate graph.
+- **Every build is `--locked`**: `rust:test`, `build:rust` (napi-rs forwards args after `--` to cargo) and the `napi build` steps in `main-publish.yml`. If `Cargo.toml` and `Cargo.lock` disagree, the build fails instead of re-resolving. Never add `cargo update` to a script or workflow.
+- **Dependency bumps go through PRs** (Dependabot, #134): change `Cargo.toml`, run `cargo update -p <crate>` (or a plain build without `--locked`) locally, and commit the resulting lockfile diff together with it so it can be reviewed.
+- **`rust-toolchain.toml` pins the compiler** (`1.100.0`, same as `cas-lib`); rustup installs it on first use, and it overrides any toolchain a workflow selects. It also lists every release target in `main-publish.yml`, so add a target there when adding one to the release matrix. Bump the channel in its own PR.
 
 ## Architecture & conventions
 

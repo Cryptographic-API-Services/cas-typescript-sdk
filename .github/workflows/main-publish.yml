@@ -86,17 +86,15 @@ jobs:
             rustup toolchain install nightly &&
             rustup default nightly &&
             npm ci && 
-            cargo update &&
             npm run build:ts &&
-            npx napi build --platform --release --target ${{ matrix.settings.target }}
+            npx napi build --platform --release --target ${{ matrix.settings.target }} -- --locked
           '
 
       - name: Build native
         if: ${{ !matrix.settings.docker }}
         run: |
-          cargo update
           npm run build:ts
-          npx napi build --platform --release --target ${{ matrix.settings.target }}
+          npx napi build --platform --release --target ${{ matrix.settings.target }} -- --locked
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
