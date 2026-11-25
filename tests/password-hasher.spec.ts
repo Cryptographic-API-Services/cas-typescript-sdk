@@ -6,6 +6,7 @@ import {
   PasswordHasherType,
 } from "../src-ts/password-hashers";
 import { AESWrapper } from "../src-ts/symmetric";
+import { CasErrorCode, isCasError } from "../src-ts/index";
 import { argon2HashParams, bcryptHashParams, scryptHashParams } from "../index";
 
 // Cost 4 (below today's minimum of 10); from the bcrypt crate's tests.
@@ -287,6 +288,47 @@ test.describe("Argon2 Tests", () => {
     }
   });
 
+  test("generate salt", () => {
+    const hasher: Argon2Wrapper = new Argon2Wrapper();
+    const salt: number[] = hasher.generateSalt();
+    expect(salt.length).toBe(16);
+    expect(hasher.generateSalt()).not.toEqual(salt);
+  });
+
+  for (const [bits, keyLength] of [[128, 16], [256, 32]] as const) {
+    const derive = (hasher: Argon2Wrapper, password: number[], salt: number[]): number[] =>
+      bits === 128 ? hasher.deriveAes128KeyWithSalt(password, salt) : hasher.deriveAes256KeyWithSalt(password, salt);
+
+    test(`derive aes ${bits} key with salt: same password and salt give the same key`, () => {
+      const hasher: Argon2Wrapper = new Argon2Wrapper();
+      const password: number[] = Array.from(new TextEncoder().encode("Argon2Rocks"));
+      const salt: number[] = hasher.generateSalt();
+      const key: number[] = derive(hasher, password, salt);
+      expect(key.length).toBe(keyLength);
+      expect(derive(hasher, password, [...salt])).toEqual(key);
+    });
+
+    test(`derive aes ${bits} key with salt: a different salt gives a different key`, () => {
+      const hasher: Argon2Wrapper = new Argon2Wrapper();
+      const password: number[] = Array.from(new TextEncoder().encode("Argon2Rocks"));
+      const key: number[] = derive(hasher, password, hasher.generateSalt());
+      expect(derive(hasher, password, hasher.generateSalt())).not.toEqual(key);
+    });
+
+    test(`derive aes ${bits} key with salt: a 15 byte salt throws CAS_INVALID_PARAMETERS`, () => {
+      const hasher: Argon2Wrapper = new Argon2Wrapper();
+      const password: number[] = Array.from(new TextEncoder().encode("Argon2Rocks"));
+      let caught: unknown;
+      try {
+        derive(hasher, password, new Array(15).fill(0));
+      } catch (err) {
+        caught = err;
+      }
+      expect(isCasError(caught, CasErrorCode.InvalidParameters)).toBe(true);
+      expect(derive(hasher, password, new Array(16).fill(0)).length).toBe(keyLength);
+    });
+  }
+
   test("derive aes 128 key", () => {
     const hasher: Argon2Wrapper = new Argon2Wrapper();
     const password: number[] = Array.from(new TextEncoder().encode("Argon2Rocks"));
@@ -306,15 +348,16 @@ test.describe("Argon2 Tests", () => {
     expect(secondKey).not.toEqual(key);
   });
 
-  test("derive aes 256 key encrypt and decrypt round trip", () => {
+  test("derive aes 256 key with salt encrypt and decrypt round trip", () => {
     const hasher: Argon2Wrapper = new Argon2Wrapper();
     const aes: AESWrapper = new AESWrapper();
     const password: number[] = Array.from(new TextEncoder().encode("Argon2Rocks"));
-    const key: number[] = hasher.deriveAes256Key(password);
+    const salt: number[] = hasher.generateSalt();
     const nonce: number[] = aes.generateAESNonce();
     const plaintext: number[] = Array.from(new TextEncoder().encode("WelcomeHome"));
-    const ciphertext: number[] = aes.aes256Encrypt(key, nonce, plaintext);
-    const decrypted: number[] = aes.aes256Decrypt(key, nonce, ciphertext);
+    const ciphertext: number[] = aes.aes256Encrypt(hasher.deriveAes256KeyWithSalt(password, salt), nonce, plaintext);
+    // Re-derive the key from the stored salt to decrypt.
+    const decrypted: number[] = aes.aes256Decrypt(hasher.deriveAes256KeyWithSalt(password, salt), nonce, ciphertext);
     expect(decrypted).toEqual(plaintext);
   });
 });

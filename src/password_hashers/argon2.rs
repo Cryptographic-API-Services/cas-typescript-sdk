@@ -18,11 +18,28 @@ pub fn argon2_hash_params(memory_cost: u32, iterations: u32, parallelism: u32, p
 }
 
 #[napi]
+pub fn argon2_generate_salt() -> Vec<u8> {
+    CASArgon::generate_salt()
+}
+
+#[napi]
+pub fn argon2_derive_aes_128_key_with_salt(password: Vec<u8>, salt: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(CASArgon::derive_aes_128_key_with_salt(password, salt))
+}
+
+#[napi]
+pub fn argon2_derive_aes_256_key_with_salt(password: Vec<u8>, salt: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(CASArgon::derive_aes_256_key_with_salt(password, salt))
+}
+
+#[napi]
+#[allow(deprecated)]
 pub fn argon2_derive_aes_128_key(password: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(CASArgon::derive_aes_128_key(password))
 }
 
 #[napi]
+#[allow(deprecated)]
 pub fn argon2_derive_aes_256_key(password: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(CASArgon::derive_aes_256_key(password))
 }
@@ -100,9 +117,44 @@ pub fn argon2_derive_aes_256_key_test() {
 }
 
 #[test]
+pub fn argon2_generate_salt_test() {
+    let salt = argon2_generate_salt();
+    assert_eq!(salt.len(), 16);
+    assert_ne!(salt, argon2_generate_salt());
+}
+
+#[test]
+pub fn argon2_derive_aes_128_key_with_salt_test() {
+    let password = crate::test_util::random_password().into_bytes();
+    let salt = argon2_generate_salt();
+    let key = argon2_derive_aes_128_key_with_salt(password.clone(), salt.clone()).unwrap();
+    assert_eq!(key.len(), 16);
+    assert_eq!(key, argon2_derive_aes_128_key_with_salt(password.clone(), salt).unwrap());
+    assert_ne!(key, argon2_derive_aes_128_key_with_salt(password, argon2_generate_salt()).unwrap());
+}
+
+#[test]
+pub fn argon2_derive_aes_256_key_with_salt_test() {
+    let password = crate::test_util::random_password().into_bytes();
+    let salt = argon2_generate_salt();
+    let key = argon2_derive_aes_256_key_with_salt(password.clone(), salt.clone()).unwrap();
+    assert_eq!(key.len(), 32);
+    assert_eq!(key, argon2_derive_aes_256_key_with_salt(password.clone(), salt).unwrap());
+    assert_ne!(key, argon2_derive_aes_256_key_with_salt(password, argon2_generate_salt()).unwrap());
+}
+
+#[test]
+pub fn argon2_derive_aes_key_with_short_salt_test() {
+    let password = crate::test_util::random_password().into_bytes();
+    assert!(argon2_derive_aes_128_key_with_salt(password.clone(), vec![0u8; 15]).is_err());
+    assert!(argon2_derive_aes_256_key_with_salt(password.clone(), vec![0u8; 15]).is_err());
+    assert!(argon2_derive_aes_256_key_with_salt(password, vec![0u8; 16]).is_ok());
+}
+
+#[test]
 pub fn argon2_derive_aes_256_key_encrypt_decrypt_test() {
     use crate::symmetric::aes::{aes256_decrypt, aes256_encrypt, aes_nonce};
-    let key = argon2_derive_aes_256_key(crate::test_util::random_password().into_bytes()).unwrap();
+    let key = argon2_derive_aes_256_key_with_salt(crate::test_util::random_password().into_bytes(), argon2_generate_salt()).unwrap();
     let nonce = aes_nonce();
     let plaintext = b"WelcomeHome".to_vec();
     let ciphertext = aes256_encrypt(key.clone(), nonce.clone(), plaintext.clone()).unwrap();

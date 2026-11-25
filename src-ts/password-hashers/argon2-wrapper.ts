@@ -1,5 +1,14 @@
 
-import { argon2DeriveAes128Key, argon2DeriveAes256Key, argon2Hash, argon2HashParams, argon2Verify} from "./../../index";
+import {
+  argon2DeriveAes128Key,
+  argon2DeriveAes128KeyWithSalt,
+  argon2DeriveAes256Key,
+  argon2DeriveAes256KeyWithSalt,
+  argon2GenerateSalt,
+  argon2Hash,
+  argon2HashParams,
+  argon2Verify,
+} from "./../../index";
 import { IPasswordHasherBase } from "./password-hasher-base";
 
 const MIN_MEMORY_COST_MIB = 19;
@@ -45,10 +54,53 @@ export class Argon2Wrapper implements IPasswordHasherBase {
   }
 
   /**
+   * Generates a random 16 byte salt for deriveAes128KeyWithSalt and deriveAes256KeyWithSalt.
+   * The salt is not secret: store it next to whatever the key protects and pass it back
+   * with the same password to re-derive the same key.
+   * @returns Array<number>
+   */
+  public generateSalt(): Array<number> {
+    return argon2GenerateSalt();
+  }
+
+  /**
+   * Derives a 16 byte AES-128 key from a password and salt with Argon2id.
+   * The same password and salt always give the same key. The cost parameters are fixed
+   * (19 MiB of memory, 2 iterations, parallelism 1), so a stored salt keeps working across updates.
+   * @param password
+   * @param salt At least 16 bytes, for example from generateSalt. A shorter salt throws a
+   * CasError with code CasErrorCode.InvalidParameters.
+   * @returns Array<number>
+   */
+  public deriveAes128KeyWithSalt(password: Array<number>, salt: Array<number>): Array<number> {
+    if (!password || password.length === 0) {
+      throw new Error("You must provide a password to derive an AES-128 key with Argon2");
+    }
+    return argon2DeriveAes128KeyWithSalt(password, salt);
+  }
+
+  /**
+   * Derives a 32 byte AES-256 key from a password and salt with Argon2id.
+   * The same password and salt always give the same key. The cost parameters are fixed
+   * (19 MiB of memory, 2 iterations, parallelism 1), so a stored salt keeps working across updates.
+   * @param password
+   * @param salt At least 16 bytes, for example from generateSalt. A shorter salt throws a
+   * CasError with code CasErrorCode.InvalidParameters.
+   * @returns Array<number>
+   */
+  public deriveAes256KeyWithSalt(password: Array<number>, salt: Array<number>): Array<number> {
+    if (!password || password.length === 0) {
+      throw new Error("You must provide a password to derive an AES-256 key with Argon2");
+    }
+    return argon2DeriveAes256KeyWithSalt(password, salt);
+  }
+
+  /**
    * Derives a 16 byte AES-128 key from a password with Argon2id.
    * A random salt is generated internally and discarded, so the key cannot be
    * re-derived from the password — each call produces a fresh one-time key.
-   * Use Pbkdf2Wrapper.deriveWithSalt if you need a re-derivable key.
+   * @deprecated The salt is discarded, so the key can never be derived again. Use
+   * generateSalt and deriveAes128KeyWithSalt instead.
    * @param password
    * @returns Array<number>
    */
@@ -63,7 +115,8 @@ export class Argon2Wrapper implements IPasswordHasherBase {
    * Derives a 32 byte AES-256 key from a password with Argon2id.
    * A random salt is generated internally and discarded, so the key cannot be
    * re-derived from the password — each call produces a fresh one-time key.
-   * Use Pbkdf2Wrapper.deriveWithSalt if you need a re-derivable key.
+   * @deprecated The salt is discarded, so the key can never be derived again. Use
+   * generateSalt and deriveAes256KeyWithSalt instead.
    * @param password
    * @returns Array<number>
    */

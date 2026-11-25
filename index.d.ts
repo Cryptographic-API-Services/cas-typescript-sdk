@@ -55,7 +55,13 @@ export declare function aesNonce(): Array<number>
 
 export declare function argon2DeriveAes128Key(password: Array<number>): Array<number>
 
+export declare function argon2DeriveAes128KeyWithSalt(password: Array<number>, salt: Array<number>): Array<number>
+
 export declare function argon2DeriveAes256Key(password: Array<number>): Array<number>
+
+export declare function argon2DeriveAes256KeyWithSalt(password: Array<number>, salt: Array<number>): Array<number>
+
+export declare function argon2GenerateSalt(): Array<number>
 
 export declare function argon2Hash(password: string): string
 

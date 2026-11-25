@@ -41,6 +41,24 @@ test.describe("Hybrid Encryption", () => {
         expect(() => decrypt()).toThrow();
     });
 
+    test("HPKE Encrypt and Decrypt with a fixed application-specific info", () => {
+        const hpkeWrapper = new HpkeWrapper();
+        const keyPair = hpkeWrapper.generateKeyPair();
+        const encoder = new TextEncoder();
+        const messageBytes: Array<number> = Array.from(encoder.encode("This is a secret message"));
+        const info: Array<number> = Array.from(encoder.encode("my-app/v1/file-encryption"));
+        const encrypted = hpkeWrapper.encrypt(messageBytes, keyPair.publicKey, info);
+        const decrypt = (infoToUse: Array<number>) => hpkeWrapper.decrypt(
+            encrypted.ciphertext,
+            keyPair.secretKey,
+            encrypted.encapsulatedKey,
+            encrypted.tag,
+            infoToUse
+        );
+        expect(decrypt(Array.from(encoder.encode("my-app/v1/file-encryption")))).toEqual(messageBytes);
+        expect(() => decrypt(Array.from(encoder.encode("my-app/v1/messaging")))).toThrow();
+    });
+
     test("HPKE Decrypt with AAD fails when encrypted without it", () => {
         const hpkeWrapper = new HpkeWrapper();
         const keyPair = hpkeWrapper.generateKeyPair();
