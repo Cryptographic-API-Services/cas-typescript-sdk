@@ -1,5 +1,5 @@
 # PRs are squash-merged, so the PR title becomes the commit message that
-# release-plz turns into a CHANGELOG.md line and uses to choose the version bump.
+# release-please turns into a CHANGELOG.md line and uses to choose the version bump.
 name: PR title
 
 on:
