@@ -72,18 +72,26 @@ async function httpsFetch(url, options = {}) {
   }
 }
 
-async function githubApi(endpoint, accept = "application/vnd.github+json") {
+async function githubApi(endpoint, accept = "application/vnd.github+json", attempts = 4) {
   const url = `https://api.github.com/repos/${REPO}/${endpoint}`;
   const headers = { Accept: accept, "User-Agent": "cas-typescript-sdk-wycheproof-fetch" };
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await httpsFetch(url, { headers });
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} for ${url}: ${await response.text()}`);
+  for (let attempt = 1; ; attempt++) {
+    const response = await httpsFetch(url, { headers });
+    if (response.ok) {
+      return accept === "application/vnd.github.sha" ? response.text() : response.json();
+    }
+    const body = await response.text();
+    // GitHub occasionally returns 502/503/504 for tree lookups. Retry those;
+    // anything else (404, 401, 403) fails immediately.
+    if (attempt >= attempts || (response.status !== 502 && response.status !== 503 && response.status !== 504)) {
+      throw new Error(`HTTP ${response.status} for ${url}: ${body}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
   }
-  return accept === "application/vnd.github.sha" ? response.text() : response.json();
 }
 
 async function resolveRef(name) {
