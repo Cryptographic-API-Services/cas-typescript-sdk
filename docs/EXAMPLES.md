@@ -93,12 +93,21 @@ const plaintext = chacha.decrypt(key, nonce, ciphertext);
 ## Asymmetric
 
 ### RSA signatures
+
+`sign` / `verify` take the message itself (any length), not a digest of it, and use RSASSA-PKCS1-v1_5 with SHA-256: standard `RS256`, as in JWS, OpenSSL and WebCrypto. Signatures made by 1.x of this SDK don't verify. Keys are PEM strings: PKCS#8 for the private key, PKCS#1 for the public key. `verify` accepts public keys from 2048 up to 8192 bits.
+
 ```typescript
 const rsa = new RSAWrapper();
 const keys: CASRSAKeyPairResult = rsa.getKeyPair(4096); // 2048, 3072 or 4096; smaller keys throw
 const message = toBytes("This is my message to sign");
 const signature = rsa.sign(keys.privateKey, message);
 const isValid: boolean = rsa.verify(keys.publicKey, message, signature);
+
+// Interoperates with Node's crypto module (and any other RS256 implementation)
+import { sign, verify } from "crypto";
+const nodeSignature = sign("sha256", Buffer.from(message), keys.privateKey);
+const nodeSignatureIsValid: boolean = rsa.verify(keys.publicKey, message, Array.from(nodeSignature));
+const verifiedByNode: boolean = verify("sha256", Buffer.from(message), keys.publicKey, Buffer.from(signature));
 ```
 
 ## Digital Signatures
@@ -164,14 +173,24 @@ const hash = hasher.hash256(toBytes("This is my array to hash"));
 
 ## Passwords
 
+### Cost bounds
+
+`hashPasswordWithParameters` throws for a parameter outside these ranges, and `verify` throws for a stored hash whose costs exceed the upper bounds (such as `$2b$31$...`) instead of tying up memory or CPU. Existing hashes below the minimums still verify.
+
+| Hasher | Bounds |
+| --- | --- |
+| Argon2 | memory 19–4096 **MiB** (not KiB), iterations 1–10, parallelism 1–16 |
+| SCrypt | log₂ N 10–20, block size `r` 1–32, parallelism `p` 1–16; log₂ N must also be less than 16 · `r` |
+| BCrypt | cost 10–16 |
+
 ### Argon2
 ```typescript
 const argon2 = new Argon2Wrapper();
 const hashed = argon2.hashPassword("ThisOneBadPassword!@");
 const isMatch: boolean = argon2.verify(hashed, "ThisOneBadPassword!@");
 
-// Custom parameters: memory cost (MiB), time cost (iterations), parallelism
-const tuned = argon2.hashPasswordWithParameters("ThisOneBadPassword!@", 19, 2, 1);
+// Custom parameters: memory cost in MiB (19-4096; 64 means 64 MiB), time cost (iterations, 1-10), parallelism (1-16)
+const tuned = argon2.hashPasswordWithParameters("ThisOneBadPassword!@", 64, 3, 1);
 
 // Derive a one-time AES key from a password (the salt is discarded, so it cannot be re-derived)
 const aes256Key = argon2.deriveAes256Key(toBytes("ThisOneBadPassword!@"));
@@ -186,7 +205,7 @@ Passwords are limited to 72 bytes of UTF-8 (bytes, not characters: `"€"` is 3 
 const bcrypt = new BCryptWrapper();
 const hashed = bcrypt.hashPassword("ThisOneBadPassword!@");
 const isMatch: boolean = bcrypt.verify(hashed, "ThisOneBadPassword!@");
-const tuned = bcrypt.hashPasswordWithParameters("ThisOneBadPassword!@", 12); // cost
+const tuned = bcrypt.hashPasswordWithParameters("ThisOneBadPassword!@", 13); // cost, 10-16
 ```
 
 ### SCrypt
@@ -194,7 +213,7 @@ const tuned = bcrypt.hashPasswordWithParameters("ThisOneBadPassword!@", 12); // 
 const scrypt = new ScryptWrapper();
 const hashed = scrypt.hashPassword("ScryptRocks");
 const isMatch: boolean = scrypt.verify(hashed, "ScryptRocks");
-// Custom parameters: log2 CPU cost, block size, parallelism
+// Custom parameters: log2 N (10-20), block size r (1-32), parallelism p (1-16); memory is about 128 * r * 2^log2N bytes
 const tuned = scrypt.hashPasswordWithParameters("ScryptRocks", 17, 8, 1);
 ```
 
@@ -225,26 +244,30 @@ const x25519 = new X25519Wrapper();
 const alice = x25519.generateSecretAndPublicKey();
 const bob = x25519.generateSecretAndPublicKey();
 
-// Each side combines its own secret key with the other side's public key
+// Each side combines its own secret key with the other side's public key.
+// Throws if the other side's public key is a low-order point (it would force an all-zero secret).
 const aliceShared = x25519.generateSharedSecret(alice.secretKey, bob.publicKey);
 const bobShared = x25519.generateSharedSecret(bob.secretKey, alice.publicKey);
 // aliceShared and bobShared are identical
 
-// Turn the shared secret into an AES key
+// Turn the shared secret into an AES key. Pass both public keys, in either order:
+// the key is bound to them and to the cipher, so it differs per cipher and per pair of peers.
+// Keys differ from those of earlier SDK versions, so both peers must upgrade together.
 const aes = new AESWrapper();
-const aliceKey = aes.aes256KeyNonceX25519DiffieHellman(aliceShared);
-const bobKey = aes.aes256KeyNonceX25519DiffieHellman(bobShared);
+const aliceKey = aes.aes256KeyNonceX25519DiffieHellman(aliceShared, alice.publicKey, bob.publicKey);
+const bobKey = aes.aes256KeyNonceX25519DiffieHellman(bobShared, bob.publicKey, alice.publicKey);
+// aliceKey and bobKey are identical
 const nonce = aes.generateAESNonce();
 const ciphertext = aes.aes256Encrypt(aliceKey, nonce, toBytes("Hello Bob"));
 const plaintext = toText(aes.aes256Decrypt(bobKey, nonce, ciphertext));
 
-// AES-128 from the same shared secret
-const aes128Key = aes.aes128KeyNonceX25519DiffieHellman(aliceShared);
+// AES-128 from the same shared secret (an unrelated key, not a prefix of the AES-256 one)
+const aes128Key = aes.aes128KeyNonceX25519DiffieHellman(aliceShared, alice.publicKey, bob.publicKey);
 
 // AES-GCM-SIV equivalents
 const siv = new AESGCMSIVWrapper();
-const sivKey256 = siv.aes256KeyFromX25519SharedSecret(aliceShared);
-const sivKey128 = siv.aes128KeyFromX25519SharedSecret(aliceShared);
+const sivKey256 = siv.aes256KeyFromX25519SharedSecret(aliceShared, alice.publicKey, bob.publicKey);
+const sivKey128 = siv.aes128KeyFromX25519SharedSecret(aliceShared, alice.publicKey, bob.publicKey);
 ```
 
 ## Message Authentication

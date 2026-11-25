@@ -24,6 +24,35 @@ pub fn scrypt_hash_params_test() {
 }
 
 #[test]
+pub fn scrypt_hash_params_bounds_test() {
+    let password = crate::test_util::random_password();
+    assert!(scrypt_hash_params(password.clone(), 9, 8, 1).is_err());
+    assert!(scrypt_hash_params(password.clone(), 21, 8, 1).is_err());
+    assert!(scrypt_hash_params(password.clone(), 10, 0, 1).is_err());
+    assert!(scrypt_hash_params(password.clone(), 10, 33, 1).is_err());
+    assert!(scrypt_hash_params(password.clone(), 10, 8, 0).is_err());
+    assert!(scrypt_hash_params(password.clone(), 10, 8, 17).is_err());
+    assert!(scrypt_hash_params(password.clone(), 10, 32, 1).is_ok());
+    assert!(scrypt_hash_params(password, 10, 1, 16).is_ok());
+}
+
+#[cfg(test)]
+const SCRYPT_LOG_N_8_HASH: &str = "$scrypt$ln=8,r=8,p=1$Y2FzLXNkay1zY3J5cHQtbG44$we6PL3qFpfGm2MUwKWwoMg8sO/qJYxFio5fRYVWizCk";
+
+#[test]
+pub fn scrypt_verify_below_minimum_cost_test() {
+    assert_eq!(true, scrypt_verify(SCRYPT_LOG_N_8_HASH.to_string(), "password".to_string()).unwrap());
+}
+
+#[test]
+pub fn scrypt_verify_refuses_hostile_hash_test() {
+    for params in ["ln=21,r=8,p=1", "ln=8,r=33,p=1", "ln=8,r=8,p=17"] {
+        let hostile = SCRYPT_LOG_N_8_HASH.replace("ln=8,r=8,p=1", params);
+        assert!(scrypt_verify(hostile, "password".to_string()).is_err());
+    }
+}
+
+#[test]
 pub fn scrypt_hash_test() {
     let password = crate::test_util::random_password();
     let hashed_password = scrypt_hash(password.clone()).unwrap();

@@ -13,6 +13,7 @@ test.describe("Wycheproof X25519 vectors", () => {
     const file = loadWycheproof<XdhTestGroup>("x25519_test.json");
 
     let vectorsRun = 0;
+    let lowOrderRejected = 0;
 
     for (const group of file.testGroups) {
       for (const vector of group.tests) {
@@ -21,11 +22,36 @@ test.describe("Wycheproof X25519 vectors", () => {
         const publicKey = hexToBytes(vector.public);
         vectorsRun++;
 
-        // x25519-dalek clamps the private key and masks the public key's high
-        // bit per RFC 7748, so both "valid" and "acceptable" vectors (twist
-        // points, low-order points yielding an all-zero shared secret, etc.)
-        // must produce the expected shared secret.
-        const shared = x25519.generateSharedSecret(secretKey, publicKey);
+        // Low-order public keys force the all-zero shared secret whatever the
+        // private key is, so they must be rejected.
+        if (
+          vector.flags.includes("ZeroSharedSecret") ||
+          vector.flags.includes("LowOrderPublic")
+        ) {
+          expect(
+            () => x25519.generateSharedSecret(secretKey, publicKey),
+            `${label}: low-order public key must be rejected`,
+          ).toThrow();
+          lowOrderRejected++;
+          continue;
+        }
+
+        if (vector.result === "valid") {
+          const shared = x25519.generateSharedSecret(secretKey, publicKey);
+          expect(bytesToHex(shared), `${label}: shared secret mismatch`).toBe(
+            vector.shared,
+          );
+          continue;
+        }
+
+        // Other "acceptable" vectors (twist points, non-canonical public keys)
+        // may go either way, but a returned secret must still be correct.
+        let shared: Array<number> | undefined;
+        try {
+          shared = x25519.generateSharedSecret(secretKey, publicKey);
+        } catch {
+          continue;
+        }
         expect(bytesToHex(shared), `${label}: shared secret mismatch`).toBe(
           vector.shared,
         );
@@ -33,5 +59,6 @@ test.describe("Wycheproof X25519 vectors", () => {
     }
 
     expect(vectorsRun).toBe(file.numberOfTests);
+    expect(lowOrderRejected).toBeGreaterThan(0);
   });
 });

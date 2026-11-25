@@ -47,8 +47,8 @@ test.describe("Symmetric Tests", () => {
     const bobSharedSecret = x25519.generateSharedSecret(bob.secretKey, alice.publicKey);
 
     const aesWrapper: AESWrapper = new AESWrapper();
-    const aliceAesKey = aesWrapper.aes256KeyNonceX25519DiffieHellman(aliceSharedSecret);
-    const bobAesKey = aesWrapper.aes256KeyNonceX25519DiffieHellman(bobSharedSecret);
+    const aliceAesKey = aesWrapper.aes256KeyNonceX25519DiffieHellman(aliceSharedSecret, alice.publicKey, bob.publicKey);
+    const bobAesKey = aesWrapper.aes256KeyNonceX25519DiffieHellman(bobSharedSecret, bob.publicKey, alice.publicKey);
 
     const nonce = aesWrapper.generateAESNonce();
 
@@ -72,8 +72,8 @@ test.describe("Symmetric Tests", () => {
     const bobSharedSecret = x25519.generateSharedSecret(bob.secretKey, alice.publicKey);
 
     const aesWrapper: AESWrapper = new AESWrapper();
-    const aliceAesKey = aesWrapper.aes128KeyNonceX25519DiffieHellman(aliceSharedSecret);
-    const bobAesKey = aesWrapper.aes128KeyNonceX25519DiffieHellman(bobSharedSecret);
+    const aliceAesKey = aesWrapper.aes128KeyNonceX25519DiffieHellman(aliceSharedSecret, alice.publicKey, bob.publicKey);
+    const bobAesKey = aesWrapper.aes128KeyNonceX25519DiffieHellman(bobSharedSecret, bob.publicKey, alice.publicKey);
 
     const tohashed: string = "This is my array to encrypt";
     const encoder = new TextEncoder();

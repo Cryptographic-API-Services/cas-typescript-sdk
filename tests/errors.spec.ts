@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { argon2HashParams } from "../index";
 import {
   AESWrapper,
   Argon2Wrapper,
@@ -74,8 +75,9 @@ test.describe("Typed CasError codes", () => {
   });
 
   test("out-of-range Argon2 parameters throw CAS_INVALID_PARAMETERS", () => {
+    // Argon2Wrapper rejects these bounds itself with a plain Error, so call the native binding.
     expectCasError(
-      () => new Argon2Wrapper().hashPasswordWithParameters("password", 19, 0, 1),
+      () => argon2HashParams(19, 0, 1, "password"),
       CasErrorCode.InvalidParameters,
       "invalid algorithm parameters",
     );

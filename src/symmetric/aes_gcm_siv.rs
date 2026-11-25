@@ -37,13 +37,13 @@ pub fn aes256_gcm_siv_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<
 }
 
 #[napi]
-pub fn aes128_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> crate::Result<Vec<u8>> {
-    crate::map_cas_err(<CASAES128SIV as CASAES128SIVEncryption>::key_from_x25519_shared_secret(shared_secret))
+pub fn aes128_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>, public_key_a: Vec<u8>, public_key_b: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128SIV as CASAES128SIVEncryption>::key_from_x25519_shared_secret(shared_secret, public_key_a, public_key_b))
 }
 
 #[napi]
-pub fn aes256_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>) -> crate::Result<Vec<u8>> {
-    crate::map_cas_err(<CASAES256SIV as CASAES256SIVEncryption>::key_from_x25519_shared_secret(shared_secret))
+pub fn aes256_gcm_siv_key_from_x25519_shared_secret(shared_secret: Vec<u8>, public_key_a: Vec<u8>, public_key_b: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256SIV as CASAES256SIVEncryption>::key_from_x25519_shared_secret(shared_secret, public_key_a, public_key_b))
 }
 
 #[napi]
@@ -91,18 +91,25 @@ fn aes_gcm_siv_key_from_x25519_shared_secret_test() {
     use crate::key_exchange::x25519::{x25519_diffie_hellman, x25519_generate_secret_and_public_key};
     let alice = x25519_generate_secret_and_public_key();
     let bob = x25519_generate_secret_and_public_key();
-    let alice_shared_secret = x25519_diffie_hellman(alice.secret_key, bob.public_key).unwrap();
-    let bob_shared_secret = x25519_diffie_hellman(bob.secret_key, alice.public_key).unwrap();
+    let alice_shared_secret = x25519_diffie_hellman(alice.secret_key, bob.public_key.clone()).unwrap();
+    let bob_shared_secret = x25519_diffie_hellman(bob.secret_key, alice.public_key.clone()).unwrap();
 
-    let alice_key_128 = aes128_gcm_siv_key_from_x25519_shared_secret(alice_shared_secret.clone()).unwrap();
-    let bob_key_128 = aes128_gcm_siv_key_from_x25519_shared_secret(bob_shared_secret.clone()).unwrap();
+    // Each side passes its own public key first; the order must not matter.
+    let alice_key_128 = aes128_gcm_siv_key_from_x25519_shared_secret(alice_shared_secret.clone(), alice.public_key.clone(), bob.public_key.clone()).unwrap();
+    let bob_key_128 = aes128_gcm_siv_key_from_x25519_shared_secret(bob_shared_secret.clone(), bob.public_key.clone(), alice.public_key.clone()).unwrap();
     assert_eq!(alice_key_128.len(), 16);
     assert_eq!(alice_key_128, bob_key_128);
 
-    let alice_key_256 = aes256_gcm_siv_key_from_x25519_shared_secret(alice_shared_secret).unwrap();
-    let bob_key_256 = aes256_gcm_siv_key_from_x25519_shared_secret(bob_shared_secret).unwrap();
+    let alice_key_256 = aes256_gcm_siv_key_from_x25519_shared_secret(alice_shared_secret.clone(), alice.public_key.clone(), bob.public_key.clone()).unwrap();
+    let bob_key_256 = aes256_gcm_siv_key_from_x25519_shared_secret(bob_shared_secret, bob.public_key.clone(), alice.public_key.clone()).unwrap();
     assert_eq!(alice_key_256.len(), 32);
     assert_eq!(alice_key_256, bob_key_256);
+    assert_ne!(alice_key_256[..16], alice_key_128[..]);
+
+    let gcm_key_256 = crate::symmetric::aes::aes_256_key_from_x25519_shared_secret(alice_shared_secret.clone(), alice.public_key.clone(), bob.public_key.clone()).unwrap();
+    let gcm_key_128 = crate::symmetric::aes::aes_128_key_from_x25519_shared_secret(alice_shared_secret, alice.public_key, bob.public_key).unwrap();
+    assert_ne!(gcm_key_256, alice_key_256);
+    assert_ne!(gcm_key_128, alice_key_128);
 
     let nonce = aes_gcm_siv_nonce();
     let plaintext = b"WelcomeHome".to_vec();
