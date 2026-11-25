@@ -207,6 +207,8 @@ export declare function signEd25519(privateKey: Array<number>, message: Array<nu
 
 export declare function signRsa(privateKey: string, message: Array<number>): Array<number>
 
+export declare function signRsaPss(privateKey: string, message: Array<number>): Array<number>
+
 export declare function slhDsaGenerateKeyPair(): CASSlhDsaKeyPairResult
 
 export declare function slhDsaSign(message: Array<number>, signingKey: Array<number>): Array<number>
@@ -218,6 +220,8 @@ export declare function verifyEd25519(publicKey: Array<number>, message: Array<n
 export declare function verifyEd25519WithKeyPair(keyPair: Array<number>, message: Array<number>, signature: Array<number>): boolean
 
 export declare function verifyRsa(publicKey: string, message: Array<number>, signature: Array<number>): boolean
+
+export declare function verifyRsaPss(publicKey: string, message: Array<number>, signature: Array<number>): boolean
 
 export declare function x25519DiffieHellman(mySecretKey: Array<number>, usersPublicKey: Array<number>): Array<number>
 
