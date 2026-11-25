@@ -41,6 +41,15 @@ fn rsa_sign_verify_test() {
 }
 
 #[test]
+fn rsa_key_sizes_test() {
+    assert!(generate_rsa_keys(1024).is_err());
+    let key_pair = generate_rsa_keys(3072).unwrap();
+    let hash = "NotMyDataToHash".as_bytes().to_vec();
+    let signature = sign_rsa(key_pair.private_key, hash.clone()).unwrap();
+    assert_eq!(true, verify_rsa(key_pair.public_key, hash, signature).unwrap());
+}
+
+#[test]
 fn rsa_verify_fail_test() {
     let key_pair = generate_rsa_keys(2048).unwrap();
     let hash = "NotMyDataToHash".as_bytes().to_vec();

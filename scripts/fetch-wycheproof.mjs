@@ -33,6 +33,17 @@ const FILES = [
   "x25519_test.json",
 ];
 
+// Files removed from upstream main, fetched from the last commit that has them.
+// testvectors_v1/ed25519_test.json omits the private keys that
+// Ed25519Wrapper.verifyWithKeyPairBytes needs; the legacy file still has them.
+const PINNED_FILES = [
+  {
+    file: "eddsa_test.json",
+    dir: "testvectors",
+    ref: "36e236b68fd97f0681d2786ca152aa8ac10cf1c5",
+  },
+];
+
 const requestedRef = process.env.WYCHEPROOF_REF || "main";
 const force = process.argv.includes("--force");
 const isCommitSha = (value) => /^[0-9a-f]{40}$/i.test(value);
@@ -96,16 +107,16 @@ async function resolveRef(name) {
   return sha.toLowerCase();
 }
 
-// Maps each vector file name to its git blob SHA-1 in the given commit.
-async function expectedBlobShas(commitSha) {
+// Maps each file name in `dirName` to its git blob SHA-1 in the given commit.
+async function expectedBlobShas(commitSha, dirName = VECTOR_DIR) {
   const root = await githubApi(`git/trees/${commitSha}`);
-  const dir = root.tree.find((entry) => entry.path === VECTOR_DIR && entry.type === "tree");
+  const dir = root.tree.find((entry) => entry.path === dirName && entry.type === "tree");
   if (!dir) {
-    throw new Error(`${REPO}@${commitSha} has no ${VECTOR_DIR}/ directory`);
+    throw new Error(`${REPO}@${commitSha} has no ${dirName}/ directory`);
   }
   const vectors = await githubApi(`git/trees/${dir.sha}`);
   if (vectors.truncated) {
-    throw new Error(`GitHub truncated the ${VECTOR_DIR}/ tree listing for ${REPO}@${commitSha}`);
+    throw new Error(`GitHub truncated the ${dirName}/ tree listing for ${REPO}@${commitSha}`);
   }
   return new Map(vectors.tree.filter((entry) => entry.type === "blob").map((entry) => [entry.path, entry.sha.toLowerCase()]));
 }
@@ -126,11 +137,13 @@ function upToDate() {
   if (fs.readFileSync(markerPath, "utf8").trim() !== ref) {
     return false;
   }
-  return FILES.every((file) => fs.existsSync(path.join(outDir, file)));
+  return [...FILES, ...PINNED_FILES.map((pinned) => pinned.file)].every((file) =>
+    fs.existsSync(path.join(outDir, file)),
+  );
 }
 
-async function download(file, expectedSha, attempts = 3) {
-  const url = `https://raw.githubusercontent.com/${REPO}/${ref}/${VECTOR_DIR}/${file}`;
+async function download(file, expectedSha, { dir = VECTOR_DIR, fileRef = ref } = {}, attempts = 3) {
+  const url = `https://raw.githubusercontent.com/${REPO}/${fileRef}/${dir}/${file}`;
   for (let attempt = 1; ; attempt++) {
     try {
       const response = await httpsFetch(url);
@@ -141,7 +154,7 @@ async function download(file, expectedSha, attempts = 3) {
       const actualSha = gitBlobSha(bytes);
       if (actualSha !== expectedSha) {
         throw new IntegrityError(
-          `Integrity check failed for ${url}: git blob SHA-1 is ${actualSha}, but ${REPO}@${ref} records ${expectedSha}`,
+          `Integrity check failed for ${url}: git blob SHA-1 is ${actualSha}, but ${REPO}@${fileRef} records ${expectedSha}`,
         );
       }
       // Fail here rather than with a confusing error inside a spec.
@@ -174,5 +187,14 @@ if (upToDate()) {
   }
   const counts = await Promise.all(FILES.map((file) => download(file, expected.get(file))));
   FILES.forEach((file, i) => console.log(`  ${file} (${counts[i]} tests, git blob ${expected.get(file)} verified)`));
+  for (const pinned of PINNED_FILES) {
+    const pinnedExpected = await expectedBlobShas(pinned.ref, pinned.dir);
+    if (!pinnedExpected.has(pinned.file)) {
+      throw new Error(`${REPO}@${pinned.ref} has no ${pinned.dir}/${pinned.file}`);
+    }
+    const sha = pinnedExpected.get(pinned.file);
+    const count = await download(pinned.file, sha, { dir: pinned.dir, fileRef: pinned.ref });
+    console.log(`  ${pinned.dir}/${pinned.file}@${pinned.ref} (${count} tests, git blob ${sha} verified)`);
+  }
   fs.writeFileSync(markerPath, `${ref}\n`);
 }

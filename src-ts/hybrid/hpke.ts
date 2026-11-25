@@ -26,11 +26,13 @@ export class HpkeWrapper {
      * @param plaintext The message to encrypt
      * @param publicKey The recipient's public key
      * @param infoStr Additional information to include in the encryption
+     * @param aad Additional authenticated data: authenticated but not encrypted, and not
+     * included in the result. The same bytes must be passed to decrypt. Defaults to none.
      * @returns HpkeEncryptResult
      */
     
-    public encrypt(plaintext: number[], publicKey: number[], infoStr: number[]): HpkeEncryptResult {
-        return hpkeEncrypt(plaintext, publicKey, infoStr);
+    public encrypt(plaintext: number[], publicKey: number[], infoStr: number[], aad: number[] = []): HpkeEncryptResult {
+        return hpkeEncrypt(plaintext, publicKey, infoStr, aad);
     }
 
     /**
@@ -40,10 +42,12 @@ export class HpkeWrapper {
      * @param encapsulatedKey The encapsulated key
      * @param tag The tag
      * @param infoStr Additional information to include in the decryption
+     * @param aad The additional authenticated data passed to encrypt. Decryption throws if
+     * it does not match. Defaults to none.
      * @returns The decrypted message
      */
     
-    public decrypt(ciphertext: number[], privateKey: number[], encapsulatedKey: number[], tag: number[], infoStr: number[]): number[] {
-        return hpkeDecrypt(ciphertext, privateKey, encapsulatedKey, tag, infoStr);
+    public decrypt(ciphertext: number[], privateKey: number[], encapsulatedKey: number[], tag: number[], infoStr: number[], aad: number[] = []): number[] {
+        return hpkeDecrypt(ciphertext, privateKey, encapsulatedKey, tag, infoStr, aad);
     }
 }

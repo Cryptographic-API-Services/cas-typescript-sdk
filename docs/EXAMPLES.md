@@ -93,7 +93,7 @@ const plaintext = chacha.decrypt(key, nonce, ciphertext);
 ### RSA signatures
 ```typescript
 const rsa = new RSAWrapper();
-const keys: CASRSAKeyPairResult = rsa.getKeyPair(4096); // 1024, 2048 or 4096
+const keys: CASRSAKeyPairResult = rsa.getKeyPair(4096); // 2048, 3072 or 4096; smaller keys throw
 const message = toBytes("This is my message to sign");
 const signature = rsa.sign(keys.privateKey, message);
 const isValid: boolean = rsa.verify(keys.publicKey, message, signature);
@@ -109,7 +109,7 @@ const message = toBytes("This is my message to sign");
 const signature = ed25519.signBytes(keyPair.privateKey, message);
 const isValid: boolean = ed25519.verifyBytes(keyPair.publicKey, message, signature);
 
-// Verify with the 32 byte private key instead of the public key (non-strict verification)
+// Verify with the 32 byte private key instead of the public key (strict, like verifyBytes)
 const isValidWithKeyPair: boolean = ed25519.verifyWithKeyPairBytes(keyPair.privateKey, message, signature);
 ```
 
@@ -177,6 +177,9 @@ const aes128Key = argon2.deriveAes128Key(toBytes("ThisOneBadPassword!@"));
 ```
 
 ### BCrypt
+
+Passwords are limited to 72 bytes of UTF-8 (bytes, not characters: `"€"` is 3 bytes). `hashPassword`, `hashPasswordWithParameters` and `verify` throw for a longer password instead of silently truncating it.
+
 ```typescript
 const bcrypt = new BCryptWrapper();
 const hashed = bcrypt.hashPassword("ThisOneBadPassword!@");
@@ -194,6 +197,9 @@ const tuned = scrypt.hashPasswordWithParameters("ScryptRocks", 17, 8, 1);
 ```
 
 ### PBKDF2 key derivation
+
+The iteration count must be at least 600,000 and a caller-supplied salt at least 16 bytes; anything weaker throws. Store the salt and iteration count alongside whatever the key protects.
+
 ```typescript
 const pbkdf2 = new Pbkdf2Wrapper();
 const password = toBytes("ThisOneBadPassword!@");
@@ -283,6 +289,19 @@ const plaintext = hpke.decrypt(
   encrypted.encapsulatedKey,
   encrypted.tag,
   recipient.infoStr,
+);
+
+// Optional additional authenticated data: bound to the ciphertext but not encrypted or
+// returned, so the recipient must pass the same bytes or decrypt throws
+const aad = toBytes("message-id: 42");
+const withAad = hpke.encrypt(toBytes("This is my message to encrypt"), recipient.publicKey, recipient.infoStr, aad);
+const plaintextWithAad = hpke.decrypt(
+  withAad.ciphertext,
+  recipient.secretKey,
+  withAad.encapsulatedKey,
+  withAad.tag,
+  recipient.infoStr,
+  aad,
 );
 
 // A fresh info string can also be generated on its own

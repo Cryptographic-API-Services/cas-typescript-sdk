@@ -41,6 +41,35 @@ test.describe("Bcrypt Tests", () => {
     const hashedPassword: string = hasher.hashPasswordWithParameters(password, 12);
     expect(hashedPassword).not.toBe(password);
   })
+
+  test("72 byte password hashes and verifies", () => {
+    const hasher: BCryptWrapper = new BCryptWrapper();
+    const password: string = "a".repeat(72);
+    const hashedPassword: string = hasher.hashPassword(password);
+    expect(hasher.verify(hashedPassword, password)).toBe(true);
+  });
+
+  test("password over 72 bytes throws", () => {
+    const hasher: BCryptWrapper = new BCryptWrapper();
+    const password: string = "a".repeat(73);
+    expect(() => hasher.hashPassword(password)).toThrow(/72 bytes/);
+    expect(() => hasher.hashPasswordWithParameters(password, 4)).toThrow(/72 bytes/);
+    const hashedPassword: string = hasher.hashPasswordWithParameters(password.slice(0, 72), 4);
+    expect(() => hasher.verify(hashedPassword, password)).toThrow(/72 bytes/);
+  });
+
+  test("password limit counts UTF-8 bytes, not characters", () => {
+    const hasher: BCryptWrapper = new BCryptWrapper();
+    const encoder = new TextEncoder();
+    for (const char of ["é", "€", "😀"]) {
+      const bytesPerChar = encoder.encode(char).length;
+      const password = char.repeat(Math.floor(72 / bytesPerChar));
+      expect(encoder.encode(password).length).toBe(72);
+      const hashedPassword = hasher.hashPasswordWithParameters(password, 4);
+      expect(hasher.verify(hashedPassword, password)).toBe(true);
+      expect(() => hasher.hashPasswordWithParameters(password + "a", 4)).toThrow(/72 bytes/);
+    }
+  });
 });
 
 test.describe("Scrypt Tests", () => {

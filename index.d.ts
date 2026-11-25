@@ -147,9 +147,9 @@ export declare function hmacSign(key: Array<number>, message: Array<number>): Ar
 
 export declare function hmacVerify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean
 
-export declare function hpkeDecrypt(ciphertext: Array<number>, privateKey: Array<number>, encappedKey: Array<number>, tag: Array<number>, infoStr: Array<number>): Array<number>
+export declare function hpkeDecrypt(ciphertext: Array<number>, privateKey: Array<number>, encappedKey: Array<number>, tag: Array<number>, infoStr: Array<number>, aad: Array<number>): Array<number>
 
-export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<number>, infoStr: Array<number>): HpkeEncryptResult
+export declare function hpkeEncrypt(plaintext: Array<number>, publicKey: Array<number>, infoStr: Array<number>, aad: Array<number>): HpkeEncryptResult
 
 export interface HpkeEncryptResult {
   tag: Array<number>

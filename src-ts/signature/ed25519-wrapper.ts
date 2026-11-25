@@ -41,8 +41,7 @@ export class Ed25519Wrapper {
 
   /**
    * Verifies a signature for a message with the given Ed25519 key pair (the 32 byte private key).
-   * Note: this uses non-strict verification, unlike verifyBytes which uses strict
-   * verification and rejects some edge-case signatures this method accepts.
+   * Uses strict verification, like verifyBytes, so malleable signatures are rejected.
    * @param keyPair The 32 byte private key to verify the signature with
    * @param message The signed message
    * @param signature The signature to verify

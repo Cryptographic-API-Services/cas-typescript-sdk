@@ -41,6 +41,13 @@ export type EddsaTestGroup = {
   tests: EddsaTest[];
 };
 
+export type LegacyEddsaTestGroup = {
+  key: {
+    pk: string;
+    sk: string;
+  };
+};
+
 export type XdhTest = {
   tcId: number;
   comment: string;
