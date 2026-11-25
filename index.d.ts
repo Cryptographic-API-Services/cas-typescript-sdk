@@ -11,11 +11,19 @@ export declare const __napiBindingTarget: 'native' | 'wasm32-wasi' | 'wasm32-was
 
 export declare function aes128Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes128DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes128Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes128EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes128GcmSivDecrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes128GcmSivDecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes128GcmSivEncrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes128GcmSivEncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes128GcmSivKey(): Array<number>
 
@@ -49,11 +57,19 @@ export declare function aes128Seal(aesKey: Array<number>, plaintext: Array<numbe
 
 export declare function aes256Decrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes256DecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes256Encrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes256EncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes256GcmSivDecrypt(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function aes256GcmSivDecryptWithAad(aesKey: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function aes256GcmSivEncrypt(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function aes256GcmSivEncryptWithAad(aesKey: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function aes256GcmSivKey(): Array<number>
 
@@ -107,7 +123,11 @@ export declare function argon2Verify(hashedPassword: string, passwordToVerify: s
 
 export declare function ascon128Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function ascon128DecryptWithAad(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function ascon128Encrypt(key: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function ascon128EncryptWithAad(key: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function ascon128KeyGenerate(): Array<number>
 
@@ -173,7 +193,11 @@ export interface CASx25519SecretPublicKeyResult {
 
 export declare function chacha20Poly1305Decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number>
 
+export declare function chacha20Poly1305DecryptWithAad(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number>
+
 export declare function chacha20Poly1305Encrypt(key: Array<number>, nonce: Array<number>, plaintext: Array<number>): Array<number>
+
+export declare function chacha20Poly1305EncryptWithAad(key: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number>
 
 export declare function chacha20Poly1305Key(): Array<number>
 

@@ -1,6 +1,8 @@
 import {
   chacha20Poly1305Decrypt,
+  chacha20Poly1305DecryptWithAad,
   chacha20Poly1305Encrypt,
+  chacha20Poly1305EncryptWithAad,
   chacha20Poly1305Key,
   chacha20Poly1305Nonce,
   chacha20Poly1305Open,
@@ -86,5 +88,39 @@ export class ChaCha20Poly1305Wrapper {
 
     public decrypt(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>): Array<number> {
         return chacha20Poly1305Decrypt(key, nonce, ciphertext);
+    }
+
+    /**
+     * Encrypts with ChaCha20-Poly1305 under a caller-supplied 96 bit nonce and binds `aad`,
+     * returning `ciphertext || tag (16 bytes)`. The AAD is not encrypted or stored in the output,
+     * but decryptWithAad only succeeds with the same bytes. Never reuse a nonce with the same key:
+     * that reveals the XOR of the plaintexts and the Poly1305 key, which lets an attacker forge
+     * messages. Prefer seal, which generates the nonce for you and also takes AAD.
+     * Empty AAD gives the same output as encrypt.
+     * Throws CAS_INVALID_KEY for a key that is not 32 bytes and CAS_INVALID_NONCE for a nonce
+     * that is not 12 bytes.
+     * @param key 32 byte key
+     * @param nonce 12 byte nonce, used for this message only
+     * @param plaintext
+     * @param aad additional authenticated data
+     * @returns Array<number>
+     */
+
+    public encryptWithAad(key: Array<number>, nonce: Array<number>, plaintext: Array<number>, aad: Array<number>): Array<number> {
+        return chacha20Poly1305EncryptWithAad(key, nonce, plaintext, aad);
+    }
+
+    /**
+     * Decrypts `ciphertext || tag` produced by encryptWithAad and checks `aad`.
+     * Throws CAS_DECRYPTION_FAILED if the key, nonce, ciphertext, tag or AAD do not authenticate.
+     * @param key 32 byte key
+     * @param nonce the nonce passed to encryptWithAad
+     * @param ciphertext
+     * @param aad the AAD passed to encryptWithAad
+     * @returns Array<number>
+     */
+
+    public decryptWithAad(key: Array<number>, nonce: Array<number>, ciphertext: Array<number>, aad: Array<number>): Array<number> {
+        return chacha20Poly1305DecryptWithAad(key, nonce, ciphertext, aad);
     }
 }

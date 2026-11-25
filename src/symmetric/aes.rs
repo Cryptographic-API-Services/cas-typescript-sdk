@@ -1,4 +1,4 @@
-use cas_lib::symmetric::{aes::{CASAES128, CASAES256}, cas_symmetric_encryption::{CASAES128Encryption, CASAES256Encryption, CASAeadSeal}};
+use cas_lib::symmetric::{aes::{CASAES128, CASAES256}, cas_symmetric_encryption::{CASAES128AadEncryption, CASAES128Encryption, CASAES256AadEncryption, CASAES256Encryption, CASAeadSeal}};
 use napi_derive::napi;
 
 #[napi]
@@ -34,6 +34,26 @@ pub fn aes256_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>) -> c
 #[napi]
 pub fn aes256_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES256 as CASAES256Encryption>::decrypt_ciphertext(aes_key, nonce, ciphertext))
+}
+
+#[napi]
+pub fn aes128_encrypt_with_aad(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>, aad: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128 as CASAES128AadEncryption>::encrypt_plaintext_with_aad(aes_key, nonce, plaintext, aad))
+}
+
+#[napi]
+pub fn aes128_decrypt_with_aad(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>, aad: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128 as CASAES128AadEncryption>::decrypt_ciphertext_with_aad(aes_key, nonce, ciphertext, aad))
+}
+
+#[napi]
+pub fn aes256_encrypt_with_aad(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u8>, aad: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256 as CASAES256AadEncryption>::encrypt_plaintext_with_aad(aes_key, nonce, plaintext, aad))
+}
+
+#[napi]
+pub fn aes256_decrypt_with_aad(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>, aad: Vec<u8>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256 as CASAES256AadEncryption>::decrypt_ciphertext_with_aad(aes_key, nonce, ciphertext, aad))
 }
 
 #[napi]
@@ -110,6 +130,31 @@ fn aes256_encrypt_decrypt_test() {
     let ciphertext = aes256_encrypt(aes_key.clone(), nonce.clone(), plaintext.clone()).unwrap();
     let decrypted_plaintext = aes256_decrypt(aes_key, nonce, ciphertext).unwrap();
     assert_eq!(decrypted_plaintext, plaintext)
+}
+
+#[test]
+fn aes_aad_encrypt_decrypt_test() {
+    let plaintext = b"WelcomeHome".to_vec();
+    let aad = b"header".to_vec();
+    let nonce = aes_nonce();
+
+    let key128 = aes128_key();
+    let ciphertext128 = aes128_encrypt_with_aad(key128.clone(), nonce.clone(), plaintext.clone(), aad.clone()).unwrap();
+    assert_eq!(aes128_decrypt_with_aad(key128.clone(), nonce.clone(), ciphertext128.clone(), aad.clone()).unwrap(), plaintext);
+    assert!(aes128_decrypt_with_aad(key128.clone(), nonce.clone(), ciphertext128, b"other".to_vec()).is_err());
+    assert_eq!(
+        aes128_encrypt_with_aad(key128.clone(), nonce.clone(), plaintext.clone(), vec![]).unwrap(),
+        aes128_encrypt(key128, nonce.clone(), plaintext.clone()).unwrap()
+    );
+
+    let key256 = aes256_key();
+    let ciphertext256 = aes256_encrypt_with_aad(key256.clone(), nonce.clone(), plaintext.clone(), aad.clone()).unwrap();
+    assert_eq!(aes256_decrypt_with_aad(key256.clone(), nonce.clone(), ciphertext256.clone(), aad).unwrap(), plaintext);
+    assert!(aes256_decrypt_with_aad(key256.clone(), nonce.clone(), ciphertext256, vec![]).is_err());
+    assert_eq!(
+        aes256_encrypt_with_aad(key256.clone(), nonce.clone(), plaintext.clone(), vec![]).unwrap(),
+        aes256_encrypt(key256, nonce, plaintext).unwrap()
+    );
 }
 
 #[test]

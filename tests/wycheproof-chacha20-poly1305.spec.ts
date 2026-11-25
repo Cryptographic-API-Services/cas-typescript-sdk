@@ -2,59 +2,28 @@ import { expect, test } from "@playwright/test";
 import { ChaCha20Poly1305Wrapper } from "../src-ts/symmetric/chacha20poly1305-wrapper";
 import {
   AeadTestGroup,
-  bytesToHex,
-  hexToBytes,
+  AeadWithAad,
+  checkAeadVector,
   loadWycheproof,
 } from "./helpers/wycheproof";
 
 test.describe("Wycheproof ChaCha20-Poly1305 vectors", () => {
-  test("encrypt/decrypt matches Wycheproof vectors", () => {
+  test("ChaCha20-Poly1305 with AAD matches every Wycheproof vector", () => {
     const chacha = new ChaCha20Poly1305Wrapper();
+    const cipher: AeadWithAad = {
+      encrypt: (k, n, p, a) => chacha.encryptWithAad(k, n, p, a),
+      decrypt: (k, n, c, a) => chacha.decryptWithAad(k, n, c, a),
+    };
     const file = loadWycheproof<AeadTestGroup>("chacha20_poly1305_test.json");
 
-    // The SDK's API takes a 96-bit nonce, appends the 128-bit tag to the
-    // ciphertext, and has no AAD parameter. All of Wycheproof's "invalid"
-    // ChaCha20-Poly1305 vectors carry AAD, so rejection is instead checked by
-    // corrupting the tag of each valid vector.
-    const groups = file.testGroups.filter(
-      (group) =>
-        group.ivSize === 96 && group.tagSize === 128 && group.keySize === 256,
-    );
-
     let vectorsRun = 0;
-
-    for (const group of groups) {
+    for (const group of file.testGroups) {
       for (const vector of group.tests) {
-        if (vector.aad !== "" || vector.result !== "valid") {
-          continue;
-        }
-
-        const label = `tcId ${vector.tcId} (${vector.comment})`;
-        const key = hexToBytes(vector.key);
-        const iv = hexToBytes(vector.iv);
-        const msg = hexToBytes(vector.msg);
-        const ctWithTag = [...hexToBytes(vector.ct), ...hexToBytes(vector.tag)];
         vectorsRun++;
-
-        const ciphertext = chacha.encrypt(key, iv, msg);
-        expect(bytesToHex(ciphertext), `${label}: ciphertext||tag mismatch`).toBe(
-          vector.ct + vector.tag,
-        );
-
-        const plaintext = chacha.decrypt(key, iv, ctWithTag);
-        expect(bytesToHex(plaintext), `${label}: plaintext mismatch`).toBe(
-          vector.msg,
-        );
-
-        const corrupted = [...ctWithTag];
-        corrupted[corrupted.length - 1] ^= 0x01;
-        expect(
-          () => chacha.decrypt(key, iv, corrupted),
-          `${label}: decrypt accepted a corrupted tag`,
-        ).toThrow();
+        checkAeadVector(cipher, vector);
       }
     }
 
-    expect(vectorsRun, "no usable vectors found").toBeGreaterThan(0);
+    expect(vectorsRun).toBe(file.numberOfTests);
   });
 });

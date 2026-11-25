@@ -80,6 +80,15 @@ const nonce128 = aes.generateAESNonce();
 const ciphertext128 = aes.aes128Encrypt(key128, nonce128, toBytes("hello"));
 const plaintext128 = aes.aes128Decrypt(key128, nonce128, ciphertext128);
 
+// Caller-supplied nonce with AAD (same nonce rule); decrypt throws CasErrorCode.DecryptionFailed for other AAD
+const header = toBytes("record-id: 7");
+const aadNonce = aes.generateAESNonce();
+const aadCiphertext = aes.aes256EncryptWithAad(key, aadNonce, toBytes("This is my message to encrypt"), header);
+const aadPlaintext = toText(aes.aes256DecryptWithAad(key, aadNonce, aadCiphertext, header));
+const aadNonce128 = aes.generateAESNonce();
+const aadCiphertext128 = aes.aes128EncryptWithAad(key128, aadNonce128, toBytes("hello"), header);
+const aadPlaintext128 = aes.aes128DecryptWithAad(key128, aadNonce128, aadCiphertext128, header);
+
 // Bring your own key (throws if the length is wrong: 16 bytes for 128, 32 bytes for 256)
 const ownKey = aes.aes256KeyFromBytes(existing32ByteKey);
 const ownKey128 = aes.aes128KeyFromBytes(existing32ByteKey.slice(0, 16));
@@ -107,6 +116,14 @@ const plaintext = siv.aes256Decrypt(key, nonce, ciphertext);
 const ciphertext128 = siv.aes128Encrypt(key128, nonce, toBytes("hello"));
 const plaintext128 = siv.aes128Decrypt(key128, nonce, ciphertext128);
 
+// Caller-supplied nonce with AAD; decrypt throws CasErrorCode.DecryptionFailed for other AAD
+const header = toBytes("record-id: 7");
+const aadNonce = siv.generateNonce();
+const aadCiphertext = siv.aes256EncryptWithAad(key, aadNonce, toBytes("This is my message to encrypt"), header);
+const aadPlaintext = siv.aes256DecryptWithAad(key, aadNonce, aadCiphertext, header);
+const aadCiphertext128 = siv.aes128EncryptWithAad(key128, aadNonce, toBytes("hello"), header);
+const aadPlaintext128 = siv.aes128DecryptWithAad(key128, aadNonce, aadCiphertext128, header);
+
 // Bring your own key (16 bytes for 128, 32 bytes for 256)
 const ownKey = siv.aes256KeyFromBytes(existing32ByteKey);
 const ownKey128 = siv.aes128KeyFromBytes(existing32ByteKey.slice(0, 16));
@@ -126,6 +143,12 @@ const opened = chacha.open(key, sealed, aad);
 const nonce = chacha.generateNonce();
 const ciphertext = chacha.encrypt(key, nonce, toBytes("This is my message to encrypt"));
 const plaintext = chacha.decrypt(key, nonce, ciphertext);
+
+// Caller-supplied nonce with AAD (same nonce rule); decrypt throws CasErrorCode.DecryptionFailed for other AAD
+const header = toBytes("record-id: 7");
+const aadNonce = chacha.generateNonce();
+const aadCiphertext = chacha.encryptWithAad(key, aadNonce, toBytes("This is my message to encrypt"), header);
+const aadPlaintext = chacha.decryptWithAad(key, aadNonce, aadCiphertext, header);
 ```
 
 ### AES key wrapping (AES-KW, RFC 3394 / AES-KWP, RFC 5649)
@@ -394,6 +417,12 @@ const opened = ascon.ascon128Open(key, sealed, aad);
 const nonce = ascon.ascon128Nonce();
 const ciphertext = ascon.ascon128Encrypt(key, nonce, toBytes("This is my message to encrypt"));
 const plaintext = ascon.ascon128Decrypt(key, nonce, ciphertext);
+
+// Caller-supplied nonce with AAD (same nonce rule); decrypt throws CasErrorCode.DecryptionFailed for other AAD
+const header = toBytes("record-id: 7");
+const aadNonce = ascon.ascon128Nonce();
+const aadCiphertext = ascon.ascon128EncryptWithAad(key, aadNonce, toBytes("This is my message to encrypt"), header);
+const aadPlaintext = ascon.ascon128DecryptWithAad(key, aadNonce, aadCiphertext, header);
 ```
 
 ## Hybrid Encryption
