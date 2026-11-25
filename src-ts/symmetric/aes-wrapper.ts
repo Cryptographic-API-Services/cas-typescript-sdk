@@ -4,17 +4,87 @@ import {
   aes128Key,
   aes128KeyFromVec,
   aes128KeyFromX25519SharedSecret,
+  aes128Open,
+  aes128Seal,
   aes256Decrypt,
   aes256Encrypt,
   aes256Key,
   aes256KeyFromVec,
   aes256KeyFromX25519SharedSecret,
+  aes256Open,
+  aes256Seal,
   aesNonce,
 } from "../../index";
 
 
 
 export class AESWrapper {
+
+    /**
+     * Encrypts with AES-128-GCM under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * A random 96 bit nonce is only safe for about 2^32 messages per key, so rotate keys
+     * well before that. If you have to manage nonces yourself, use AESGCMSIVWrapper,
+     * which tolerates nonce reuse.
+     * @param aesKey 16 byte key from aes128Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes128Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes128Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128Seal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes128Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes128Seal
+     * @param sealed output of aes128Seal
+     * @param aad the AAD passed to aes128Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes128Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128Open(aesKey, sealed, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * A random 96 bit nonce is only safe for about 2^32 messages per key, so rotate keys
+     * well before that. If you have to manage nonces yourself, use AESGCMSIVWrapper,
+     * which tolerates nonce reuse.
+     * @param aesKey 32 byte key from aes256Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes256Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes256Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256Seal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes256Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes256Seal
+     * @param sealed output of aes256Seal
+     * @param aad the AAD passed to aes256Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes256Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256Open(aesKey, sealed, aad);
+    }
 
     /**
      * @description Generates a 128 bit AES key
@@ -44,7 +114,9 @@ export class AESWrapper {
     }
 
     /**
-     * Encrypts with AES 128.
+     * Encrypts with AES 128 under a caller-supplied nonce. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker forge messages.
+     * Prefer aes128Seal, which generates the nonce for you.
      * @param aesKey 
      * @param nonce 
      * @param plaintext 
@@ -68,7 +140,9 @@ export class AESWrapper {
     }
 
     /**
-     * Encrypts with AES-256
+     * Encrypts with AES-256 under a caller-supplied nonce. Never reuse a nonce with the same
+     * key: that reveals the XOR of the plaintexts and lets an attacker forge messages.
+     * Prefer aes256Seal, which generates the nonce for you.
      * @param aesKey 
      * @param nonce 
      * @param plaintext 

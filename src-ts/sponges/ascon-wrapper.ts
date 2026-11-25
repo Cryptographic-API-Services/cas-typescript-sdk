@@ -3,10 +3,43 @@ import {
   ascon128Encrypt,
   ascon128KeyGenerate,
   ascon128NonceGenerate,
+  ascon128Open,
+  ascon128Seal,
 } from "../../index";
 
 
 export class AsconWrapper {
+  /**
+   * Encrypts with Ascon-AEAD128 under a fresh random 128 bit nonce and returns
+   * `nonce (16 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+   * nonce is generated for you, so it cannot be reused by mistake. The 128 bit nonce leaves a
+   * far larger margin than the 96 bit nonces of AES-GCM and ChaCha20-Poly1305.
+   * @param key 16 byte key from ascon128Key()
+   * @param plaintext
+   * @param aad optional additional authenticated data: not encrypted or stored in the
+   * output, but the same bytes must be passed to ascon128Open. Omitting it is the same as empty AAD.
+   * @returns Array<number>
+   */
+
+  ascon128Seal(key: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+    return ascon128Seal(key, plaintext, aad);
+  }
+
+  /**
+   * Decrypts a `nonce || ciphertext || tag` blob produced by ascon128Seal.
+   * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+   * shorter than nonce + tag (32 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+   * tag or AAD do not authenticate.
+   * @param key the key passed to ascon128Seal
+   * @param sealed output of ascon128Seal
+   * @param aad the AAD passed to ascon128Seal, if any
+   * @returns Array<number>
+   */
+
+  ascon128Open(key: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+    return ascon128Open(key, sealed, aad);
+  }
+
   /**
    * Generates an Ascon 128 key
    * @returns Array<number>
@@ -27,6 +60,7 @@ export class AsconWrapper {
 
   /**
    * Encrypts with Ascon 128 using the key and nonce generated from ascon128Key() and ascon128Nonce() respectively.
+   * Never reuse a nonce with the same key. Prefer ascon128Seal, which generates the nonce for you.
    * @param key 
    * @param nonce 
    * @param plaintext 

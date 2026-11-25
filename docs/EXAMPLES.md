@@ -46,18 +46,39 @@ const toText = (bytes: Array<number>): string => decoder.decode(new Uint8Array(b
 
 ## Symmetric
 
+Every AEAD has `seal` / `open` methods, the recommended API. `seal` draws a fresh random nonce for every call and returns `nonce || ciphertext || tag` (a 16 byte tag; a 12 byte nonce, or 16 bytes for Ascon), so there is no nonce to store or reuse by mistake. Optional AAD (additional authenticated data) is bound to the tag but not encrypted or stored: `open` needs the same bytes. `open` throws `CasErrorCode.DecryptionFailed` for a wrong key, AAD or tampered data, and `CasErrorCode.InvalidInput` for a blob shorter than nonce + tag.
+
+A random 96 bit nonce (AES-GCM, AES-GCM-SIV, ChaCha20-Poly1305) is only safe for about 2³² messages per key, so rotate keys well before that. If you have to manage nonces yourself, use AES-GCM-SIV: reusing a nonce there only reveals whether two messages were identical, while with AES-GCM or ChaCha20-Poly1305 it breaks confidentiality and authenticity.
+
 ### AES-GCM (128 / 256)
 ```typescript
 const aes = new AESWrapper();
 const key = aes.aes256Key(); // or aes.aes128Key()
-const nonce = aes.generateAESNonce();
-const ciphertext = aes.aes256Encrypt(key, nonce, toBytes("This is my message to encrypt"));
-const plaintext = toText(aes.aes256Decrypt(key, nonce, ciphertext));
+
+// Recommended: seal / open manage the nonce for you
+const sealed = aes.aes256Seal(key, toBytes("This is my message to encrypt"));
+const opened = toText(aes.aes256Open(key, sealed));
+
+// With AAD, which open must receive unchanged
+const aad = toBytes("message-id: 42");
+const sealedWithAad = aes.aes256Seal(key, toBytes("This is my message to encrypt"), aad);
+const openedWithAad = aes.aes256Open(key, sealedWithAad, aad);
 
 // AES-128 uses the matching methods
 const key128 = aes.aes128Key();
-const ciphertext128 = aes.aes128Encrypt(key128, nonce, toBytes("hello"));
-const plaintext128 = aes.aes128Decrypt(key128, nonce, ciphertext128);
+const sealed128 = aes.aes128Seal(key128, toBytes("hello"));
+const opened128 = aes.aes128Open(key128, sealed128);
+
+// A sealed blob is nonce (12 bytes) || ciphertext || tag, so decrypt can read it too
+const sameMessage = aes.aes256Decrypt(key, sealed.slice(0, 12), sealed.slice(12));
+
+// Caller-supplied nonce: never use a nonce twice with the same key
+const nonce = aes.generateAESNonce();
+const ciphertext = aes.aes256Encrypt(key, nonce, toBytes("This is my message to encrypt"));
+const plaintext = toText(aes.aes256Decrypt(key, nonce, ciphertext));
+const nonce128 = aes.generateAESNonce();
+const ciphertext128 = aes.aes128Encrypt(key128, nonce128, toBytes("hello"));
+const plaintext128 = aes.aes128Decrypt(key128, nonce128, ciphertext128);
 
 // Bring your own key (throws if the length is wrong: 16 bytes for 128, 32 bytes for 256)
 const ownKey = aes.aes256KeyFromBytes(existing32ByteKey);
@@ -68,12 +89,21 @@ const ownKey128 = aes.aes128KeyFromBytes(existing32ByteKey.slice(0, 16));
 ```typescript
 const siv = new AESGCMSIVWrapper();
 const key = siv.aes256Key(); // or siv.aes128Key()
-const nonce = siv.generateNonce();
-const ciphertext = siv.aes256Encrypt(key, nonce, toBytes("This is my message to encrypt"));
-const plaintext = siv.aes256Decrypt(key, nonce, ciphertext);
+
+// Recommended: seal / open manage the nonce for you (AAD is optional)
+const aad = toBytes("message-id: 42");
+const sealed = siv.aes256Seal(key, toBytes("This is my message to encrypt"), aad);
+const opened = siv.aes256Open(key, sealed, aad);
 
 // AES-128-GCM-SIV
 const key128 = siv.aes128Key();
+const sealed128 = siv.aes128Seal(key128, toBytes("hello"));
+const opened128 = siv.aes128Open(key128, sealed128);
+
+// Caller-supplied nonce, for when you have to manage nonces yourself
+const nonce = siv.generateNonce();
+const ciphertext = siv.aes256Encrypt(key, nonce, toBytes("This is my message to encrypt"));
+const plaintext = siv.aes256Decrypt(key, nonce, ciphertext);
 const ciphertext128 = siv.aes128Encrypt(key128, nonce, toBytes("hello"));
 const plaintext128 = siv.aes128Decrypt(key128, nonce, ciphertext128);
 
@@ -86,6 +116,13 @@ const ownKey128 = siv.aes128KeyFromBytes(existing32ByteKey.slice(0, 16));
 ```typescript
 const chacha = new ChaCha20Poly1305Wrapper();
 const key = chacha.generateKey();
+
+// Recommended: seal / open manage the nonce for you (AAD is optional)
+const aad = toBytes("message-id: 42");
+const sealed = chacha.seal(key, toBytes("This is my message to encrypt"), aad);
+const opened = chacha.open(key, sealed, aad);
+
+// Caller-supplied nonce: never use a nonce twice with the same key
 const nonce = chacha.generateNonce();
 const ciphertext = chacha.encrypt(key, nonce, toBytes("This is my message to encrypt"));
 const plaintext = chacha.decrypt(key, nonce, ciphertext);
@@ -346,6 +383,14 @@ const isValid512: boolean = hmac.hmacSha512VerifyBytes(key, message, tag512);
 ```typescript
 const ascon = new AsconWrapper();
 const key = ascon.ascon128Key();
+
+// Recommended: seal / open manage the nonce for you (AAD is optional).
+// The sealed blob is nonce (16 bytes) || ciphertext || tag (16 bytes).
+const aad = toBytes("message-id: 42");
+const sealed = ascon.ascon128Seal(key, toBytes("This is my message to encrypt"), aad);
+const opened = ascon.ascon128Open(key, sealed, aad);
+
+// Caller-supplied nonce: never use a nonce twice with the same key
 const nonce = ascon.ascon128Nonce();
 const ciphertext = ascon.ascon128Encrypt(key, nonce, toBytes("This is my message to encrypt"));
 const plaintext = ascon.ascon128Decrypt(key, nonce, ciphertext);
