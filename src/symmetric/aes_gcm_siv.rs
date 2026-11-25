@@ -1,4 +1,4 @@
-use cas_lib::symmetric::{aes_gcm_siv::{CASAES128SIV, CASAES256SIV}, cas_symmetric_encryption::{CASAES128SIVEncryption, CASAES256SIVEncryption}};
+use cas_lib::symmetric::{aes_gcm_siv::{CASAES128SIV, CASAES256SIV}, cas_symmetric_encryption::{CASAES128SIVEncryption, CASAES256SIVEncryption, CASAeadSeal}};
 use napi_derive::napi;
 
 #[napi]
@@ -34,6 +34,26 @@ pub fn aes256_gcm_siv_encrypt(aes_key: Vec<u8>, nonce: Vec<u8>, plaintext: Vec<u
 #[napi]
 pub fn aes256_gcm_siv_decrypt(aes_key: Vec<u8>, nonce: Vec<u8>, ciphertext: Vec<u8>) -> crate::Result<Vec<u8>> {
     crate::map_cas_err(<CASAES256SIV as CASAES256SIVEncryption>::decrypt_ciphertext(aes_key, nonce, ciphertext))
+}
+
+#[napi]
+pub fn aes128_gcm_siv_seal(aes_key: Vec<u8>, plaintext: Vec<u8>, aad: Option<Vec<u8>>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128SIV as CASAeadSeal>::seal(aes_key, plaintext, aad))
+}
+
+#[napi]
+pub fn aes128_gcm_siv_open(aes_key: Vec<u8>, sealed: Vec<u8>, aad: Option<Vec<u8>>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES128SIV as CASAeadSeal>::open(aes_key, sealed, aad))
+}
+
+#[napi]
+pub fn aes256_gcm_siv_seal(aes_key: Vec<u8>, plaintext: Vec<u8>, aad: Option<Vec<u8>>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256SIV as CASAeadSeal>::seal(aes_key, plaintext, aad))
+}
+
+#[napi]
+pub fn aes256_gcm_siv_open(aes_key: Vec<u8>, sealed: Vec<u8>, aad: Option<Vec<u8>>) -> crate::Result<Vec<u8>> {
+    crate::map_cas_err(<CASAES256SIV as CASAeadSeal>::open(aes_key, sealed, aad))
 }
 
 #[napi]
@@ -74,6 +94,25 @@ fn aes256_gcm_siv_encrypt_decrypt_test() {
     let ciphertext = aes256_gcm_siv_encrypt(aes_key.clone(), nonce.clone(), plaintext.clone()).unwrap();
     let decrypted_plaintext = aes256_gcm_siv_decrypt(aes_key, nonce, ciphertext).unwrap();
     assert_eq!(decrypted_plaintext, plaintext)
+}
+
+#[test]
+fn aes_gcm_siv_seal_open_test() {
+    let plaintext = b"WelcomeHome".to_vec();
+    let aad = Some(b"header".to_vec());
+
+    let key128 = aes128_gcm_siv_key();
+    let sealed128 = aes128_gcm_siv_seal(key128.clone(), plaintext.clone(), aad.clone()).unwrap();
+    assert_eq!(sealed128.len(), CASAES128SIV::NONCE_LEN + plaintext.len() + 16);
+    assert_eq!(aes128_gcm_siv_open(key128.clone(), sealed128.clone(), aad.clone()).unwrap(), plaintext);
+    assert!(aes128_gcm_siv_open(key128, sealed128, None).is_err());
+
+    let key256 = aes256_gcm_siv_key();
+    let sealed256 = aes256_gcm_siv_seal(key256.clone(), plaintext.clone(), None).unwrap();
+    assert_eq!(aes256_gcm_siv_open(key256.clone(), sealed256.clone(), None).unwrap(), plaintext);
+    let (nonce, ciphertext) = sealed256.split_at(CASAES256SIV::NONCE_LEN);
+    assert_eq!(aes256_gcm_siv_decrypt(key256.clone(), nonce.to_vec(), ciphertext.to_vec()).unwrap(), plaintext);
+    assert!(aes256_gcm_siv_open(key256, sealed256[..CASAES256SIV::NONCE_LEN + 15].to_vec(), None).is_err());
 }
 
 #[test]

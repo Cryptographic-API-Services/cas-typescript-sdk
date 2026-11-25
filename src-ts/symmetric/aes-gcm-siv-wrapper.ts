@@ -4,17 +4,83 @@ import {
   aes128GcmSivKey,
   aes128GcmSivKeyFromVec,
   aes128GcmSivKeyFromX25519SharedSecret,
+  aes128GcmSivOpen,
+  aes128GcmSivSeal,
   aes256GcmSivDecrypt,
   aes256GcmSivEncrypt,
   aes256GcmSivKey,
   aes256GcmSivKeyFromVec,
   aes256GcmSivKeyFromX25519SharedSecret,
+  aes256GcmSivOpen,
+  aes256GcmSivSeal,
   aesGcmSivNonce,
 } from "../../index";
 
 
 
 export class AESGCMSIVWrapper {
+
+    /**
+     * Encrypts with AES-128-GCM-SIV under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * Rotate keys well before about 2^32 messages per key.
+     * @param aesKey 16 byte key from aes128Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes128Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes128Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128GcmSivSeal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes128Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes128Seal
+     * @param sealed output of aes128Seal
+     * @param aad the AAD passed to aes128Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes128Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes128GcmSivOpen(aesKey, sealed, aad);
+    }
+
+    /**
+     * Encrypts with AES-256-GCM-SIV under a fresh random 96 bit nonce and returns
+     * `nonce (12 bytes) || ciphertext || tag (16 bytes)`. This is the recommended API: the
+     * nonce is generated for you, so it cannot be reused by mistake.
+     * Rotate keys well before about 2^32 messages per key.
+     * @param aesKey 32 byte key from aes256Key()
+     * @param plaintext
+     * @param aad optional additional authenticated data: not encrypted or stored in the
+     * output, but the same bytes must be passed to aes256Open. Omitting it is the same as empty AAD.
+     * @returns Array<number>
+     */
+
+    public aes256Seal(aesKey: Array<number>, plaintext: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256GcmSivSeal(aesKey, plaintext, aad);
+    }
+
+    /**
+     * Decrypts a `nonce || ciphertext || tag` blob produced by aes256Seal.
+     * Throws CAS_INVALID_KEY for a key of the wrong length, CAS_INVALID_INPUT for a blob
+     * shorter than nonce + tag (28 bytes), and CAS_DECRYPTION_FAILED if the key, ciphertext,
+     * tag or AAD do not authenticate.
+     * @param aesKey the key passed to aes256Seal
+     * @param sealed output of aes256Seal
+     * @param aad the AAD passed to aes256Seal, if any
+     * @returns Array<number>
+     */
+
+    public aes256Open(aesKey: Array<number>, sealed: Array<number>, aad?: Array<number>): Array<number> {
+        return aes256GcmSivOpen(aesKey, sealed, aad);
+    }
 
     /**
      * @description Generates a 128 bit AES-GCM-SIV key
@@ -44,7 +110,9 @@ export class AESGCMSIVWrapper {
     }
 
     /**
-     * Encrypts with AES-128-GCM-SIV (nonce-misuse-resistant AEAD). The 128 bit tag is appended to the ciphertext.
+     * Encrypts with AES-128-GCM-SIV (nonce-misuse-resistant AEAD) under a caller-supplied nonce.
+     * The 128 bit tag is appended to the ciphertext. Use this when you have to manage nonces
+     * yourself: reusing one only reveals whether two messages were identical. Otherwise prefer aes128Seal.
      * @param aesKey
      * @param nonce
      * @param plaintext
@@ -68,7 +136,9 @@ export class AESGCMSIVWrapper {
     }
 
     /**
-     * Encrypts with AES-256-GCM-SIV (nonce-misuse-resistant AEAD). The 128 bit tag is appended to the ciphertext.
+     * Encrypts with AES-256-GCM-SIV (nonce-misuse-resistant AEAD) under a caller-supplied nonce.
+     * The 128 bit tag is appended to the ciphertext. Use this when you have to manage nonces
+     * yourself: reusing one only reveals whether two messages were identical. Otherwise prefer aes256Seal.
      * @param aesKey
      * @param nonce
      * @param plaintext
