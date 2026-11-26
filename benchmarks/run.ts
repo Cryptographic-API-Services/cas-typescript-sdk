@@ -214,7 +214,9 @@ function environment(jobName: string) {
 }
 
 function markdownReport(env: ReturnType<typeof environment>, results: BenchmarkResult[]): string {
-  const escapeCell = (text: string) => text.replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+  // Escape backslash first, then the pipe. Replacing "|" with "\|" alone leaves a
+  // backslash in the cell able to swallow the escape (js/incomplete-sanitization).
+  const escapeCell = (text: string) => text.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
   const lines: string[] = [];
   if (env.job === "dry") {
     lines.push("> Dry run: every benchmark ran once to check it works. These timings are not meaningful.", "");
