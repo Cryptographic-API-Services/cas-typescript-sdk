@@ -47,6 +47,9 @@ We build on the work of leading cryptography projects. For in-depth algorithm de
 ## Usage Examples
 See practical usage and code samples in our [Examples](./docs/EXAMPLES.md). Release notes are in the [Changelog](./CHANGELOG.md), and upgrade steps from 1.x are in the [2.0 migration guide](./docs/MIGRATING-2.0.md).
 
+## Benchmarks
+A [tinybench](https://github.com/tinylibs/tinybench) suite covering every algorithm lives in [`benchmarks/`](./benchmarks/README.md). Build the native addon with `npm run build:rust`, then run it with `npm run bench`. CI runs it on every push to `main` and publishes the results with the workflow run.
+
 ## Disclaimer
 This SDK leverages several cryptographic crates via our core FFI [layer](./src). Please note that many of these crates have not undergone formal security audits. Use this library at your own risk and always review the underlying cryptographic implementations for your security requirements.
 

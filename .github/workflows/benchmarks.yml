@@ -1,0 +1,114 @@
+name: Benchmarks
+
+# tinybench suite in benchmarks/ (#182), run with `npm run bench`.
+#
+# - pull_request: a dry run (each benchmark runs once) so a PR can't break the
+#   suite. The numbers aren't meaningful and aren't uploaded.
+# - push to main / workflow_dispatch: a real run (`short` job by default). The
+#   results table goes to the job summary and the full results (JSON and
+#   Markdown) are uploaded as the `benchmark-results` artifact.
+#
+# Hosted runners are shared VMs, so expect run-to-run noise of several percent:
+# compare results from the same runner type, and treat small differences as noise.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      filter:
+        description: "Benchmark name glob, e.g. *Hasher* or MlKem*"
+        required: false
+        default: "*"
+      category:
+        description: "Only this category (Hashing, Symmetric, Asymmetric, PostQuantum, PasswordHashing, Compression, KeyGeneration); empty for all"
+        required: false
+        default: ""
+      job:
+        description: "Benchmark job (accuracy vs. run time)"
+        required: false
+        default: short
+        type: choice
+        options:
+          - dry
+          - short
+          - medium
+          - long
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmarks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Same Node.js as the release builds in main-publish.yml, so results from
+      # different runs are comparable.
+      - name: Use Node.js 26.13.1
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26.13.1
+          cache: 'npm'
+
+      - name: Install toolchain from rust-toolchain.toml
+        run: rustup toolchain install
+
+      - run: npm ci
+
+      - name: Build native addon
+        run: npm run build:rust
+
+      - name: Run benchmarks
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_FILTER: ${{ inputs.filter }}
+          INPUT_CATEGORY: ${{ inputs.category }}
+          INPUT_JOB: ${{ inputs.job }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            JOB=dry
+          else
+            JOB="${INPUT_JOB:-short}"
+          fi
+          ARGS=(--job "$JOB" --filter "${INPUT_FILTER:-*}" --out "$RUNNER_TEMP/benchmarks")
+          if [ -n "${INPUT_CATEGORY:-}" ]; then
+            ARGS+=(--category "$INPUT_CATEGORY")
+          fi
+          echo "Running benchmarks: ${ARGS[*]}"
+          # npm run bench compiles lib/ and benchmarks/, then runs the suite. It
+          # exits non-zero if any benchmark fails.
+          npm run bench -- "${ARGS[@]}"
+
+      - name: Publish results to the job summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="$RUNNER_TEMP/benchmarks/results.md"
+          if [ -f "$report" ]; then
+            { echo "## Benchmarks"; echo; cat "$report"; } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No benchmark report was produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload results
+        if: always() && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: benchmark-results
+          path: ${{ runner.temp }}/benchmarks/
+          if-no-files-found: warn
+          retention-days: 90

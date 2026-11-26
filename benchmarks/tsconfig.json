@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  // Compiles the benchmark suite to benchmarks/dist (npm run bench:build).
+  // The suites import "cas-typescript-sdk", which resolves to this package's own
+  // lib/ through its "exports" map, so they measure the published JavaScript.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "types": ["node"],
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["dist"]
+}

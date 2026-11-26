@@ -24,3 +24,7 @@ target/
 # Wycheproof vectors are downloaded by scripts/fetch-wycheproof.mjs
 /tests/data/wycheproof/*.json
 /tests/data/wycheproof/.wycheproof-ref
+
+# Benchmarks: compiled suite and local results (npm run bench)
+/benchmarks/dist/
+/benchmarks/results/

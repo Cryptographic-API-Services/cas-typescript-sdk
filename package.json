@@ -18,7 +18,9 @@
     "rust:test": "cargo test --release --locked",
     "build:ts": "rimraf lib && tsc",
     "build:rust": "napi build --release --platform -- --locked",
-    "build": "npm run build:rust && npm run build:ts"
+    "build": "npm run build:rust && npm run build:ts",
+    "bench": "npm run build:ts && npm run bench:build && node benchmarks/dist/run.js",
+    "bench:build": "rimraf benchmarks/dist && tsc -p benchmarks/tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -47,6 +49,7 @@
     "@playwright/test": "1.65.1",
     "@types/node": "26.6.6",
     "rimraf": "6.1.4",
+    "tinybench": "6.2.3",
     "typescript": "7.0.2"
   }
 }
