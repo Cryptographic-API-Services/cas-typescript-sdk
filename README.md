@@ -7,7 +7,7 @@
 CAS TypeScript SDK is a comprehensive cryptographic toolkit for Node.js, designed to provide developers with a unified, high-level interface to industry-standard cryptographic algorithms. This library acts as an abstraction layer over the powerful RustCrypto and Dalek-Cryptography suites, enabling secure and efficient cryptographic operations through a simple TypeScript API.
 
 - **Official NPM Package:** [cas-typescript-sdk](https://www.npmjs.com/package/cas-typescript-sdk)
-- **cas-lib version:** 2.x wraps [cas-lib 0.7.0](https://github.com/Cryptographic-API-Services/cas-lib/releases/tag/v0.7.0), pinned exactly in `Cargo.toml`.
+- **cas-lib version:** 2.x wraps [cas-lib 0.7.1](https://github.com/Cryptographic-API-Services/cas-lib/releases/tag/v0.7.1), pinned exactly in `Cargo.toml`.
 - **Release notes:** [Changelog](./CHANGELOG.md)
 
 > **Upgrading from 1.x?** 2.0 has breaking changes: RSA signatures, X25519-derived keys, PBKDF2 minimums, password-hasher bounds, zstd limits and more. Read the [2.0 migration guide](./docs/MIGRATING-2.0.md) before you upgrade.
