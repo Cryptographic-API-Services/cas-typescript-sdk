@@ -24,3 +24,7 @@ target/
 # Wycheproof vectors are downloaded by scripts/fetch-wycheproof.mjs
 /tests/data/wycheproof/*.json
 /tests/data/wycheproof/.wycheproof-ref
+
+# NIST CAVP vectors are downloaded by scripts/fetch-nist.mjs
+/tests/data/nist/**
+!/tests/data/nist/README.md
