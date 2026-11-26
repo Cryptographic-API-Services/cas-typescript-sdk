@@ -7,10 +7,9 @@
 // Usage: node scripts/fetch-nist.mjs [--force]
 
 import { createHash } from "node:crypto";
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
+import { inflateRawSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
 
 const MAX_REDIRECTS = 5;
@@ -59,6 +58,44 @@ function wantedNames() {
   return ARCHIVES.flatMap((archive) => archive.members.map((member) => path.basename(member)));
 }
 
+// GNU tar on Linux does not read zip files. Windows bsdtar does, which is why
+// a local extract is not a check. Read the central directory and inflate here.
+function unzipMembers(zip, wanted) {
+  const eocd = zip.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
+  if (eocd < 0) {
+    throw new Error("download is not a zip archive");
+  }
+  const count = zip.readUInt16LE(eocd + 10);
+  let cursor = zip.readUInt32LE(eocd + 16);
+  const found = new Map();
+  for (let i = 0; i < count; i++) {
+    if (zip.readUInt32LE(cursor) !== 0x02014b50) {
+      throw new Error("zip central directory is truncated");
+    }
+    const method = zip.readUInt16LE(cursor + 10);
+    const compressedSize = zip.readUInt32LE(cursor + 20);
+    const nameLength = zip.readUInt16LE(cursor + 28);
+    const extraLength = zip.readUInt16LE(cursor + 30);
+    const commentLength = zip.readUInt16LE(cursor + 32);
+    const localOffset = zip.readUInt32LE(cursor + 42);
+    const name = zip.subarray(cursor + 46, cursor + 46 + nameLength).toString("utf8").replaceAll("\\", "/");
+    cursor += 46 + nameLength + extraLength + commentLength;
+    if (!wanted.has(name)) {
+      continue;
+    }
+    const dataStart = localOffset + 30 + zip.readUInt16LE(localOffset + 26) + zip.readUInt16LE(localOffset + 28);
+    const compressed = zip.subarray(dataStart, dataStart + compressedSize);
+    if (method === 0) {
+      found.set(name, Buffer.from(compressed));
+    } else if (method === 8) {
+      found.set(name, inflateRawSync(compressed));
+    } else {
+      throw new Error(`${name} uses unsupported zip method ${method}`);
+    }
+  }
+  return found;
+}
+
 async function httpsGet(url) {
   for (let redirects = 0; ; redirects++) {
     if (new URL(url).protocol !== "https:") {
@@ -90,27 +127,22 @@ if (
   console.log("NIST CAVP vectors already match the pinned archives");
 } else {
   fs.mkdirSync(outDir, { recursive: true });
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "nist-cavp-"));
-  try {
-    for (const archive of ARCHIVES) {
-      process.stdout.write(`Fetching ${archive.name}... `);
-      const bytes = await httpsGet(archive.url);
-      const actual = createHash("sha256").update(bytes).digest("hex");
-      if (actual !== archive.sha256) {
-        throw new Error(`${archive.name} SHA-256 is ${actual}, expected ${archive.sha256}`);
-      }
-      const zipPath = path.join(tmp, `${archive.name}.zip`);
-      fs.writeFileSync(zipPath, bytes);
-      execFileSync("tar", ["-xf", zipPath, "-C", tmp, ...archive.members], { stdio: "inherit" });
-      for (const member of archive.members) {
-        const from = path.join(tmp, member);
-        const to = path.join(outDir, path.basename(member));
-        fs.copyFileSync(from, to);
-      }
-      console.log(`ok (${archive.members.length} files, sha256 ${actual})`);
+  for (const archive of ARCHIVES) {
+    process.stdout.write(`Fetching ${archive.name}... `);
+    const bytes = await httpsGet(archive.url);
+    const actual = createHash("sha256").update(bytes).digest("hex");
+    if (actual !== archive.sha256) {
+      throw new Error(`${archive.name} SHA-256 is ${actual}, expected ${archive.sha256}`);
     }
-  } finally {
-    fs.rmSync(tmp, { recursive: true, force: true });
+    const extracted = unzipMembers(bytes, new Set(archive.members));
+    for (const member of archive.members) {
+      const data = extracted.get(member);
+      if (!data) {
+        throw new Error(`${archive.name} has no ${member}`);
+      }
+      fs.writeFileSync(path.join(outDir, path.basename(member)), data);
+    }
+    console.log(`ok (${archive.members.length} files, sha256 ${actual})`);
   }
   fs.writeFileSync(markerPath, `${marker}\n`);
 }
