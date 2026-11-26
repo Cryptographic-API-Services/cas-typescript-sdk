@@ -25,6 +25,10 @@ target/
 /tests/data/wycheproof/*.json
 /tests/data/wycheproof/.wycheproof-ref
 
+# NIST CAVP vectors are downloaded by scripts/fetch-nist.mjs
+/tests/data/nist/**
+!/tests/data/nist/README.md
+
 # Benchmarks: compiled suite and local results (npm run bench)
 /benchmarks/dist/
 /benchmarks/results/
