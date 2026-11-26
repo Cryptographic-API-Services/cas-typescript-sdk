@@ -132,6 +132,16 @@ pub(crate) mod test_util {
             .map(|byte| format!("{:02x}", byte))
             .collect()
     }
+
+    /// `len` fresh CSPRNG bytes, for salts, keys and other secret inputs.
+    pub fn random_bytes(len: usize) -> Vec<u8> {
+        let mut bytes = Vec::with_capacity(len + 32);
+        while bytes.len() < len {
+            bytes.extend(crate::symmetric::aes::aes256_key());
+        }
+        bytes.truncate(len);
+        bytes
+    }
 }
 
 mod password_hashers {
