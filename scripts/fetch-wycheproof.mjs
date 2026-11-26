@@ -27,6 +27,8 @@ const FILES = [
   "aes_wrap_test.json",
   "chacha20_poly1305_test.json",
   "ed25519_test.json",
+  "hkdf_sha256_test.json",
+  "hkdf_sha512_test.json",
   "hmac_sha256_test.json",
   "hmac_sha512_test.json",
   "mldsa_65_sign_seed_test.json",

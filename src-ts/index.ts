@@ -5,6 +5,7 @@ export * from "./symmetric/index";
 export * from "./asymmetric/index";
 export * from "./sponges/index";
 export * from "./message/index";
+export * from "./kdf/index";
 export * from "./signature/index";
 export * from "./hybrid/index";
 export * from "./compression/index";

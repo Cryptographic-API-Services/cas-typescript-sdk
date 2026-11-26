@@ -118,6 +118,23 @@ export type MacTestGroup = {
   tests: MacTest[];
 };
 
+export type HkdfTest = {
+  tcId: number;
+  comment: string;
+  flags: string[];
+  ikm: string;
+  salt: string;
+  info: string;
+  size: number;
+  okm: string;
+  result: WycheproofResult;
+};
+
+export type HkdfTestGroup = {
+  keySize: number;
+  tests: HkdfTest[];
+};
+
 export type SignatureTest = {
   tcId: number;
   comment: string;

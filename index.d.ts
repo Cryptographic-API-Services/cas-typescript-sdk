@@ -213,6 +213,18 @@ export declare function generateInfoStr(): Array<number>
 
 export declare function generateRsaKeys(keySize: number): CASRSAKeyPairResult
 
+export declare function hkdfSha256Derive(salt: Array<number>, ikm: Array<number>, info: Array<number>, length: number): Array<number>
+
+export declare function hkdfSha256Expand(prk: Array<number>, info: Array<number>, length: number): Array<number>
+
+export declare function hkdfSha256Extract(salt: Array<number>, ikm: Array<number>): Array<number>
+
+export declare function hkdfSha512Derive(salt: Array<number>, ikm: Array<number>, info: Array<number>, length: number): Array<number>
+
+export declare function hkdfSha512Expand(prk: Array<number>, info: Array<number>, length: number): Array<number>
+
+export declare function hkdfSha512Extract(salt: Array<number>, ikm: Array<number>): Array<number>
+
 export declare function hmacSha512Sign(key: Array<number>, message: Array<number>): Array<number>
 
 export declare function hmacSha512Verify(key: Array<number>, message: Array<number>, signature: Array<number>): boolean

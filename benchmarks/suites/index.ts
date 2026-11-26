@@ -7,7 +7,7 @@ import {
   x25519Benchmarks,
 } from "./asymmetric";
 import { zstdBenchmarks } from "./compression";
-import { hasherBenchmarks, hmacBenchmarks } from "./hashers";
+import { hasherBenchmarks, hkdfBenchmarks, hmacBenchmarks } from "./hashers";
 import { passwordHasherBenchmarks } from "./password-hashers";
 import { mlDsaBenchmarks, mlKemBenchmarks, slhDsaBenchmarks } from "./pqc";
 import { aesKeyWrapBenchmarks, symmetricBenchmarks } from "./symmetric";
@@ -16,6 +16,7 @@ import { aesKeyWrapBenchmarks, symmetricBenchmarks } from "./symmetric";
 export const suites: Suite[] = [
   hasherBenchmarks,
   hmacBenchmarks,
+  hkdfBenchmarks,
   symmetricBenchmarks,
   aesKeyWrapBenchmarks,
   rsaBenchmarks,
