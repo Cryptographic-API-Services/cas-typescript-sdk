@@ -187,9 +187,9 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
 name = "cas-lib"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67a20d487ce7f45b030d6a933f72338baa217a887e70bd1e1617aa8ac0cdb829"
+checksum = "3d00f77d2c607b22c5e19f153d21b238b43b2bcd32bb81be45e303121134e552"
 dependencies = [
  "aes-gcm",
  "aes-gcm-siv",
