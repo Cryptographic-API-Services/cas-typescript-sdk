@@ -178,6 +178,10 @@ mod message {
     pub mod hmac;
 }
 
+mod kdf {
+    pub mod hkdf;
+}
+
 mod hybrid {
     pub mod hpke;
     pub mod types;

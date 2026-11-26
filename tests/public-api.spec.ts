@@ -36,4 +36,14 @@ test.describe("Public API exports", () => {
   test("AES key wrapping wrapper is exported", () => {
     expect(typeof sdk.AesKeyWrapWrapper).toBe("function");
   });
+
+  test("HKDF wrapper is exported", () => {
+    expect(typeof sdk.HkdfWrapper).toBe("function");
+    const hkdf = new sdk.HkdfWrapper();
+    for (const hash of ["Sha256", "Sha512"]) {
+      for (const step of ["Extract", "Expand", "Derive"]) {
+        expect(typeof (hkdf as unknown as Record<string, unknown>)[`hkdf${hash}${step}`]).toBe("function");
+      }
+    }
+  });
 });

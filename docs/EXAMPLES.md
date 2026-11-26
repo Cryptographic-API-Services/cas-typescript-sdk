@@ -24,6 +24,7 @@ import {
   PasswordHasherType,
   X25519Wrapper,
   HmacWrapper,
+  HkdfWrapper,
   AsconWrapper,
   HpkeWrapper,
   ZTSDWrapper,
@@ -400,6 +401,44 @@ const emptyTag = hmac.hmacSignBytes(key, null);
 // HMAC-SHA512
 const tag512 = hmac.hmacSha512SignBytes(key, message);
 const isValid512: boolean = hmac.hmacSha512VerifyBytes(key, message, tag512);
+```
+
+## Key Derivation
+
+### HKDF
+HKDF (RFC 5869) turns a shared secret into keys. It is not a password hash: use Argon2 for passwords. `extract` returns a pseudorandom key (PRK, 32 bytes for SHA-256 and 64 for SHA-512); `expand` derives a key of the length you ask for (1 to 255 × hash length) from a PRK and an `info` label; `derive` does both in one call. An empty, `null` or `undefined` salt or info is allowed.
+```typescript
+const hkdf = new HkdfWrapper();
+const x25519 = new X25519Wrapper();
+
+// Both sides compute the same X25519 shared secret.
+const alice = x25519.generateSecretAndPublicKey();
+const bob = x25519.generateSecretAndPublicKey();
+const shared = x25519.generateSharedSecret(alice.secretKey, bob.publicKey);
+
+// Extract once with a (public) salt, then expand one key per purpose.
+const salt = toBytes("session-1234");
+const prk = hkdf.hkdfSha512Extract(salt, shared);
+const sendKey = hkdf.hkdfSha512Expand(prk, toBytes("my-app/v1 send"), 32);
+const receiveKey = hkdf.hkdfSha512Expand(prk, toBytes("my-app/v1 receive"), 32);
+
+// Extract and expand in one call gives the same key.
+const sameSendKey = hkdf.hkdfSha512Derive(salt, shared, toBytes("my-app/v1 send"), 32);
+
+// HKDF-SHA256 works the same way; here with no salt.
+const aesKey = hkdf.hkdfSha256Derive(null, shared, toBytes("my-app/v1 aes-256"), 32);
+const prk256 = hkdf.hkdfSha256Extract(null, shared);
+const macKey = hkdf.hkdfSha256Expand(prk256, toBytes("my-app/v1 mac"), 32);
+
+// A length of 0 or above 255 × hash length throws CasErrorCode.InvalidParameters;
+// a PRK shorter than the hash length throws CasErrorCode.InvalidKey.
+try {
+  hkdf.hkdfSha256Expand(prk256, null, 8161);
+} catch (err) {
+  if (isCasError(err, CasErrorCode.InvalidParameters)) {
+    // too long for HKDF-SHA256
+  }
+}
 ```
 
 ## Sponges
